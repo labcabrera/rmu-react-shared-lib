@@ -92,9 +92,9 @@ const ImageSelectorDialog: FC<{
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>{t('cancel')}</Button>
+        <Button onClick={onClose}>Cancel</Button>
         <Button onClick={handleSave} disabled={!selectedImage} variant="contained" color="primary">
-          {t('save')}
+          Save
         </Button>
       </DialogActions>
     </Dialog>

@@ -17,9 +17,9 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({ message, open, onDelete, on
         <DialogContentText>{message}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>{t('Cancel')}</Button>
+        <Button onClick={onClose}>Cancel</Button>
         <Button onClick={onDelete} color="error">
-          {t('Delete')}
+          Delete
         </Button>
       </DialogActions>
     </Dialog>
