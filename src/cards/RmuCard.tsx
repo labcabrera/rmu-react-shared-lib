@@ -12,7 +12,8 @@ const RmuCard: FC<{
   onClick?: () => void;
   children?: ReactNode;
   grayscale?: number;
-}> = ({ image, onClick, children, grayscale = 0 }) => {
+  imageFilter?: string;
+}> = ({ image, onClick, children, grayscale = 0, imageFilter: filter }) => {
   return (
     <Card
       onClick={onClick}
@@ -37,7 +38,7 @@ const RmuCard: FC<{
           width: smallImageSize,
           height: smallImageSize,
           objectFit: 'cover',
-          filter: `grayscale(${grayscale})`,
+          filter: filter ? filter : `grayscale(${grayscale})`,
         }}
       />
       <CardContent

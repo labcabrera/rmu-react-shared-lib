@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { Typography } from '@mui/material';
-// import { textRed, textGreen } from '../../services/display';
 import RmuCard from './RmuCard';
 
 export const textRed = '#ffab91';
@@ -12,10 +11,11 @@ const RmuTextCard: FC<{
   subtitle: string | undefined;
   image: string;
   grayscale?: number;
+  imageFilter?: string;
   onClick?: () => void;
-}> = ({ value, subtitle, applyColor = false, image, grayscale = 0, onClick }) => {
+}> = ({ value, subtitle, applyColor = false, image, grayscale = 0, imageFilter, onClick }) => {
   return (
-    <RmuCard image={image} onClick={onClick} grayscale={grayscale}>
+    <RmuCard image={image} onClick={onClick} grayscale={grayscale} imageFilter={imageFilter}>
       <Typography
         component="div"
         variant="h6"
