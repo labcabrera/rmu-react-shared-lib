@@ -23,3 +23,5 @@ export { default as CategorySeparator } from './display/CategorySeparator';
 export { default as TechnicalInfo } from './display/TechnicalInfo';
 
 export { default as ImageSelectorDialog } from './images/ImageSelectorDialog';
+
+export { default as NumericInput } from './inputs/NumericInput';
