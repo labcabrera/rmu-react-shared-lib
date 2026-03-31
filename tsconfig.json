@@ -10,12 +10,14 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
+    "outDir": "dist",
+    "declaration": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
   },
-  "include": ["src//*", "public//*"],
+  "include": ["src/**/*", "public/**/*"],
   "exclude": ["node_modules", "dist", "build", "scripts"]
 }
 
