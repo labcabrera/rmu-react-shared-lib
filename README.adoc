@@ -1,0 +1,31 @@
+= RMU Engine Shared UI Components
+:linkattrs:
+:icons: font
+
+image:https://img.shields.io/badge/license-GPL3.0-green.svg[License,link="https://www.gnu.org/licenses/gpl-3.0.html"]
+image:https://img.shields.io/badge/rolemaster-rmu-green.svg[Rolemaster,link="http://ironcrown.co.uk/unified-rolemaster/"]
+image:https://img.shields.io/badge/react-19.1.1-green.svg[React 19.1.1, link="https://www.npmjs.com/package/react/v/19.1.1"]
+image:https://img.shields.io/badge/@mui-7.3.1-green.svg[Material UI 7.3.1, link="https://www.npmjs.com/package/@mui/material/v/7.3.1"]
+
+This project is part of RMU Online: https://github.com/labcabrera/rmu-platform
+
+WARNING: *This application is an independent project developed by fans of Rolemaster Unified. It is not affiliated with, endorsed by, or licensed by Iron Crown Enterprises (ICE), the owners of the Rolemaster intellectual property.*
+*All Rolemaster trademarks, game systems, and materials are the property of Iron Crown Enterprises. This software is provided for personal, non-commercial use only. If you enjoy Rolemaster, please support the official publications and content from ICE.*
+
+Library of UI components based on React and MUI.
+
+== Usage
+
+Local build:
+
+----
+npm run build
+
+npm link
+----
+
+Install in another project:
+
+----
+npm link @labcabrera-rmu/rmu-react-shared-lib
+----
