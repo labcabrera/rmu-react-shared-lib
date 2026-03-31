@@ -3,10 +3,12 @@ import Avatar from '@mui/material/Avatar';
 
 const GenericAvatar: FC<{
   imageUrl: string;
-}> = ({ imageUrl }) => {
+  variant?: 'circular' | 'rounded' | 'square' | undefined;
+}> = ({ imageUrl, variant = 'circular' }) => {
   return (
     <Avatar
       src={imageUrl}
+      variant={variant}
       sx={{
         width: {
           xs: 50,
