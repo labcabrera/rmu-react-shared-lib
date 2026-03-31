@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react';
 import Avatar from '@mui/material/Avatar';
-import ImageSelectorDialog from "../images/ImageSelectorDialog";
+import ImageSelectorDialog from '../images/ImageSelectorDialog';
 
 const EditableAvatar: FC<{
   imageUrl: string;
   variant?: 'circular' | 'rounded' | 'square';
-  images: string[],
+  images: string[];
   onImageChange: (newImageUrl: string) => void;
 }> = ({ imageUrl, images, variant = 'circular', onImageChange }) => {
   const [dialogOpen, setDialogOpen] = useState(false);

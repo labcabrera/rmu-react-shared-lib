@@ -13,14 +13,7 @@ const RmuTextCard: FC<{
   image: string;
   grayscale?: number;
   onClick?: () => void;
-}> = ({
-  value,
-  subtitle,
-  applyColor = false,
-  image,
-  grayscale = 0,
-  onClick,
-}) => {
+}> = ({ value, subtitle, applyColor = false, image, grayscale = 0, onClick }) => {
   return (
     <RmuCard image={image} onClick={onClick} grayscale={grayscale}>
       <Typography
