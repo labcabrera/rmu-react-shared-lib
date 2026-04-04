@@ -25,7 +25,7 @@ const RmuPagination: FC<{
           labelId="page-size-label"
           id="page-size-select"
           value={String(pageSize)}
-          label="Rows"
+          label="Size"
           onChange={(e) => setPageSize(Number(e.target.value))}
         >
           {sizes.map((v) => (
