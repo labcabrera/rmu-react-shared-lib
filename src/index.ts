@@ -20,6 +20,7 @@ export { default as RmuTextCard } from './cards/RmuTextCard';
 export { default as DeleteDialog } from './dialogs/DeleteDialog';
 
 export { default as CategorySeparator } from './display/CategorySeparator';
+export { default as RmuPagination } from './display/RmuPagination';
 export { default as TechnicalInfo } from './display/TechnicalInfo';
 
 export { default as ImageSelectorDialog } from './images/ImageSelectorDialog';
