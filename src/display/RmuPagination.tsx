@@ -10,7 +10,7 @@ const RmuPagination: FC<{
   setPageSize: Dispatch<SetStateAction<number>>;
 }> = ({ page, pageSize, totalPages, sizes = [12, 24, 48, 96], setPage, setPageSize }) => {
   return (
-    <Box mt={3} display="flex" justifyContent="center">
+    <Box mt={5} display="flex" justifyContent="center">
       <Pagination
         count={totalPages}
         page={page + 1}
