@@ -32,6 +32,8 @@ export { default as NumericReadonlyInput } from './inputs/NumericReadonlyInput';
 export type { Page } from './api/common.dto';
 export * from './api/error-handler';
 
+export * from './api/profession.api';
+export * from './api/profession.dto';
 export * from './api/strategic-item.api';
 export * from './api/strategic-item.dto';
 export * from './api/race.api';
