@@ -185,7 +185,7 @@ export interface CharacterItemInfo {
   cost: number;
 }
 
-export interface WeaponMode {
+export interface CharacterWeaponMode {
   type: string;
   attackTable: string;
   fumbleTable: string;
@@ -196,7 +196,7 @@ export interface WeaponInfo {
   skillId: string;
   fumble: string;
   sizeAdjustment: string;
-  modes: WeaponMode[];
+  modes: CharacterWeaponMode[];
 }
 
 export interface ArmorInfo {
@@ -262,6 +262,7 @@ export interface CharacterAttack {
   bo: number;
   type: string;
   defaultAttack: boolean;
+  meleeRange: number | null;
 }
 
 export interface AddSkill {

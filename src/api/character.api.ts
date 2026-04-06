@@ -232,3 +232,12 @@ export async function deleteCharacterTrait(characterId: string, dto: DeleteTrait
   }
   return await response.json();
 }
+
+export async function fetchCharacterSizes(): Promise<any> {
+  const url = `${apiStrategicGameUrl}/character-sizes`;
+  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
+  if (response.status !== 200) {
+    throw await buildErrorFromResponse(response, url);
+  }
+  return await response.json();
+}

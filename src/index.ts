@@ -39,6 +39,8 @@ export * from './api/enumerations.api';
 export * from './api/enumerations.dto';
 export * from './api/faction.api';
 export * from './api/faction.dto';
+export * from './api/item.api';
+export * from './api/item.dto';
 export * from './api/maneuver.api';
 export * from './api/maneuver.dto';
 export * from './api/profession.api';
