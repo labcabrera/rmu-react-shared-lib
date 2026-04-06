@@ -34,6 +34,10 @@ export * from './api/error-handler';
 
 export * from './api/profession.api';
 export * from './api/profession.dto';
+export * from './api/skill-category.api';
+export * from './api/skill-category.dto';
+export * from './api/skill.api';
+export * from './api/skill.dto';
 export * from './api/strategic-item.api';
 export * from './api/strategic-item.dto';
 export * from './api/race.api';
