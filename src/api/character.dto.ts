@@ -109,9 +109,7 @@ export interface CharacterMovement {
 }
 
 export interface CharacterInitiative {
-  baseBonus: number;
-  customBonus: number;
-  penaltyBonus: number;
+  modifiers: Record<string, number>;
   totalBonus: number;
 }
 
