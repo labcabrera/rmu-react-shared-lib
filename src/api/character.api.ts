@@ -131,28 +131,6 @@ export async function setUpProfessionalSkill(
   return await response.json();
 }
 
-export async function addItem(characterId: string, data: AddItemDto): Promise<Character> {
-  const url = `${apiStrategicGameUrl}/characters/${characterId}/items`;
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: mergeJsonHeaders(),
-    body: JSON.stringify(data),
-  });
-  if (response.status !== 201) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
-}
-
-export async function deleteItem(characterId: string, itemId: string): Promise<any> {
-  const url = `${apiStrategicGameUrl}/characters/${characterId}/items/${itemId}`;
-  const response = await fetch(url, { method: 'DELETE', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
-}
-
 export async function equipItem(characterId: string, slot: string, itemId: string): Promise<any> {
   const request = { slot: slot, itemId: itemId };
   const url = `${apiStrategicGameUrl}/characters/${characterId}/equipment`;
@@ -229,7 +207,7 @@ export async function addCharacterXP(characterId: string, xp: number): Promise<C
   return await response.json();
 }
 
-export async function addTrait(characterId: string, addTraitDto: AddTraitDto): Promise<Character> {
+export async function addCharacterTrait(characterId: string, addTraitDto: AddTraitDto): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/traits`;
   const response = await fetch(url, {
     method: 'POST',
@@ -242,7 +220,7 @@ export async function addTrait(characterId: string, addTraitDto: AddTraitDto): P
   return await response.json();
 }
 
-export async function deleteTrait(characterId: string, dto: DeleteTraitDto): Promise<Character> {
+export async function deleteCharacterTrait(characterId: string, dto: DeleteTraitDto): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/traits`;
   const response = await fetch(url, {
     method: 'DELETE',

@@ -55,3 +55,5 @@ export * from './api/strategic-item.api';
 export * from './api/strategic-item.dto';
 export * from './api/strategic-game.api';
 export * from './api/strategic-game.dto';
+export * from './api/trait.api';
+export * from './api/trait.dto';
