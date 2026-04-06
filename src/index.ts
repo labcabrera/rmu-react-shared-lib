@@ -28,3 +28,13 @@ export { default as ImageSelectorDialog } from './images/ImageSelectorDialog';
 export { default as ClearableTextField } from './inputs/ClearableTextField';
 export { default as NumericInput } from './inputs/NumericInput';
 export { default as NumericReadonlyInput } from './inputs/NumericReadonlyInput';
+
+export type { Page } from './api/common.dto';
+export * from './api/error-handler';
+
+export * from './api/strategic-item.api';
+export * from './api/strategic-item.dto';
+export * from './api/race.api';
+export * from './api/race.dto';
+export * from './api/realm.api';
+export * from './api/realm.dto';

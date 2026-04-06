@@ -1,0 +1,3 @@
+export const assetsBaseUrl = process.env.RMU_ASSETS_BASE_URL;
+export const apiCoreUrl = process.env.RMU_API_CORE_URL;
+export const apiStrategicGameUrl = process.env.RMU_API_STRATEGIC_URL;
