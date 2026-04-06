@@ -33,19 +33,23 @@ export type { Page } from './api/common.dto';
 
 export * from './api/error-handler';
 
+export * from './api/character.api';
+export * from './api/character.dto';
 export * from './api/enumerations.api';
 export * from './api/enumerations.dto';
 export * from './api/maneuver.api';
 export * from './api/maneuver.dto';
 export * from './api/profession.api';
 export * from './api/profession.dto';
+export * from './api/race.api';
+export * from './api/race.dto';
+export * from './api/realm.api';
+export * from './api/realm.dto';
 export * from './api/skill-category.api';
 export * from './api/skill-category.dto';
 export * from './api/skill.api';
 export * from './api/skill.dto';
 export * from './api/strategic-item.api';
 export * from './api/strategic-item.dto';
-export * from './api/race.api';
-export * from './api/race.dto';
-export * from './api/realm.api';
-export * from './api/realm.dto';
+export * from './api/strategic-game.api';
+export * from './api/strategic-game.dto';
