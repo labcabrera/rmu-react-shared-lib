@@ -47,6 +47,8 @@ export * from './api/race.api';
 export * from './api/race.dto';
 export * from './api/realm.api';
 export * from './api/realm.dto';
+export * from './api/resistance-roll.api';
+export * from './api/resistance-roll.dto';
 export * from './api/skill-category.api';
 export * from './api/skill-category.dto';
 export * from './api/skill.api';
