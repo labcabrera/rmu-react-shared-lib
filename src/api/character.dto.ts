@@ -1,5 +1,7 @@
 import { NamedEntity } from './common.dto';
 
+export type StatKey = 'ag' | 'co' | 'em' | 'in' | 'me' | 'pr' | 'qu' | 're' | 'sd' | 'st';
+
 export const STATS = ['ag', 'co', 'em', 'in', 'me', 'pr', 'qu', 're', 'sd', 'st'];
 
 export interface Character {
@@ -10,7 +12,7 @@ export interface Character {
   info: CharacterInfo;
   roleplay: CharacterRoleplay;
   experience: CharacterExperience;
-  statistics: CharacterStatistics;
+  statistics: Record<StatKey, Stat>;
   resistances: CharacterResistance[];
   hp: CharacterHP;
   movement: CharacterMovement;
