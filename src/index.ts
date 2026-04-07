@@ -29,6 +29,8 @@ export { default as ClearableTextField } from './inputs/ClearableTextField';
 export { default as NumericInput } from './inputs/NumericInput';
 export { default as NumericReadonlyInput } from './inputs/NumericReadonlyInput';
 
+export { default as SkillSelector } from './skills/SkillSelector';
+
 export type { Page } from './api/common.dto';
 
 export * from './api/error-handler';

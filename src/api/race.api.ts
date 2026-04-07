@@ -91,7 +91,7 @@ export async function addRaceSkillBonus(raceId: string, dto: RaceSkillBonus): Pr
   return await response.json();
 }
 
-export async function addDeleteSkillBonus(
+export async function deleteRaceSkillBonus(
   raceId: string,
   skillId: string,
   specialization: string | null
