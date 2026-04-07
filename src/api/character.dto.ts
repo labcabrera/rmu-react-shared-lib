@@ -261,6 +261,7 @@ export interface CharacterAttack {
   type: string;
   defaultAttack: boolean;
   meleeRange: number | null;
+  boModifiers: Record<string, number>;
 }
 
 export interface AddSkill {
