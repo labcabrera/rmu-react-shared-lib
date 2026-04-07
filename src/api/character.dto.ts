@@ -12,7 +12,7 @@ export interface Character {
   info: CharacterInfo;
   roleplay: CharacterRoleplay;
   experience: CharacterExperience;
-  statistics: Record<StatKey, Stat>;
+  statistics: Record<StatKey, CharacterStat>;
   resistances: CharacterResistance[];
   hp: CharacterHP;
   movement: CharacterMovement;
@@ -209,17 +209,15 @@ export interface ArmorInfo {
   baseDifficulty: string;
 }
 
-export interface Stat {
+export interface CharacterStat {
   potential: number;
   temporary: number;
-  bonus: number;
-  racial: number | undefined;
-  custom: number;
+  modifiers: Record<string, number>;
   totalBonus: number;
 }
 
 export type CharacterStatistics = {
-  [key in (typeof STATS)[number]]: Stat;
+  [key in (typeof STATS)[number]]: CharacterStat;
 };
 
 export interface CharacterResistance {
