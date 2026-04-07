@@ -1,4 +1,5 @@
 import { assetsBaseUrl } from '../config/config.service';
+import { StatKey } from './character.dto';
 import { AccessType, NamedEntity } from './common.dto';
 
 export const resistances = ['channeling', 'mentalism', 'essence', 'physical', 'poison', 'disease', 'fear'];
@@ -9,7 +10,7 @@ export type Race = {
   archetype: string | undefined;
   realm: NamedEntity;
   sizeId: string;
-  stats: RaceStats;
+  stats: Record<StatKey, number>;
   resistances: RaceResistances;
   averageHeight: GenderBasedStat;
   averageWeight: GenderBasedStat;
@@ -26,19 +27,6 @@ export type Race = {
   description: string | undefined;
   imageUrl: string | undefined;
   accessType: AccessType;
-};
-
-export type RaceStats = {
-  ag: number;
-  co: number;
-  em: number;
-  in: number;
-  me: number;
-  pr: number;
-  qu: number;
-  re: number;
-  sd: number;
-  st: number;
 };
 
 export type RaceResistances = {
@@ -74,7 +62,7 @@ export type CreateRaceDto = {
   realmId: string;
   archetype: string | undefined;
   sizeId: string;
-  stats: RaceStats;
+  stats: Record<StatKey, number>;
   resistances: RaceResistances;
   averageHeight: GenderBasedStat;
   averageWeight: GenderBasedStat;
@@ -96,7 +84,7 @@ export type UpdateRaceDto = {
   name: string | undefined;
   archetype: string | undefined;
   sizeId: string | undefined;
-  stats: RaceStats | undefined;
+  stats: Record<StatKey, number>;
   resistances: RaceResistances | undefined;
   averageHeight: GenderBasedStat | undefined;
   averageWeight: GenderBasedStat | undefined;
