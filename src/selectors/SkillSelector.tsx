@@ -2,19 +2,21 @@
 import React, { useState, useEffect, FC } from 'react';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { Grid, Typography, Stack, Button } from '@mui/material';
-import { t } from 'i18next';
 import { fetchEnumerations } from '../api/enumerations.api';
 import { fetchSkillCategories } from '../api/skill-category.api';
 import { SkillCategory } from '../api/skill-category.dto';
 import { fetchSkills } from '../api/skill.api';
 import { Skill } from '../api/skill.dto';
+import CategorySeparator from '../display/CategorySeparator';
 
-const AddSkillDialog: FC<{
+const SkillSelector: FC<{
   realmId?: string;
   onSkillChange: (skillId: string | null) => void;
   onSpecializationChange: (specialization: string | null) => void;
   onError: (message: string) => void;
-}> = ({ realmId, onSkillChange, onSpecializationChange, onError }) => {
+  //TODO fix i18n instance
+  t: (message: string) => string;
+}> = ({ realmId, onSkillChange, onSpecializationChange, onError, t }) => {
   const [availableCategories, setAvailableCategories] = useState<SkillCategory[]>([]);
   const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
   const [availableSpecializations, setAvailableSpecializations] = useState<string[]>();
@@ -72,9 +74,7 @@ const AddSkillDialog: FC<{
   return (
     <Grid container spacing={1} sx={{ mt: 1 }}>
       <Grid size={12}>
-        <Typography variant="subtitle1" sx={{ mb: 1 }}>
-          {t('Skill category')}
-        </Typography>
+        <CategorySeparator text={t('Skill category')} />
         <SelectionList
           value={selectedCategory}
           options={availableCategories}
@@ -82,11 +82,9 @@ const AddSkillDialog: FC<{
           formatter={(value: any) => t(value.id as string)}
         />
       </Grid>
-      <Grid size={12}>
-        <Typography variant="subtitle1" sx={{ mb: 1 }}>
-          {t('Skill')}
-        </Typography>
-        {selectedCategory ? (
+      {selectedCategory && (
+        <Grid size={12}>
+          <CategorySeparator text={t('Skill')} />
           <SelectionList
             value={selectedSkill}
             options={availableSkills}
@@ -100,27 +98,19 @@ const AddSkillDialog: FC<{
               );
             }}
           />
-        ) : (
-          <Typography variant="body2" color="text.secondary">
-            {t('select-skill-category-first')}
-          </Typography>
-        )}
-      </Grid>
-      <Grid size={12}>
-        {selectedSkill && availableSpecializations && (
-          <>
-            <Typography variant="subtitle1" sx={{ mb: 1 }}>
-              {t('Specialization')}
-            </Typography>
-            <SelectionList
-              value={selectedSpecialization}
-              options={availableSpecializations}
-              onChange={(value) => setSelectedSpecialization(value)}
-              formatter={(value: any) => t(value as string)}
-            />
-          </>
-        )}
-      </Grid>
+        </Grid>
+      )}
+      {selectedSkill && availableSpecializations && (
+        <Grid size={12}>
+          <CategorySeparator text={t('Specialization')} />
+          <SelectionList
+            value={selectedSpecialization}
+            options={availableSpecializations}
+            onChange={(value) => setSelectedSpecialization(value)}
+            formatter={(value: any) => t(value as string)}
+          />
+        </Grid>
+      )}
     </Grid>
   );
 };
@@ -157,4 +147,4 @@ const SelectionList: FC<{
   );
 };
 
-export default AddSkillDialog;
+export default SkillSelector;
