@@ -4,6 +4,8 @@ export type StatKey = 'ag' | 'co' | 'em' | 'in' | 'me' | 'pr' | 'qu' | 're' | 's
 
 export const STATS: StatKey[] = ['ag', 'co', 'em', 'in', 'me', 'pr', 'qu', 're', 'sd', 'st'];
 
+export type Pace = 'creep' | 'walk' | 'jog' | 'run' | 'sprint' | 'dash';
+
 export interface Character {
   id: string;
   gameId: string;
@@ -106,8 +108,8 @@ export interface CharacterInfo {
 
 export interface CharacterMovement {
   baseMovementRate: number;
-  strideRacialBonus: number;
-  strideQuBonus: number;
+  modifiers: Record<string, number>;
+  maxPace: Pace;
 }
 
 export interface CharacterInitiative {
