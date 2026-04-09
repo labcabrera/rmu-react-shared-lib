@@ -1,11 +1,8 @@
 import { NamedEntity } from './common.dto';
 
 export type WeaponModeType = 'one-hand' | 'two-hands';
-
 export type WeaponAttackType = 'melee' | 'ranged' | 'thrown';
-
 export type ItemModifierType = 'bonus' | 'breakage' | 'skill-bonus' | 'material';
-
 export type ItemArmorSlot = 'head' | 'body' | 'arms' | 'legs';
 
 export type Item = {
@@ -51,7 +48,8 @@ export type WeaponRange = {
 };
 
 export type ItemShield = {
-  attacks: number;
+  db: number;
+  blockCount: number;
 };
 
 export type ItemInfo = {
