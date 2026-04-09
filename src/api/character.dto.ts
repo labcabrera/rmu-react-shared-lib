@@ -6,7 +6,7 @@ export type EquipmentSlot = 'mainHand' | 'offHand' | 'body' | 'head' | 'arms' | 
 
 export const STATS: StatKey[] = ['ag', 'co', 'em', 'in', 'me', 'pr', 'qu', 're', 'sd', 'st'];
 export const PACE_VALUES: Pace[] = ['creep', 'walk', 'jog', 'run', 'sprint', 'dash'];
-export const EQUIPMENT_SLOTS: EquipmentSlot[] = ['mainHand', 'offHand', 'body', 'head', 'arms', 'legs'];
+export const EQUIPMENT_SLOTS: EquipmentSlot[] = ['mainHand', 'offHand', 'head', 'body', 'arms', 'legs'];
 
 export interface Character {
   id: string;
@@ -64,6 +64,7 @@ export interface CreateCharacterInfoDto {
 export interface CharacterDefense {
   defensiveBonus: number;
   armor: CharacterArmor;
+  shield: CharacterDefenseShield | null;
 }
 
 export interface CharacterArmor {
@@ -73,6 +74,11 @@ export interface CharacterArmor {
   bodyAt: number | undefined;
   armsAt: number | undefined;
   legsAt: number | undefined;
+}
+
+export interface CharacterDefenseShield {
+  db: number;
+  blockCount: number;
 }
 
 export interface AddTraitDto {
