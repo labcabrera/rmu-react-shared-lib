@@ -1,10 +1,12 @@
 import { NamedEntity } from './common.dto';
 
 export type StatKey = 'ag' | 'co' | 'em' | 'in' | 'me' | 'pr' | 'qu' | 're' | 'sd' | 'st';
+export type Pace = 'creep' | 'walk' | 'jog' | 'run' | 'sprint' | 'dash';
+export type EquipmentSlot = 'mainHand' | 'offHand' | 'body' | 'head' | 'arms' | 'legs';
 
 export const STATS: StatKey[] = ['ag', 'co', 'em', 'in', 'me', 'pr', 'qu', 're', 'sd', 'st'];
-
-export type Pace = 'creep' | 'walk' | 'jog' | 'run' | 'sprint' | 'dash';
+export const PACE_VALUES: Pace[] = ['creep', 'walk', 'jog', 'run', 'sprint', 'dash'];
+export const EQUIPMENT_SLOTS: EquipmentSlot[] = ['mainHand', 'offHand', 'body', 'head', 'arms', 'legs'];
 
 export interface Character {
   id: string;
@@ -164,12 +166,7 @@ export interface CharacterSkill {
 }
 
 export interface CharacterEquipment {
-  mainHand: string | undefined;
-  offHand: string | undefined;
-  body: string | undefined;
-  head: string | undefined;
-  arms: string | undefined;
-  legs: string | undefined;
+  slots: Record<EquipmentSlot, string | null>;
   weight: number;
   weightAllowance: number;
   encumbrancePenalty: number;

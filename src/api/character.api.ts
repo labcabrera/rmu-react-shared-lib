@@ -145,8 +145,8 @@ export async function equipItem(characterId: string, slot: string, itemId: strin
   return await response.json();
 }
 
-export async function unequipItem(characterId: string, slot: string): Promise<any> {
-  const url = `${apiStrategicGameUrl}/characters/${characterId}/equipment/${slot}`;
+export async function unequipItem(characterId: string, itemId: string): Promise<any> {
+  const url = `${apiStrategicGameUrl}/characters/${characterId}/equipment/${itemId}`;
   const response = await fetch(url, {
     method: 'DELETE',
     headers: mergeJsonHeaders(),
