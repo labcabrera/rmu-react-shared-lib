@@ -12,22 +12,35 @@ const RmuTextCard: FC<{
   image: string;
   grayscale?: number;
   imageFilter?: string;
+  color?: 'red' | 'green' | undefined;
   onClick?: () => void;
-}> = ({ value, subtitle, applyColor = false, image, grayscale = 0, imageFilter, onClick }) => {
+}> = ({ value, subtitle, applyColor = false, image, grayscale = 0, color, imageFilter, onClick }) => {
+  const getColor = () => {
+    if (!applyColor) return undefined;
+    if (color) {
+      switch (color) {
+        case 'red':
+          return textRed;
+        case 'green':
+          return textRed;
+        default:
+          return undefined;
+      }
+    }
+    if (typeof value === 'number') {
+      if (value > 0) return textGreen;
+      if (value < 0) return textRed;
+      return undefined;
+    }
+  };
+
   return (
     <RmuCard image={image} onClick={onClick} grayscale={grayscale} imageFilter={imageFilter}>
       <Typography
         component="div"
         variant="h6"
         sx={{
-          color:
-            applyColor && typeof value === 'number'
-              ? value > 0
-                ? textGreen
-                : value < 0
-                  ? textRed
-                  : 'text.primary'
-              : undefined,
+          color: getColor(),
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
@@ -43,7 +56,7 @@ const RmuTextCard: FC<{
         component="div"
         sx={{
           fontSize: '1rem',
-          color: applyColor ? 'primary.main' : 'text.secondary',
+          color: 'text.secondary',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
