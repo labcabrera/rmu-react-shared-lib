@@ -6,14 +6,14 @@ export type TacticalGame = {
   round: number;
   phase: string;
   factions: string[];
-  actors: ActorRound[];
+  actors: ActorRoundSelection[];
   environment: TacticalGameEnvironment;
   description: string;
   owner: string;
   imageUrl?: string;
 };
 
-export type ActorRound = {
+export type ActorRoundSelection = {
   id: string;
   actorId: string;
 };
