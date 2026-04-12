@@ -1,6 +1,6 @@
 import { getAuthHeaders, mergeJsonHeaders } from '../auth/auth-token-service';
 import { apiStrategicGameUrl } from './../config/config.service';
-import { AddItemDto, AddTraitDto, Character, CharacterTrait } from './character.dto';
+import { AddTraitDto, Character } from './character.dto';
 import { AddSkill, DeleteTraitDto } from './character.dto';
 import { Page } from './common.dto';
 import { buildErrorFromResponse } from './error-handler';
