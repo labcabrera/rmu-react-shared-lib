@@ -68,12 +68,12 @@ export interface CharacterDefense {
 }
 
 export interface CharacterArmor {
-  at: number | undefined;
-  racialAtBonus: number | undefined;
-  headAt: number | undefined;
-  bodyAt: number | undefined;
-  armsAt: number | undefined;
-  legsAt: number | undefined;
+  at: number | null;
+  racialAtBonus: number | null;
+  headAt: number | null;
+  bodyAt: number | null;
+  armsAt: number | null;
+  legsAt: number | null;
 }
 
 export interface CharacterDefenseShield {
