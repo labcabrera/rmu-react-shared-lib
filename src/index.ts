@@ -18,6 +18,7 @@ export { default as RmuCard } from './cards/RmuCard';
 export { default as RmuTextCard } from './cards/RmuTextCard';
 
 export { default as DeleteDialog } from './dialogs/DeleteDialog';
+export { default as RmuDialog } from './dialogs/RmuDialog';
 
 export { default as CategorySeparator } from './display/CategorySeparator';
 export { default as RmuPagination } from './display/RmuPagination';
