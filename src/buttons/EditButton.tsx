@@ -6,7 +6,7 @@ const EditButton: FC<{
   onClick: (event: MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
 }> = ({ onClick, disabled = false }) => (
-  <RmuIconButton onClick={onClick} aria-label="edit" disabled={disabled} Icon={EditDocumentIcon} />
+  <RmuIconButton onClick={onClick} aria-label="edit" disabled={disabled} Icon={EditDocumentIcon} tooltip="Edit" />
 );
 
 export default EditButton;

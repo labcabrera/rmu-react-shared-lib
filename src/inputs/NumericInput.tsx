@@ -2,7 +2,7 @@ import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import TextField from '@mui/material/TextField';
 
 export type NumericInputProps = {
-  value: number | null;
+  value: number | null | undefined;
   onChange: (value: number | null) => void;
   integer?: boolean;
   allowNegatives?: boolean;
@@ -57,8 +57,8 @@ const NumericInput: FC<NumericInputProps> = ({
   const lastCommitted = useRef<number | null>(value);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  function formatValue(value: number | null, formatter: Intl.NumberFormat): string {
-    if (value === null || Number.isNaN(value)) return '';
+  function formatValue(value: number | null | undefined, formatter: Intl.NumberFormat): string {
+    if (!value || value === null || Number.isNaN(value)) return '';
     return formatter.format(value);
   }
 
@@ -123,7 +123,7 @@ const NumericInput: FC<NumericInputProps> = ({
 
   function handleFocus(e: React.FocusEvent<HTMLInputElement>) {
     if (text === formatValue(value, formatter)) {
-      setText(value === null ? '' : toEnglishRaw(value));
+      setText(!value || value === null ? '' : toEnglishRaw(value));
     }
     onFocus?.(e);
   }

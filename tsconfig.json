@@ -16,8 +16,8 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "strictPropertyInitialization": false
   },
   "include": ["src/**/*", "public/**/*"],
   "exclude": ["node_modules", "dist", "build", "scripts"]
 }
-

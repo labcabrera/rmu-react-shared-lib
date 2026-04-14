@@ -12,14 +12,15 @@ const RmuCard: FC<{
   onClick?: () => void;
   children?: ReactNode;
   grayscale?: number;
-}> = ({ image, onClick, children, grayscale = 0 }) => {
+  imageFilter?: string;
+}> = ({ image, onClick, children, grayscale = 0, imageFilter: filter, height }) => {
   return (
     <Card
       onClick={onClick}
       sx={{
         display: 'flex',
         alignItems: 'stretch',
-        height: smallImageSize,
+        height: height || smallImageSize,
         cursor: onClick ? 'pointer' : 'default',
         ...(onClick && {
           transition: 'box-shadow 0.2s, background 0.2s',
@@ -34,10 +35,10 @@ const RmuCard: FC<{
         component="img"
         image={image}
         sx={{
-          width: smallImageSize,
-          height: smallImageSize,
+          width: height || smallImageSize,
+          height: height || smallImageSize,
           objectFit: 'cover',
-          filter: `grayscale(${grayscale})`,
+          filter: filter ? filter : `grayscale(${grayscale})`,
         }}
       />
       <CardContent

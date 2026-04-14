@@ -1,12 +1,13 @@
 {
   "name": "@labcabrera-rmu/rmu-react-shared-lib",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": false,
   "description": "RMU React Shared Library",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "prepublishOnly": "npm run build",
     "postinstall": "echo '{\"type\":\"module\",\"sideEffects\":false,\"version\":\"7.3.1\"}' > node_modules/@mui/material/esm/package.json && echo '{\"type\":\"module\",\"sideEffects\":false,\"version\":\"7.3.1\"}' > node_modules/@mui/icons-material/esm/package.json",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\""
@@ -46,11 +47,17 @@
     "react-router-dom": "^7.8.1"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^10.0.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "eslint": "^10.1.0",
+    "eslint": "^9.9.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.2.2",
     "prettier": "^3.8.1",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "typescript": "^5.9.3",
