@@ -1,7 +1,7 @@
 import { getAuthHeaders, mergeJsonHeaders } from '../auth/auth-token-service';
 import { apiCoreUrl } from '../config/config.service';
 import { Page } from './common.dto';
-import { CreateCultureDto, Culture, UpdateCultureDto } from './culture.dto';
+import { CreateCultureDto, Culture, CultureSkillRank, UpdateCultureDto } from './culture.dto';
 import { buildErrorFromResponse } from './error-handler';
 
 export async function fetchCulture(cultureId: string): Promise<Culture> {
@@ -24,11 +24,7 @@ export async function fetchCultures(rsql: string, page: number, size: number): P
 
 export async function createCulture(data: CreateCultureDto): Promise<Culture> {
   const url = `${apiCoreUrl}/cultures`;
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: mergeJsonHeaders(),
-    body: JSON.stringify(data),
-  });
+  const response = await fetch(url, { method: 'POST', headers: mergeJsonHeaders(), body: JSON.stringify(data) });
   if (response.status !== 201) {
     throw await buildErrorFromResponse(response, url);
   }
@@ -37,11 +33,7 @@ export async function createCulture(data: CreateCultureDto): Promise<Culture> {
 
 export async function updateCulture(cultureId: string, data: UpdateCultureDto): Promise<Culture> {
   const url = `${apiCoreUrl}/cultures/${cultureId}`;
-  const response = await fetch(url, {
-    method: 'PATCH',
-    headers: mergeJsonHeaders(),
-    body: JSON.stringify(data),
-  });
+  const response = await fetch(url, { method: 'PATCH', headers: mergeJsonHeaders(), body: JSON.stringify(data) });
   if (response.status !== 200) {
     throw await buildErrorFromResponse(response, url);
   }
@@ -54,4 +46,27 @@ export async function deleteCulture(cultureId: string): Promise<void> {
   if (response.status !== 204) {
     throw await buildErrorFromResponse(response, url);
   }
+}
+
+export async function addCultureFixedSkillRank(cultureId: string, data: CultureSkillRank): Promise<Culture> {
+  const url = `${apiCoreUrl}/cultures/${cultureId}/fixed-skills`;
+  const response = await fetch(url, { method: 'POST', headers: mergeJsonHeaders(), body: JSON.stringify(data) });
+  if (response.status !== 200) {
+    throw await buildErrorFromResponse(response, url);
+  }
+  return await response.json();
+}
+
+export async function deleteCultureFixedSkillRank(
+  cultureId: string,
+  skillId: string,
+  specialization: string | null
+): Promise<Culture> {
+  const dto = { skillId, specialization };
+  const url = `${apiCoreUrl}/cultures/${cultureId}/fixed-skills`;
+  const response = await fetch(url, { method: 'DELETE', headers: mergeJsonHeaders(), body: JSON.stringify(dto) });
+  if (response.status !== 200) {
+    throw await buildErrorFromResponse(response, url);
+  }
+  return await response.json();
 }
