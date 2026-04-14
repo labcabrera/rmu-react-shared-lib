@@ -28,11 +28,9 @@ export interface StrategicGamePowerLevel {
   statCreationSwap: number;
 }
 
-export interface CreateStrategicGameDto extends Omit<StrategicGame, 'id' | 'realmName' | 'status' | 'owner'> {}
+export type CreateStrategicGameDto = Omit<StrategicGame, 'id' | 'realmName' | 'status' | 'owner'>;
 
-export interface UpdateStrategicGameDto extends Partial<
-  Omit<StrategicGame, 'id' | 'realmId' | 'realmName' | 'status' | 'owner'>
-> {}
+export type UpdateStrategicGameDto = Partial<Omit<StrategicGame, 'id' | 'realmId' | 'realmName' | 'status' | 'owner'>>;
 
 export const CREATE_GAME_TEMPLATE = {
   name: '',

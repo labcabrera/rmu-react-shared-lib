@@ -23,7 +23,6 @@ export function getAuthHeaders(): Record<string, string> {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-// Optional helper to build headers merging content-type when needed
 export function mergeJsonHeaders(extra?: Record<string, string>): Record<string, string> {
   return { 'Content-Type': 'application/json', ...getAuthHeaders(), ...(extra || {}) };
 }

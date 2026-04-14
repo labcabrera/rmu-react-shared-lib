@@ -74,7 +74,7 @@ export async function deleteCharacterSkill(
   characterId: string,
   skillId: string,
   specialization: string | undefined
-): Promise<any> {
+): Promise<Character> {
   const specializationQuery = specialization ? `?specialization=${specialization}` : '';
   const url = `${apiStrategicGameUrl}/characters/${characterId}/skills/${skillId}${specializationQuery}`;
   const response = await fetch(url, { method: 'DELETE', headers: getAuthHeaders() });
@@ -102,7 +102,7 @@ export async function levelDownSkill(
   characterId: string,
   skillId: string,
   specialization: string | undefined
-): Promise<any> {
+): Promise<Character> {
   const specializationQuery = specialization ? `?specialization=${specialization}` : '';
   const url = `${apiStrategicGameUrl}/characters/${characterId}/skills/${skillId}/level-down${specializationQuery}`;
   const response = await fetch(url, { method: 'PATCH', headers: mergeJsonHeaders() });
@@ -117,7 +117,7 @@ export async function setUpProfessionalSkill(
   skillId: string,
   specialization: string | undefined,
   types: string[]
-): Promise<any> {
+): Promise<Character> {
   const specializationQuery = specialization ? `?specialization=${specialization}` : '';
   const url = `${apiStrategicGameUrl}/characters/${characterId}/skills/${skillId}/professional${specializationQuery}`;
   const response = await fetch(url, {
@@ -131,7 +131,7 @@ export async function setUpProfessionalSkill(
   return await response.json();
 }
 
-export async function equipItem(characterId: string, slot: string, itemId: string): Promise<any> {
+export async function equipItem(characterId: string, slot: string, itemId: string): Promise<Character> {
   const request = { slot: slot, itemId: itemId };
   const url = `${apiStrategicGameUrl}/characters/${characterId}/equipment`;
   const response = await fetch(url, {
@@ -145,7 +145,7 @@ export async function equipItem(characterId: string, slot: string, itemId: strin
   return await response.json();
 }
 
-export async function unequipItem(characterId: string, itemId: string): Promise<any> {
+export async function unequipItem(characterId: string, itemId: string): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/equipment/${itemId}`;
   const response = await fetch(url, {
     method: 'DELETE',
@@ -157,7 +157,7 @@ export async function unequipItem(characterId: string, itemId: string): Promise<
   return await response.json();
 }
 
-export async function updateCarriedStatus(characterId: string, itemId: string, carried: boolean): Promise<any> {
+export async function updateCarriedStatus(characterId: string, itemId: string, carried: boolean): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/items/${itemId}/carried/${carried}`;
   const response = await fetch(url, {
     method: 'PUT',
@@ -169,7 +169,7 @@ export async function updateCarriedStatus(characterId: string, itemId: string, c
   return await response.json();
 }
 
-export async function transferFactionGold(characterId: string, amount: number): Promise<any> {
+export async function transferFactionGold(characterId: string, amount: number): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/transfer-faction-gold`;
   const response = await fetch(url, {
     method: 'PATCH',
@@ -249,7 +249,7 @@ export async function updateCharacterTemporaryStat(
   return await response.json();
 }
 
-export async function fetchCharacterSizes(): Promise<any> {
+export async function fetchCharacterSizes(): Promise<string[]> {
   const url = `${apiStrategicGameUrl}/character-sizes`;
   const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
   if (response.status !== 200) {

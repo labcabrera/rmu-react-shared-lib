@@ -38,7 +38,7 @@ export interface CreateCharacterDto {
   info: CreateCharacterInfoDto;
   roleplay: CharacterRoleplay;
   level: number;
-  statistics: CharacterStatistics;
+  statistics: Record<StatKey, StatCreationDto>;
   resistances: CharacterResistance[];
   hp: CharacterHP;
   movement: CharacterMovement;
@@ -221,10 +221,6 @@ export interface CharacterStat {
   totalBonus: number;
 }
 
-export type CharacterStatistics = {
-  [key in (typeof STATS)[number]]: CharacterStat;
-};
-
 export interface CharacterResistance {
   resistance: string;
   statBonus: number;
@@ -286,4 +282,9 @@ export interface DeleteTraitDto {
 export interface UpdateTemporaryStatDto {
   stat: StatKey;
   roll: number;
+}
+
+export interface StatCreationDto {
+  potential: number;
+  temporary: number;
 }

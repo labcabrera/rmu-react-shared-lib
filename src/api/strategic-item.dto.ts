@@ -4,5 +4,6 @@ export type StrategicItem = {
   factionId: string;
   characterId: string;
   name: string;
+  //TODO mal fields
   [key: string]: any;
 };

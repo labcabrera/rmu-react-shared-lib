@@ -1,6 +1,4 @@
-import { assetsBaseUrl } from '../config/config.service';
-import { StatKey } from './character.dto';
-import { AccessType, NamedEntity } from './common.dto';
+import { AccessType } from './common.dto';
 
 export type Culture = {
   id: string;

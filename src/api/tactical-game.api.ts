@@ -2,7 +2,7 @@ import { getAuthHeaders, mergeJsonHeaders } from '../auth/auth-token-service';
 import { apiTacticalUrl } from '../config/config.service';
 import { Page } from './common.dto';
 import { buildErrorFromResponse } from './error-handler';
-import { TacticalGame } from './tactical-game.dto';
+import { CreateTacticalGameDto, TacticalGame, UpdateTacticalGameDto } from './tactical-game.dto';
 
 export function getPhaseAsNumber(game: TacticalGame): number | undefined {
   if (!game) return undefined;
@@ -35,7 +35,7 @@ export async function fetchTacticalGame(gameId: string): Promise<TacticalGame> {
   return await response.json();
 }
 
-export async function createTacticalGame(gameData: any): Promise<TacticalGame> {
+export async function createTacticalGame(gameData: CreateTacticalGameDto): Promise<TacticalGame> {
   const url = `${apiTacticalUrl}/tactical-games`;
   const response = await fetch(url, {
     method: 'POST',
@@ -48,7 +48,7 @@ export async function createTacticalGame(gameData: any): Promise<TacticalGame> {
   return await response.json();
 }
 
-export async function updateTacticalGame(gameId: string, gameData: any): Promise<TacticalGame> {
+export async function updateTacticalGame(gameId: string, gameData: UpdateTacticalGameDto): Promise<TacticalGame> {
   const url = `${apiTacticalUrl}/tactical-games/${gameId}`;
   const response = await fetch(url, {
     method: 'PATCH',

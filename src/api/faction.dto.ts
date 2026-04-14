@@ -14,9 +14,9 @@ export interface FactionManagement {
   availableXP: number;
 }
 
-export interface CreateFactionDto extends Omit<Faction, 'id'> {}
+export type CreateFactionDto = Omit<Faction, 'id'>;
 
-export interface UpdateFactionDto extends Partial<Omit<Faction, 'id'>> {}
+export type UpdateFactionDto = Partial<Omit<Faction, 'id'>>;
 
 export const EMPTY_FACTION: CreateFactionDto = {
   gameId: '',

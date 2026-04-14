@@ -6,7 +6,6 @@ import { CreateStrategicGameDto, StrategicGame, UpdateStrategicGameDto } from '.
 
 export async function fetchStrategicGames(rsql: string, page: number, size: number): Promise<Page<StrategicGame>> {
   const url = `${apiStrategicGameUrl}/strategic-games?q=${rsql}&page=${page}&size=${size}`;
-  console.log('Fetching strategic games with URL:', url);
   const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
   if (response.status !== 200) {
     throw await buildErrorFromResponse(response, url);
