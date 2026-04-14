@@ -23,6 +23,7 @@ const RmuDialog: FC<{
   fullScreen?: boolean;
   avatarImg?: string;
   open: boolean;
+  onConfirmDisabled?: boolean;
   onDelete?: () => void;
   onCancel?: () => void;
   onClose?: () => void;
@@ -36,6 +37,7 @@ const RmuDialog: FC<{
   maxWidth = 'xl',
   avatarImg,
   open,
+  onConfirmDisabled = false,
   onDelete,
   onCancel,
   onClose,
@@ -68,9 +70,13 @@ const RmuDialog: FC<{
           </Button>
         )}
         {onClose && <Button onClick={() => onClose()}>Close</Button>}
-        {onCancel && <Button onClick={() => onCancel()}>Confirm</Button>}
+        {onCancel && <Button onClick={() => onCancel()}>Cancel</Button>}
         {onResolve && <Button onClick={() => onResolve()}>Resolve</Button>}
-        {onConfirm && <Button onClick={() => onConfirm()}>Confirm</Button>}
+        {onConfirm && (
+          <Button disabled={onConfirmDisabled} onClick={() => onConfirm()}>
+            Confirm
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

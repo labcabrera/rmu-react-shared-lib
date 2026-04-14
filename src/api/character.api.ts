@@ -1,6 +1,6 @@
 import { getAuthHeaders, mergeJsonHeaders } from '../auth/auth-token-service';
 import { apiStrategicGameUrl } from './../config/config.service';
-import { AddTraitDto, Character } from './character.dto';
+import { AddTraitDto, Character, UpdateTemporaryStatDto } from './character.dto';
 import { AddSkill, DeleteTraitDto } from './character.dto';
 import { Page } from './common.dto';
 import { buildErrorFromResponse } from './error-handler';
@@ -224,6 +224,22 @@ export async function deleteCharacterTrait(characterId: string, dto: DeleteTrait
   const url = `${apiStrategicGameUrl}/characters/${characterId}/traits`;
   const response = await fetch(url, {
     method: 'DELETE',
+    headers: mergeJsonHeaders(),
+    body: JSON.stringify(dto),
+  });
+  if (response.status !== 200) {
+    throw await buildErrorFromResponse(response, url);
+  }
+  return await response.json();
+}
+
+export async function updateCharacterTemporaryStat(
+  characterId: string,
+  dto: UpdateTemporaryStatDto
+): Promise<Character> {
+  const url = `${apiStrategicGameUrl}/characters/${characterId}/stats/temporary`;
+  const response = await fetch(url, {
+    method: 'PATCH',
     headers: mergeJsonHeaders(),
     body: JSON.stringify(dto),
   });

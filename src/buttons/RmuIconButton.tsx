@@ -15,7 +15,7 @@ type Props = {
 const RmuIconButton: FC<Props> = ({
   onClick,
   Icon = RefreshIcon,
-  color,
+  color = 'primary',
   ariaLabel = 'action',
   disabled = false,
   tooltip,

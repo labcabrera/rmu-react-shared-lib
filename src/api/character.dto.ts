@@ -241,6 +241,8 @@ export interface CharacterExperience {
   devPoints: number;
   availableDevPoints: number;
   availableRaceDevPoints: number;
+  availableStatLevelUp: number;
+  developedStatLevelUp: number;
   weaponDevelopment: string[];
 }
 
@@ -279,4 +281,9 @@ export interface AddSkill {
 export interface DeleteTraitDto {
   traitId: string;
   specialization?: string;
+}
+
+export interface UpdateTemporaryStatDto {
+  stat: StatKey;
+  roll: number;
 }
