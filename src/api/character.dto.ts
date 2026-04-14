@@ -238,8 +238,9 @@ export interface CharacterExperience {
   level: number;
   availableLevel: number;
   xp: number;
-  developmentPoints: number;
-  availableDevelopmentPoints: number;
+  devPoints: number;
+  availableDevPoints: number;
+  availableRaceDevPoints: number;
   weaponDevelopment: string[];
 }
 

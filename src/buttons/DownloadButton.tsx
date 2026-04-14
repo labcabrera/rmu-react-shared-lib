@@ -1,18 +1,20 @@
 import React, { FC, MouseEvent } from 'react';
-import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { Tooltip } from '@mui/material';
 import RmuIconButton from './RmuIconButton';
 
-const CancelButton: FC<{
+const DownloadButton: FC<{
   onClick: (event: MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
+  tooltip?: string;
 }> = ({ onClick, disabled = false }) => (
   <RmuIconButton
     onClick={onClick}
-    aria-label="cancel"
+    tooltip="Download"
+    aria-label="download"
     disabled={disabled}
-    Icon={KeyboardDoubleArrowLeftIcon}
-    tooltip="Back"
+    Icon={FileDownloadIcon}
   />
 );
 
-export default CancelButton;
+export default DownloadButton;
