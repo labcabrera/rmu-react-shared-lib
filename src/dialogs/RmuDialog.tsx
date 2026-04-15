@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useContext, useState } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { Button, DialogActions, Slide, Stack, Typography } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -23,6 +23,7 @@ const RmuDialog: FC<{
   fullScreen?: boolean;
   avatarImg?: string;
   open: boolean;
+  buttons?: any;
   onConfirmDisabled?: boolean;
   onDelete?: () => void;
   onCancel?: () => void;
@@ -38,6 +39,7 @@ const RmuDialog: FC<{
   avatarImg,
   open,
   onConfirmDisabled = false,
+  buttons,
   onDelete,
   onCancel,
   onClose,
@@ -64,6 +66,7 @@ const RmuDialog: FC<{
       </DialogTitle>
       <DialogContent>{children}</DialogContent>
       <DialogActions>
+        {buttons}
         {onDelete && (
           <Button onClick={() => onDelete()} color="error">
             Delete

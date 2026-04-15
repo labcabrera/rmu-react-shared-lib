@@ -31,6 +31,7 @@ export { default as ImageSelectorDialog } from './images/ImageSelectorDialog';
 export { default as ClearableTextField } from './inputs/ClearableTextField';
 export { default as NumericInput } from './inputs/NumericInput';
 export { default as NumericReadonlyInput } from './inputs/NumericReadonlyInput';
+export { default as OpenEndedRollInput } from './inputs/OpenEndedRollInput';
 
 export { default as SkillSelector } from './selectors/SkillSelector';
 export { default as TraitSelector } from './selectors/TraitSelector';
