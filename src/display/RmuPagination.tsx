@@ -1,5 +1,6 @@
-import React, { Dispatch, FC, ReactNode, SetStateAction } from 'react';
-import { Box, FormControl, InputLabel, MenuItem, Pagination, Select } from '@mui/material';
+import React, { Dispatch, FC, SetStateAction } from 'react';
+import ArrowDropDownSharpIcon from '@mui/icons-material/ArrowDropDownSharp';
+import { Button, Menu, MenuItem, Pagination, Stack } from '@mui/material';
 
 const RmuPagination: FC<{
   page: number;
@@ -9,33 +10,33 @@ const RmuPagination: FC<{
   setPage: Dispatch<SetStateAction<number>>;
   setPageSize: Dispatch<SetStateAction<number>>;
 }> = ({ page, pageSize, totalPages, sizes = [12, 24, 48, 96], setPage, setPageSize }) => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const onClick = (size: number) => {
+    setPageSize(size);
+    handleClose();
+  };
+
   return (
-    <Box mt={5} display="flex" justifyContent="center">
-      <Pagination
-        count={totalPages}
-        page={page + 1}
-        onChange={(_e, v) => setPage(v - 1)}
-        size="large"
-        shape="rounded"
-        variant="outlined"
-      />
-      <FormControl size="small" sx={{ minWidth: 120 }}>
-        <InputLabel id="page-size-label">Rows</InputLabel>
-        <Select
-          labelId="page-size-label"
-          id="page-size-select"
-          value={String(pageSize)}
-          label="Size"
-          onChange={(e) => setPageSize(Number(e.target.value))}
-        >
-          {sizes.map((v) => (
-            <MenuItem key={v} value={String(v)}>
-              {v}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </Box>
+    <Stack mt={5} direction="row" display="flex" justifyContent="center">
+      <Pagination count={totalPages} page={page + 1} onChange={(_e, v) => setPage(v - 1)} size="large" />
+      <Button size="large" variant="text" onClick={handleClick} endIcon={<ArrowDropDownSharpIcon />}>
+        {pageSize}
+      </Button>
+      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+        {sizes.map((v) => (
+          <MenuItem key={v} value={String(v)} onClick={() => onClick(v)}>
+            {v}
+          </MenuItem>
+        ))}
+      </Menu>
+    </Stack>
   );
 };
 
