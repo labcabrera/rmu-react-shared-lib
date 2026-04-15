@@ -31,24 +31,3 @@ export interface StrategicGamePowerLevel {
 export type CreateStrategicGameDto = Omit<StrategicGame, 'id' | 'realmName' | 'status' | 'owner'>;
 
 export type UpdateStrategicGameDto = Partial<Omit<StrategicGame, 'id' | 'realmId' | 'realmName' | 'status' | 'owner'>>;
-
-export const CREATE_GAME_TEMPLATE = {
-  name: '',
-  realmId: '',
-  options: {
-    experienceMultiplier: 1,
-    fatigueMultiplier: 1,
-    boardScaleMultiplier: 1,
-    letality: 0,
-  },
-  powerLevel: {
-    baseDevPoints: 60,
-    statRandomMin: 11,
-    statBoostPotential: 78,
-    statBoostTemporary: 56,
-    statCreationBoost: 2,
-    statCreationSwap: 2,
-  },
-  description: '',
-  imageUrl: '',
-} as CreateStrategicGameDto;
