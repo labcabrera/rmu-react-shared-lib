@@ -38,7 +38,7 @@ const RmuTextCard: FC<{
     <RmuCard image={image} onClick={onClick} grayscale={grayscale} imageFilter={imageFilter}>
       <Typography
         component="div"
-        variant="h6"
+        variant="body1"
         sx={{
           color: getColor(),
           overflow: 'hidden',
@@ -52,7 +52,7 @@ const RmuTextCard: FC<{
         {value}
       </Typography>
       <Typography
-        variant="subtitle1"
+        variant="caption"
         component="div"
         sx={{
           fontSize: '1rem',
