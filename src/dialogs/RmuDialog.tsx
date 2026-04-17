@@ -59,8 +59,14 @@ const RmuDialog: FC<{
         <Stack direction="row" spacing={1} alignItems="center">
           {avatarImg && <GenericAvatar variant="square" imageUrl={avatarImg} />}
           <Stack direction="column">
-            <Typography variant="h6">{title}</Typography>
-            {subtitle && <Typography variant="subtitle1">{subtitle}</Typography>}
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+              {title}
+            </Typography>
+            {subtitle && (
+              <Typography variant="subtitle1" color="secondary" sx={{ fontWeight: 600 }}>
+                {subtitle}
+              </Typography>
+            )}
           </Stack>
         </Stack>
       </DialogTitle>

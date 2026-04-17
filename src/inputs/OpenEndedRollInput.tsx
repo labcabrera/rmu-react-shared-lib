@@ -98,6 +98,8 @@ const OpenEndedRollInput: FC<OpenEndedRollProps> = ({ gridColumns = 12, inputGri
             label={`Open-Ended Roll${idx > 0 ? ` ${idx + 1}` : ''}`}
             value={r}
             onChange={(e) => handleValueChange(idx, e!)}
+            min={1}
+            max={100}
           />
         </Grid>
       ))}
