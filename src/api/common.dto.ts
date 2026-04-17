@@ -13,6 +13,11 @@ export type Page<I> = {
   };
 };
 
+export type KeyValue = {
+  key: string;
+  value: number;
+};
+
 export type NamedEntity = {
   id: string;
   name: string;

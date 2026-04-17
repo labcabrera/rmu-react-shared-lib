@@ -1,4 +1,4 @@
-import { KeyValue } from './resistance-roll.dto';
+import { KeyValue } from './common.dto';
 
 export const MANEUVER_DIFFICULTIES: KeyValue[] = [
   { key: 'c', value: 70 },
