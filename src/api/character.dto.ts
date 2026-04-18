@@ -65,6 +65,7 @@ export interface CharacterDefense {
   defensiveBonus: number;
   armor: CharacterArmor;
   shield: CharacterDefenseShield | null;
+  protect: number;
 }
 
 export interface CharacterArmor {
