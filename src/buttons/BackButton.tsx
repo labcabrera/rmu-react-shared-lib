@@ -5,13 +5,14 @@ import RmuIconButton from './RmuIconButton';
 const CancelButton: FC<{
   onClick: (event: MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
-}> = ({ onClick, disabled = false }) => (
+  tooltip?: string;
+}> = ({ onClick, disabled = false, tooltip = 'Back' }) => (
   <RmuIconButton
     onClick={onClick}
     aria-label="cancel"
     disabled={disabled}
     Icon={KeyboardDoubleArrowLeftIcon}
-    tooltip="Back"
+    tooltip={tooltip}
   />
 );
 
