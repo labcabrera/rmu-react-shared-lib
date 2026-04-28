@@ -1,50 +1,47 @@
-import { getAuthHeaders, mergeJsonHeaders } from '../auth/auth-token-service';
+import { AuthContextProps } from 'react-oidc-context';
 import { apiCoreUrl } from '../config/config.service';
+import callApi from './api';
 import { Page } from './common.dto';
-import { buildErrorFromResponse } from './error-handler';
 import { CreateProfessionDto, Profession, UpdateProfessionDto } from './profession.dto';
 
-export async function fetchProfession(professionId: string): Promise<Profession> {
+export async function fetchProfession(professionId: string, auth: AuthContextProps): Promise<Profession> {
   const url = `${apiCoreUrl}/professions/${professionId}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function fetchProfessions(rsql: string, page: number, size: number): Promise<Page<Profession>> {
+export async function fetchProfessions(
+  rsql: string,
+  page: number,
+  size: number,
+  auth: AuthContextProps
+): Promise<Page<Profession>> {
   const url = `${apiCoreUrl}/professions?q=${rsql}&page=${page}&size=${size}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function createProfession(dto: CreateProfessionDto): Promise<Profession> {
+export async function createProfession(dto: CreateProfessionDto, auth: AuthContextProps): Promise<Profession> {
   const url = `${apiCoreUrl}/professions/`;
-  const response = await fetch(url, { method: 'POST', headers: mergeJsonHeaders(), body: JSON.stringify(dto) });
-  if (response.status !== 201) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dto),
+  });
 }
 
-export async function updateProfession(professionId: string, profession: UpdateProfessionDto): Promise<Profession> {
+export async function updateProfession(
+  professionId: string,
+  profession: UpdateProfessionDto,
+  auth: AuthContextProps
+): Promise<Profession> {
   const url = `${apiCoreUrl}/professions/${professionId}`;
-  const response = await fetch(url, { method: 'PATCH', headers: mergeJsonHeaders(), body: JSON.stringify(profession) });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(profession),
+  });
 }
 
-export async function deleteProfession(professionId: string): Promise<void> {
+export async function deleteProfession(professionId: string, auth: AuthContextProps): Promise<void> {
   const url = `${apiCoreUrl}/professions/${professionId}`;
-  const response = await fetch(url, { method: 'DELETE', headers: getAuthHeaders() });
-  if (response.status !== 204) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return;
+  return await callApi(auth, url, { method: 'DELETE' });
 }

@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, FC } from 'react';
+import { useAuth } from 'react-oidc-context';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { Grid, Typography, Stack, Button, Select, MenuItem } from '@mui/material';
 import { fetchEnumerations } from '../api/enumerations.api';
@@ -15,6 +16,7 @@ const SkillSelector: FC<{
   onError: (message: string) => void;
   t: (message: string) => string;
 }> = ({ realmId, onTraitChange, onTierChange, onSpecializationChange, onError, t }) => {
+  const auth = useAuth();
   const availableCategories = traitCategories;
   const [availableTraits, setAvailableTraits] = useState<Trait[]>([]);
   const [availableSpecializations, setAvailableSpecializations] = useState<string[]>();
@@ -25,7 +27,7 @@ const SkillSelector: FC<{
   const [selectedSpecialization, setSelectedSpecialization] = useState<string>();
 
   const bindTraits = (category: string) => {
-    fetchTraits(`category==${category}`, 0, 100)
+    fetchTraits(`category==${category}`, 0, 100, auth)
       .then((data) => setAvailableTraits(data.content))
       .catch((error) => onError(error.message));
   };
@@ -46,12 +48,12 @@ const SkillSelector: FC<{
         setAvailableSpecializations(undefined);
       } else {
         const realmQuery = realmId ? `;(realmId==${realmId},realmId==null)` : ``;
-        fetchEnumerations(`category==${selectedTrait.specialization}${realmQuery}`, 0, 100)
+        fetchEnumerations(`category==${selectedTrait.specialization}${realmQuery}`, 0, 100, auth)
           .then((response) => setAvailableSpecializations(response.content.map((e) => e.key)))
           .catch((err) => onError(err.message));
       }
     }
-  }, [selectedTrait]);
+  }, [selectedTrait, auth]);
 
   useEffect(() => {
     setAvailableSpecializations(undefined);
