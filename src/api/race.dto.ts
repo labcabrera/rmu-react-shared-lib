@@ -1,6 +1,6 @@
 import { assetsBaseUrl } from '../config/config.service';
 import { StatKey } from './character.dto';
-import { AccessType, NamedEntity } from './common.dto';
+import { AccessType } from './common.dto';
 
 export const resistances = ['channeling', 'mentalism', 'essence', 'physical', 'poison', 'disease', 'fear'];
 
@@ -8,7 +8,7 @@ export type Race = {
   id: string;
   name: string;
   archetype: string | undefined;
-  realm: NamedEntity;
+  realmId: string;
   sizeId: string;
   stats: Record<StatKey, number>;
   resistances: RaceResistances;

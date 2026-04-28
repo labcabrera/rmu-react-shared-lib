@@ -51,12 +51,12 @@ const SkillSelector: FC<{
         setAvailableSpecializations(undefined);
       } else {
         const realmQuery = realmId ? `;(realmId==${realmId},realmId==null)` : ``;
-        fetchEnumerations(`category==${selectedSkill.specialization}${realmQuery}`, 0, 100)
+        fetchEnumerations(`category==${selectedSkill.specialization}${realmQuery}`, 0, 100, auth)
           .then((response) => setAvailableSpecializations(response.content.map((e) => e.key)))
           .catch((err) => onError(err.message));
       }
     }
-  }, [selectedSkill]);
+  }, [selectedSkill, auth]);
 
   useEffect(() => {
     setAvailableSpecializations(undefined);
