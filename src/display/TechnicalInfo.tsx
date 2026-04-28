@@ -13,7 +13,7 @@ const TechnicalInfo: FC<PropsWithChildren<Props>> = ({
   defaultExpanded = false,
 }) => {
   return (
-    <Box mt={5}>
+    <Box sx={{ mt: 5 }}>
       <Accordion defaultExpanded={defaultExpanded} disableGutters>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="subtitle2">{title}</Typography>

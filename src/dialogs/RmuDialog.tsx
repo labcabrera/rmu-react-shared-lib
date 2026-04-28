@@ -56,7 +56,7 @@ const RmuDialog: FC<{
       slots={{ transition: Transition }}
     >
       <DialogTitle>
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
           {avatarImg && <GenericAvatar variant="square" imageUrl={avatarImg} />}
           <Stack direction="column">
             <Typography variant="h6" sx={{ fontWeight: 600 }}>

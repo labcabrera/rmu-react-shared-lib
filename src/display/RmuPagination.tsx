@@ -24,7 +24,7 @@ const RmuPagination: FC<{
   };
 
   return (
-    <Stack mt={5} direction="row" display="flex" justifyContent="center">
+    <Stack direction="row" sx={{ mt: 5, display: 'flex', justifyContent: 'center' }}>
       <Pagination count={totalPages} page={page + 1} onChange={(_e, v) => setPage(v - 1)} size="large" />
       <Button size="large" variant="text" onClick={handleClick} endIcon={<ArrowDropDownSharpIcon />}>
         {pageSize}

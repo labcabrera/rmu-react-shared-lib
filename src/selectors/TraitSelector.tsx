@@ -2,7 +2,6 @@
 import React, { useState, useEffect, FC } from 'react';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { Grid, Typography, Stack, Button, Select, MenuItem } from '@mui/material';
-import { t } from 'i18next';
 import { fetchEnumerations } from '../api/enumerations.api';
 import { fetchTraits } from '../api/trait.api';
 import { Trait, traitCategories } from '../api/trait.dto';
@@ -96,7 +95,7 @@ const SkillSelector: FC<{
       )}
       {selectedTrait && (
         <Grid size={12}>
-          <Typography mt={3} color="secondary">
+          <Typography sx={{ mt: 3 }} color="secondary">
             {selectedTrait.description}
           </Typography>
         </Grid>

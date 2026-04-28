@@ -91,7 +91,7 @@ const OpenEndedRollInput: FC<OpenEndedRollProps> = ({ gridColumns = 12, inputGri
   }, [rolls]);
 
   return (
-    <Grid container spacing={1} columns={gridColumns} alignItems="center">
+    <Grid container spacing={1} columns={gridColumns} sx={{ alignItems: 'center' }}>
       {rolls.map((r, idx) => (
         <Grid size={inputGridSize} key={idx}>
           <NumericInput
