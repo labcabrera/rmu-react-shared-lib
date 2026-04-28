@@ -1,259 +1,216 @@
-import { getAuthHeaders, mergeJsonHeaders } from '../auth/auth-token-service';
+import { AuthContextProps } from 'react-oidc-context';
 import { apiStrategicGameUrl } from './../config/config.service';
+import callApi, { Page } from './api';
 import { AddTraitDto, Character, UpdateTemporaryStatDto } from './character.dto';
 import { AddSkill, DeleteTraitDto } from './character.dto';
-import { Page } from './common.dto';
-import { buildErrorFromResponse } from './error-handler';
 
-export async function fetchCharacter(characterId: string): Promise<Character> {
+// error handling is done inside callApi
+
+export async function fetchCharacter(characterId: string, auth: AuthContextProps): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function fetchCharacters(rsql: string, page: number, size: number): Promise<Page<Character>> {
+export async function fetchCharacters(
+  rsql: string,
+  page: number,
+  size: number,
+  auth: AuthContextProps
+): Promise<Page<Character>> {
   const url = `${apiStrategicGameUrl}/characters?q=${rsql}&page=${page}&size=${size}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function createCharacter(characterData: Partial<Character>): Promise<Character> {
+export async function createCharacter(characterData: Partial<Character>, auth: AuthContextProps): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'POST',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(characterData),
   });
-  if (response.status !== 201) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function updateCharacter(characterId: string, character: Partial<Character>): Promise<Character> {
+export async function updateCharacter(
+  characterId: string,
+  character: Partial<Character>,
+  auth: AuthContextProps
+): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'PATCH',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(character),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function deleteCharacter(characterId: string): Promise<void> {
+export async function deleteCharacter(characterId: string, auth: AuthContextProps): Promise<void> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}`;
-  const response = await fetch(url, { method: 'DELETE', headers: getAuthHeaders() });
-  if (response.status !== 204) {
-    throw await buildErrorFromResponse(response, url);
-  }
+  await callApi(auth, url, { method: 'DELETE' });
 }
 
-export async function addCharacterSkill(characterId: string, data: AddSkill): Promise<Character> {
+export async function addCharacterSkill(
+  characterId: string,
+  data: AddSkill,
+  auth: AuthContextProps
+): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/skills`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'POST',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (response.status !== 201) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
 export async function deleteCharacterSkill(
   characterId: string,
   skillId: string,
-  specialization: string | undefined
+  specialization: string | undefined,
+  auth: AuthContextProps
 ): Promise<Character> {
   const specializationQuery = specialization ? `?specialization=${specialization}` : '';
   const url = `${apiStrategicGameUrl}/characters/${characterId}/skills/${skillId}${specializationQuery}`;
-  const response = await fetch(url, { method: 'DELETE', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'DELETE' });
 }
 
 export async function levelUpSkill(
   characterId: string,
   skillId: string,
-  specialization: string | undefined
+  specialization: string | undefined,
+  auth: AuthContextProps
 ): Promise<Character> {
   const specializationQuery = specialization ? `?specialization=${specialization}` : '';
   const url = `${apiStrategicGameUrl}/characters/${characterId}/skills/${skillId}/level-up${specializationQuery}`;
-  const response = await fetch(url, { method: 'PATCH', headers: mergeJsonHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'PATCH' });
 }
 
 export async function levelDownSkill(
   characterId: string,
   skillId: string,
-  specialization: string | undefined
+  specialization: string | undefined,
+  auth: AuthContextProps
 ): Promise<Character> {
   const specializationQuery = specialization ? `?specialization=${specialization}` : '';
   const url = `${apiStrategicGameUrl}/characters/${characterId}/skills/${skillId}/level-down${specializationQuery}`;
-  const response = await fetch(url, { method: 'PATCH', headers: mergeJsonHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'PATCH' });
 }
 
 export async function setUpProfessionalSkill(
   characterId: string,
   skillId: string,
   specialization: string | undefined,
-  types: string[]
+  types: string[],
+  auth: AuthContextProps
 ): Promise<Character> {
   const specializationQuery = specialization ? `?specialization=${specialization}` : '';
   const url = `${apiStrategicGameUrl}/characters/${characterId}/skills/${skillId}/professional${specializationQuery}`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'PUT',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ types: types }),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function equipItem(characterId: string, slot: string, itemId: string): Promise<Character> {
+export async function equipItem(
+  characterId: string,
+  slot: string,
+  itemId: string,
+  auth: AuthContextProps
+): Promise<Character> {
   const request = { slot: slot, itemId: itemId };
   const url = `${apiStrategicGameUrl}/characters/${characterId}/equipment`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'POST',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(request),
   });
-  if (response.status !== 201) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function unequipItem(characterId: string, itemId: string): Promise<Character> {
+export async function unequipItem(characterId: string, itemId: string, auth: AuthContextProps): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/equipment/${itemId}`;
-  const response = await fetch(url, {
-    method: 'DELETE',
-    headers: mergeJsonHeaders(),
-  });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'DELETE' });
 }
 
-export async function updateCarriedStatus(characterId: string, itemId: string, carried: boolean): Promise<Character> {
+export async function updateCarriedStatus(
+  characterId: string,
+  itemId: string,
+  carried: boolean,
+  auth: AuthContextProps
+): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/items/${itemId}/carried/${carried}`;
-  const response = await fetch(url, {
-    method: 'PUT',
-    headers: mergeJsonHeaders(),
-  });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'PUT' });
 }
 
-export async function transferFactionGold(characterId: string, amount: number): Promise<Character> {
+export async function transferFactionGold(
+  characterId: string,
+  amount: number,
+  auth: AuthContextProps
+): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/transfer-faction-gold`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'PATCH',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ amount }),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function levelUpCharacter(characterId: string, force: boolean): Promise<Character> {
+export async function levelUpCharacter(
+  characterId: string,
+  force: boolean,
+  auth: AuthContextProps
+): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/level-up?force=${force}`;
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: mergeJsonHeaders(),
-  });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'POST' });
 }
 
-export async function addCharacterXP(characterId: string, xp: number): Promise<Character> {
+export async function addCharacterXP(characterId: string, xp: number, auth: AuthContextProps): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/xp`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'POST',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ xp }),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function addCharacterTrait(characterId: string, addTraitDto: AddTraitDto): Promise<Character> {
+export async function addCharacterTrait(
+  characterId: string,
+  addTraitDto: AddTraitDto,
+  auth: AuthContextProps
+): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/traits`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'POST',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(addTraitDto),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function deleteCharacterTrait(characterId: string, dto: DeleteTraitDto): Promise<Character> {
+export async function deleteCharacterTrait(
+  characterId: string,
+  dto: DeleteTraitDto,
+  auth: AuthContextProps
+): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/traits`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'DELETE',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dto),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
 export async function updateCharacterTemporaryStat(
   characterId: string,
-  dto: UpdateTemporaryStatDto
+  dto: UpdateTemporaryStatDto,
+  auth: AuthContextProps
 ): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/stats/temporary`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'PATCH',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dto),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function fetchCharacterSizes(): Promise<string[]> {
+export async function fetchCharacterSizes(auth: AuthContextProps): Promise<string[]> {
   const url = `${apiStrategicGameUrl}/character-sizes`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }

@@ -1,7 +1,6 @@
 import { AuthContextProps } from 'react-oidc-context';
 import { apiCoreUrl } from '../config/config.service';
-import callApi from './api';
-import { Page } from './common.dto';
+import callApi, { Page } from './api';
 import { CreateSkillDto, Skill, UpdateSkillDto } from './skill.dto';
 
 export async function fetchSkill(skillId: string, auth: AuthContextProps): Promise<Skill> {

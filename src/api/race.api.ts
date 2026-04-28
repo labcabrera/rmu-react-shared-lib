@@ -1,7 +1,6 @@
 import { AuthContextProps } from 'react-oidc-context';
 import { apiCoreUrl } from '../config/config.service';
-import callApi from './api';
-import { Page } from './common.dto';
+import callApi, { Page } from './api';
 import { AddRaceTraitDto, CreateRaceDto, Race, RaceSkillBonus, UpdateRaceDto } from './race.dto';
 
 export async function fetchRace(raceId: string, auth: AuthContextProps): Promise<Race> {

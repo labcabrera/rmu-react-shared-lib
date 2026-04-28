@@ -1,57 +1,49 @@
-import { getAuthHeaders, mergeJsonHeaders } from '../auth/auth-token-service';
+import { AuthContextProps } from 'react-oidc-context';
 import { apiStrategicGameUrl } from '../config/config.service';
-import { Page } from './common.dto';
-import { buildErrorFromResponse } from './error-handler';
+import callApi, { Page } from './api';
 import { CreateStrategicGameDto, StrategicGame, UpdateStrategicGameDto } from './strategic-game.dto';
 
-export async function fetchStrategicGames(rsql: string, page: number, size: number): Promise<Page<StrategicGame>> {
+export async function fetchStrategicGames(
+  rsql: string,
+  page: number,
+  size: number,
+  auth: AuthContextProps
+): Promise<Page<StrategicGame>> {
   const url = `${apiStrategicGameUrl}/strategic-games?q=${rsql}&page=${page}&size=${size}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function fetchStrategicGame(gameId: string): Promise<StrategicGame> {
+export async function fetchStrategicGame(gameId: string, auth: AuthContextProps): Promise<StrategicGame> {
   const url = `${apiStrategicGameUrl}/strategic-games/${gameId}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return (await response.json()) as StrategicGame;
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function createStrategicGame(gameData: CreateStrategicGameDto): Promise<StrategicGame> {
+export async function createStrategicGame(
+  gameData: CreateStrategicGameDto,
+  auth: AuthContextProps
+): Promise<StrategicGame> {
   const url = `${apiStrategicGameUrl}/strategic-games`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'POST',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(gameData),
   });
-  if (response.status !== 201) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return (await response.json()) as StrategicGame;
 }
 
-export async function updateStrategicGame(gameId: string, gameData: UpdateStrategicGameDto): Promise<StrategicGame> {
+export async function updateStrategicGame(
+  gameId: string,
+  gameData: UpdateStrategicGameDto,
+  auth: AuthContextProps
+): Promise<StrategicGame> {
   const url = `${apiStrategicGameUrl}/strategic-games/${gameId}`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'PATCH',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(gameData),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return (await response.json()) as StrategicGame;
 }
 
-export async function deleteStrategicGame(gameId: string): Promise<void> {
+export async function deleteStrategicGame(gameId: string, auth: AuthContextProps): Promise<void> {
   const url = `${apiStrategicGameUrl}/strategic-games/${gameId}`;
-  const response = await fetch(url, { method: 'DELETE', headers: getAuthHeaders() });
-  if (response.status !== 204) {
-    throw await buildErrorFromResponse(response, url);
-  }
+  return await callApi(auth, url, { method: 'DELETE' });
 }

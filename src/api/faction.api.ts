@@ -1,85 +1,66 @@
-import { getAuthHeaders, mergeJsonHeaders } from '../auth/auth-token-service';
+import { AuthContextProps } from 'react-oidc-context';
 import { apiStrategicGameUrl } from '../config/config.service';
-import { Page } from './common.dto';
-import { buildErrorFromResponse } from './error-handler';
+import callApi, { Page } from './api';
 import { CreateFactionDto, Faction, UpdateFactionDto } from './faction.dto';
 
-export async function fetchFaction(factionId: string): Promise<Faction> {
+export async function fetchFaction(factionId: string, auth: AuthContextProps): Promise<Faction> {
   const url = `${apiStrategicGameUrl}/factions/${factionId}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function fetchFactions(rsql: string, page: number, size: number): Promise<Page<Faction>> {
+export async function fetchFactions(
+  rsql: string,
+  page: number,
+  size: number,
+  auth: AuthContextProps
+): Promise<Page<Faction>> {
   const url = `${apiStrategicGameUrl}/factions?q=${rsql}&page=${page}&size=${size}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function createFaction(data: CreateFactionDto): Promise<Faction> {
+export async function createFaction(data: CreateFactionDto, auth: AuthContextProps): Promise<Faction> {
   const url = `${apiStrategicGameUrl}/factions`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'POST',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (response.status !== 201) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function updateFaction(factionId: string, data: UpdateFactionDto): Promise<Faction> {
+export async function updateFaction(
+  factionId: string,
+  data: UpdateFactionDto,
+  auth: AuthContextProps
+): Promise<Faction> {
   const url = `${apiStrategicGameUrl}/factions/${factionId}`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'PATCH',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function deleteFaction(factionId: string): Promise<void> {
+export async function deleteFaction(factionId: string, auth: AuthContextProps): Promise<void> {
   const url = `${apiStrategicGameUrl}/factions/${factionId}`;
-  const response = await fetch(url, { method: 'DELETE', headers: getAuthHeaders() });
-  if (response.status !== 204) {
-    throw await buildErrorFromResponse(response, url);
-  }
+  return await callApi(auth, url, { method: 'DELETE' });
 }
 
-export async function addFactionXP(factionId: string, amount: number): Promise<Faction> {
+export async function addFactionXP(factionId: string, amount: number, auth: AuthContextProps): Promise<Faction> {
   const url = `${apiStrategicGameUrl}/factions/${factionId}/add-xp`;
   const body = { xp: amount };
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
-    headers: mergeJsonHeaders(),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function addFactionGold(factionId: string, amount: number): Promise<Faction> {
+export async function addFactionGold(factionId: string, amount: number, auth: AuthContextProps): Promise<Faction> {
   const url = `${apiStrategicGameUrl}/factions/${factionId}/add-gold`;
   const body = { gold: amount };
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
-    headers: mergeJsonHeaders(),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }

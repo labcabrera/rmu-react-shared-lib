@@ -36,7 +36,7 @@ export { default as OpenEndedRollInput } from './inputs/OpenEndedRollInput';
 export { default as SkillSelector } from './selectors/SkillSelector';
 export { default as TraitSelector } from './selectors/TraitSelector';
 
-export * from './api/error-handler';
+export * from './api/api';
 
 export * from './api/common.dto';
 

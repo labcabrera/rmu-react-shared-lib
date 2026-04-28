@@ -1,7 +1,6 @@
 import { AuthContextProps } from 'react-oidc-context';
 import { apiCoreUrl } from '../config/config.service';
-import callApi from './api';
-import { Page } from './common.dto';
+import callApi, { Page } from './api';
 import { CreateRealmDto, Realm } from './realm.dto';
 
 export async function fetchRealm(realmId: string, auth: AuthContextProps): Promise<Realm> {

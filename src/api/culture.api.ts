@@ -1,7 +1,6 @@
 import { AuthContextProps } from 'react-oidc-context';
 import { apiCoreUrl } from '../config/config.service';
-import callApi from './api';
-import { Page } from './common.dto';
+import callApi, { Page } from './api';
 import { CreateCultureDto, Culture, CultureSkillRank, UpdateCultureDto } from './culture.dto';
 
 export async function fetchCulture(cultureId: string, auth: AuthContextProps): Promise<Culture> {

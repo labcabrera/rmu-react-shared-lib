@@ -1,7 +1,6 @@
 import { AuthContextProps } from 'react-oidc-context';
 import { apiCoreUrl } from '../config/config.service';
-import callApi from './api';
-import { Page } from './common.dto';
+import callApi, { Page } from './api';
 import { CreateTraitDto, Trait, UpdateTraitDto } from './trait.dto';
 
 export async function fetchTrait(traitId: string, auth: AuthContextProps): Promise<Trait> {

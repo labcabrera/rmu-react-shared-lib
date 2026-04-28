@@ -1,6 +1,6 @@
-import { getAuthHeaders } from '../auth/auth-token-service';
+import { AuthContextProps } from 'react-oidc-context';
 import { apiCoreUrl } from '../config/config.service';
-import { buildErrorFromResponse } from './error-handler';
+import callApi from './api';
 import {
   AbsoluteManeuverResult,
   AbsoluteManeuverTable,
@@ -8,57 +8,46 @@ import {
   PercentManeuverResult,
 } from './maneuver.dto';
 
-export async function fetchPercentManeuver(roll: number): Promise<PercentManeuverResult> {
+export async function fetchPercentManeuver(roll: number, auth: AuthContextProps): Promise<PercentManeuverResult> {
   const url = `${apiCoreUrl}/maneuvers/percent?roll=${roll}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
 export async function fetchAbsoluteManeuver(
   roll: number,
   table: string | null,
-  unusualEvent: boolean | undefined
+  unusualEvent: boolean | undefined,
+  auth: AuthContextProps
 ): Promise<AbsoluteManeuverResult> {
   let query = `?roll=${roll}`;
   if (table) query += `&table=${table}`;
   if (unusualEvent) query += `&unusualEvent=${unusualEvent}`;
   const url = `${apiCoreUrl}/maneuvers/absolute${query}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) throw await buildErrorFromResponse(response, url);
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function fetchAbsoluteManeuverTable(tableName: string): Promise<AbsoluteManeuverTable> {
+export async function fetchAbsoluteManeuverTable(
+  tableName: string,
+  auth: AuthContextProps
+): Promise<AbsoluteManeuverTable> {
   const url = `${apiCoreUrl}/maneuvers/absolute/tables/${tableName}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) throw await buildErrorFromResponse(response, url);
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
 export async function fetchEnduranceManeuver(
   roll: number,
-  unusualEvent: boolean | undefined
+  unusualEvent: boolean | undefined,
+  auth: AuthContextProps
 ): Promise<EnduranceManeuverResult> {
   let query = `?roll=${roll}`;
   if (unusualEvent) {
     query += `&unusualEvent=${unusualEvent}`;
   }
   const url = `${apiCoreUrl}/maneuvers/endurance${query}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function fetchAbsoluteManeuverTables(): Promise<string[]> {
+export async function fetchAbsoluteManeuverTables(auth: AuthContextProps): Promise<string[]> {
   const url = `${apiCoreUrl}/maneuvers/absolute/tables`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
