@@ -1,7 +1,10 @@
 import { StatKey, Pace, EquipmentSlot } from './character.dto';
 import { KeyValue } from './common.dto';
+import { RealmType } from './profession.dto';
 
 export const STATS: StatKey[] = ['ag', 'co', 'em', 'in', 'me', 'pr', 'qu', 're', 'sd', 'st'];
+
+export const REALM_TYPES: RealmType[] = ['channeling', 'essence', 'mentalism'];
 
 export const PACE_VALUES: Pace[] = ['creep', 'walk', 'jog', 'run', 'sprint', 'dash'];
 
