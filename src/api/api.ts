@@ -13,10 +13,10 @@ export interface Page<T> {
 }
 
 export async function callApi(auth: AuthContextProps, url: string, init: RequestInit = {}) {
-  if (!auth) throw new Error('Auth instance is required');
+  if (!auth) throw new Error(`Auth instance is required. Url: ${url}`);
   if (!auth.isAuthenticated) throw new Error('Not authenticated');
   const token = auth.user?.access_token;
-  if (!token) throw new Error('No access token available');
+  if (!token) throw new Error(`No access token available. Url: ${url}`);
 
   const headers = new Headers(init.headers as HeadersInit);
   headers.set('Authorization', `Bearer ${token}`);
@@ -25,7 +25,7 @@ export async function callApi(auth: AuthContextProps, url: string, init: Request
   const res = await fetch(url, init);
   if (!res.ok) {
     const text = await res.text().catch(() => '');
-    throw new Error(`API request failed: ${res.status} ${res.statusText} ${text}`);
+    throw new Error(`API request failed: ${res.status} ${res.statusText} ${text}. Url: ${url}`);
   }
   if (res.status === 204) {
     return null;

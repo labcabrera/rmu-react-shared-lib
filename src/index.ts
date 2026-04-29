@@ -33,9 +33,11 @@ export { default as NumericInput } from './inputs/NumericInput';
 export { default as NumericReadonlyInput } from './inputs/NumericReadonlyInput';
 export { default as OpenEndedRollInput } from './inputs/OpenEndedRollInput';
 
+export { default as RmuSelect } from './selectors/RmuSelect';
+export { default as SelectDifficulty } from './selectors/SelectDifficulty';
+export { default as SelectRealm } from './selectors/SelectRealm';
 export { default as SkillSelector } from './selectors/SkillSelector';
 export { default as TraitSelector } from './selectors/TraitSelector';
-export { default as SelectDifficulty } from './selectors/SelectDifficulty';
 
 export * from './api/constants';
 
