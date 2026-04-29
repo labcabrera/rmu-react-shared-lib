@@ -3,7 +3,7 @@ import { Box, Divider, Typography } from '@mui/material';
 
 const CategorySeparator: FC<{ text: string; children?: ReactNode }> = ({ text, children }) => {
   return (
-    <Box sx={{ mg: 1, mt: 2 }}>
+    <Box sx={{ mt: 1, mb: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="subtitle2" color="text.secondary">
           {text}

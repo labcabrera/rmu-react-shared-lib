@@ -4,10 +4,6 @@ export type StatKey = 'ag' | 'co' | 'em' | 'in' | 'me' | 'pr' | 'qu' | 're' | 's
 export type Pace = 'creep' | 'walk' | 'jog' | 'run' | 'sprint' | 'dash';
 export type EquipmentSlot = 'mainHand' | 'offHand' | 'body' | 'head' | 'arms' | 'legs';
 
-export const STATS: StatKey[] = ['ag', 'co', 'em', 'in', 'me', 'pr', 'qu', 're', 'sd', 'st'];
-export const PACE_VALUES: Pace[] = ['creep', 'walk', 'jog', 'run', 'sprint', 'dash'];
-export const EQUIPMENT_SLOTS: EquipmentSlot[] = ['mainHand', 'offHand', 'head', 'body', 'arms', 'legs'];
-
 export interface Character {
   id: string;
   gameId: string;

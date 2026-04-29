@@ -35,6 +35,9 @@ export { default as OpenEndedRollInput } from './inputs/OpenEndedRollInput';
 
 export { default as SkillSelector } from './selectors/SkillSelector';
 export { default as TraitSelector } from './selectors/TraitSelector';
+export { default as SelectDifficulty } from './selectors/SelectDifficulty';
+
+export * from './api/constants';
 
 export * from './api/api';
 
