@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from 'react-oidc-context';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { Grid, Typography, Stack, Button, Select, MenuItem } from '@mui/material';
@@ -14,9 +15,9 @@ const SkillSelector: FC<{
   onTierChange: (tier: number | null) => void;
   onSpecializationChange: (specialization: string | null) => void;
   onError: (message: string) => void;
-  t: (message: string) => string;
-}> = ({ realmId, onTraitChange, onTierChange, onSpecializationChange, onError, t }) => {
+}> = ({ realmId, onTraitChange, onTierChange, onSpecializationChange, onError }) => {
   const auth = useAuth();
+  const { t } = useTranslation();
   const availableCategories = traitCategories;
   const [availableTraits, setAvailableTraits] = useState<Trait[]>([]);
   const [availableSpecializations, setAvailableSpecializations] = useState<string[]>();
@@ -69,7 +70,7 @@ const SkillSelector: FC<{
   return (
     <Grid container spacing={1} sx={{ mt: 1 }}>
       <Grid size={12}>
-        <CategorySeparator text={t('Category')} />
+        <CategorySeparator text={t('category')} />
         <SelectionList
           value={selectedCategory}
           options={availableCategories}
@@ -79,7 +80,7 @@ const SkillSelector: FC<{
       </Grid>
       {selectedCategory && (
         <Grid size={12}>
-          <CategorySeparator text={t('Trait')} />
+          <CategorySeparator text={t('trait')} />
           <SelectionList
             value={selectedTrait}
             options={availableTraits}
@@ -104,7 +105,7 @@ const SkillSelector: FC<{
       )}
       {selectedTrait && availableSpecializations && (
         <Grid size={12}>
-          <CategorySeparator text={t('Specialization')} />
+          <CategorySeparator text={t('specialization')} />
           <SelectionList
             value={selectedSpecialization}
             options={availableSpecializations}
@@ -115,11 +116,11 @@ const SkillSelector: FC<{
       )}
       {selectedTrait && selectedTrait.isTierBased === true && (
         <Grid size={12}>
-          <CategorySeparator text={t('Tier')} />
+          <CategorySeparator text={t('tier')} />
           <Grid container spacing={1}>
             <Grid size={4}>
               <Select
-                label="Tier"
+                label={t('tier')}
                 value={selectedTier ?? ''}
                 onChange={(e) => setSelectedTier(Number(e.target.value))}
                 // displayEmpty

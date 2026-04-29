@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from 'react-oidc-context';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { Grid, Stack, Button } from '@mui/material';
@@ -16,9 +17,9 @@ const SkillSelector: FC<{
   onSpecializationChange: (specialization: string | null) => void;
   onError: (message: string) => void;
   //TODO fix i18n instance
-  t: (message: string) => string;
-}> = ({ realmId, onSkillChange, onSpecializationChange, onError, t }) => {
+}> = ({ realmId, onSkillChange, onSpecializationChange, onError }) => {
   const auth = useAuth();
+  const { t } = useTranslation();
   const [availableCategories, setAvailableCategories] = useState<SkillCategory[]>([]);
   const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
   const [availableSpecializations, setAvailableSpecializations] = useState<string[]>();

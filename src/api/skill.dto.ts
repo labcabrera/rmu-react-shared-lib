@@ -5,7 +5,7 @@ export interface Skill {
   categoryId: string;
   bonus: string[];
   realmBonus: number | null;
-  specialization: string;
+  specialization: string | null;
   owner: string;
   accessType: AccessType;
 }
