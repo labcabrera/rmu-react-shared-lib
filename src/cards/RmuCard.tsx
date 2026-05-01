@@ -17,7 +17,7 @@ const RmuCard: FC<{
 }> = ({ image, onClick, children, grayscale = 0, imageFilter: filter, height, contentBgImage }) => {
   return (
     <Card
-      onClick={onClick}
+      variant="outlined"
       sx={{
         display: 'flex',
         alignItems: 'stretch',
@@ -31,6 +31,7 @@ const RmuCard: FC<{
           },
         }),
       }}
+      onClick={onClick}
     >
       <CardMedia
         component="img"
