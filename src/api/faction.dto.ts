@@ -17,14 +17,3 @@ export interface FactionManagement {
 export type CreateFactionDto = Omit<Faction, 'id'>;
 
 export type UpdateFactionDto = Partial<Omit<Faction, 'id'>>;
-
-export const EMPTY_FACTION: CreateFactionDto = {
-  gameId: '',
-  name: '',
-  management: {
-    availableGold: 100,
-    availableXP: 200000,
-  },
-  shortDescription: '',
-  description: '',
-};

@@ -1,105 +1,75 @@
-import { getAuthHeaders, mergeJsonHeaders } from '../auth/auth-token-service';
+import { AuthContextProps } from 'react-oidc-context';
 import { apiCoreUrl } from '../config/config.service';
-import { Page } from './common.dto';
-import { buildErrorFromResponse } from './error-handler';
+import callApi, { Page } from './api';
 import { AddRaceTraitDto, CreateRaceDto, Race, RaceSkillBonus, UpdateRaceDto } from './race.dto';
 
-export async function fetchRace(raceId: string): Promise<Race> {
+export async function fetchRace(raceId: string, auth: AuthContextProps): Promise<Race> {
   const url = `${apiCoreUrl}/races/${raceId}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function fetchRaces(rsql: string, page: number, size: number): Promise<Page<Race>> {
+export async function fetchRaces(
+  rsql: string,
+  page: number,
+  size: number,
+  auth: AuthContextProps
+): Promise<Page<Race>> {
   const url = `${apiCoreUrl}/races?q=${rsql}&page=${page}&size=${size}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function createRace(data: CreateRaceDto): Promise<Race> {
+export async function createRace(data: CreateRaceDto, auth: AuthContextProps): Promise<Race> {
   const url = `${apiCoreUrl}/races`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'POST',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (response.status !== 201) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function updateRace(raceId: string, data: UpdateRaceDto): Promise<Race> {
+export async function updateRace(raceId: string, data: UpdateRaceDto, auth: AuthContextProps): Promise<Race> {
   const url = `${apiCoreUrl}/races/${raceId}`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'PATCH',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function deleteRace(raceId: string): Promise<void> {
+export async function deleteRace(raceId: string, auth: AuthContextProps): Promise<void> {
   const url = `${apiCoreUrl}/races/${raceId}`;
-  const response = await fetch(url, { method: 'DELETE', headers: getAuthHeaders() });
-  if (response.status !== 204) {
-    throw await buildErrorFromResponse(response, url);
-  }
+  return await callApi(auth, url, { method: 'DELETE' });
 }
 
-export async function addRaceTrait(raceId: string, dto: AddRaceTraitDto): Promise<Race> {
+export async function addRaceTrait(raceId: string, dto: AddRaceTraitDto, auth: AuthContextProps): Promise<Race> {
   const url = `${apiCoreUrl}/races/${raceId}/traits`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'POST',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dto),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function deleteRaceTrait(raceId: string, traitId: string): Promise<Race> {
+export async function deleteRaceTrait(raceId: string, traitId: string, auth: AuthContextProps): Promise<Race> {
   const url = `${apiCoreUrl}/races/${raceId}/traits/${traitId}`;
-  const response = await fetch(url, { method: 'DELETE', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'DELETE' });
 }
 
-export async function addRaceSkillBonus(raceId: string, dto: RaceSkillBonus): Promise<Race> {
+export async function addRaceSkillBonus(raceId: string, dto: RaceSkillBonus, auth: AuthContextProps): Promise<Race> {
   const url = `${apiCoreUrl}/races/${raceId}/skill-bonuses`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'POST',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dto),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
 export async function deleteRaceSkillBonus(
   raceId: string,
   skillId: string,
-  specialization: string | null
+  specialization: string | null,
+  auth: AuthContextProps
 ): Promise<Race> {
   const url = `${apiCoreUrl}/races/${raceId}/skill-bonuses/${skillId}${specialization ? `?specialization=${encodeURIComponent(specialization)}` : ''}`;
-  const response = await fetch(url, { method: 'DELETE', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'DELETE' });
 }

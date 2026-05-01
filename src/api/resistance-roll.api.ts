@@ -1,17 +1,13 @@
-import { mergeJsonHeaders } from '../auth/auth-token-service';
+import { AuthContextProps } from 'react-oidc-context';
 import { apiCoreUrl } from '../config/config.service';
-import { buildErrorFromResponse } from './error-handler';
+import callApi from './api';
 import { ResistanceRollQuery, ResistanceRollResult } from './resistance-roll.dto';
 
-export async function resistanceRoll(dto: ResistanceRollQuery): Promise<ResistanceRollResult> {
+export async function resistanceRoll(dto: ResistanceRollQuery, auth: AuthContextProps): Promise<ResistanceRollResult> {
   const url = `${apiCoreUrl}/resistance-rolls`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'POST',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dto),
   });
-  if (response.status !== 201) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }

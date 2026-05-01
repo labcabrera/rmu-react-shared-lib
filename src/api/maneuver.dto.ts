@@ -1,18 +1,3 @@
-export const MANEUVER_DIFFICULTIES: ManeuverDifficulty[] = [
-  { id: 'c', modifier: 70 },
-  { id: 's', modifier: 50 },
-  { id: 'r', modifier: 30 },
-  { id: 'e', modifier: 20 },
-  { id: 'l', modifier: 10 },
-  { id: 'm', modifier: 0 },
-  { id: 'h', modifier: -10 },
-  { id: 'vh', modifier: -20 },
-  { id: 'xh', modifier: -30 },
-  { id: 'sf', modifier: -50 },
-  { id: 'a', modifier: -70 },
-  { id: 'ni', modifier: -100 },
-];
-
 export interface AbsoluteManeuverTable {
   name: string;
   table: AbsoluteManeuverTableEntry[];
@@ -44,9 +29,4 @@ export interface EnduranceManeuverResult {
   fatigue: number;
   hitPoints: number;
   bonus: number;
-}
-
-export interface ManeuverDifficulty {
-  id: string;
-  modifier: number;
 }

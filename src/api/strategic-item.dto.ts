@@ -1,9 +1,18 @@
+import { ItemArmor, ItemInfo, ItemShield, ItemWeapon } from './item.dto';
+
 export type StrategicItem = {
   id: string;
   gameId: string;
-  factionId: string;
-  characterId: string;
+  factionId: string | null;
+  characterId: string | null;
+  itemTypeId: string;
   name: string;
-  //TODO mal fields
-  [key: string]: any;
+  category: string;
+  carried: boolean;
+  weapon: ItemWeapon | null;
+  armor: ItemArmor | null;
+  shield: ItemShield | null;
+  amount: number;
+  info: ItemInfo;
+  owner: string;
 };

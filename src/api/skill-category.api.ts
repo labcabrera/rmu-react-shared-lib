@@ -1,41 +1,29 @@
-import { getAuthHeaders } from '../auth/auth-token-service';
+import { AuthContextProps } from 'react-oidc-context';
 import { apiCoreUrl } from '../config/config.service';
-import { Page } from './common.dto';
-import { buildErrorFromResponse } from './error-handler';
+import callApi, { Page } from './api';
 import { SkillCategory } from './skill-category.dto';
 
-export async function fetchSkillCategory(skillCategoryId: string): Promise<SkillCategory> {
+export async function fetchSkillCategory(skillCategoryId: string, auth: AuthContextProps): Promise<SkillCategory> {
   const url = `${apiCoreUrl}/skill-categories/${skillCategoryId}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
 export async function fetchSkillCategories(
   rsql: string | undefined,
   page: number,
-  size: number
+  size: number,
+  auth: AuthContextProps
 ): Promise<Page<SkillCategory>> {
   const url = `${apiCoreUrl}/skill-categories?q=${rsql || ''}&page=${page}&size=${size}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
 export async function fetchPagedSkillCategories(
   query: string,
   page: number,
-  size: number
+  size: number,
+  auth: AuthContextProps
 ): Promise<Page<SkillCategory>> {
   const url = `${apiCoreUrl}/skill-categories?q=${query}&page=${page}&size=${size}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  const json = await response.json();
-  return json as Page<SkillCategory>;
+  return await callApi(auth, url, { method: 'GET' });
 }

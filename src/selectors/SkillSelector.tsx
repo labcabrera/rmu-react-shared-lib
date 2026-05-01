@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from 'react-oidc-context';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
-import { Grid, Typography, Stack, Button } from '@mui/material';
+import { Grid, Stack, Button } from '@mui/material';
 import { fetchEnumerations } from '../api/enumerations.api';
 import { fetchSkillCategories } from '../api/skill-category.api';
 import { SkillCategory } from '../api/skill-category.dto';
@@ -15,8 +17,9 @@ const SkillSelector: FC<{
   onSpecializationChange: (specialization: string | null) => void;
   onError: (message: string) => void;
   //TODO fix i18n instance
-  t: (message: string) => string;
-}> = ({ realmId, onSkillChange, onSpecializationChange, onError, t }) => {
+}> = ({ realmId, onSkillChange, onSpecializationChange, onError }) => {
+  const auth = useAuth();
+  const { t } = useTranslation();
   const [availableCategories, setAvailableCategories] = useState<SkillCategory[]>([]);
   const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
   const [availableSpecializations, setAvailableSpecializations] = useState<string[]>();
@@ -26,13 +29,13 @@ const SkillSelector: FC<{
   const [selectedSpecialization, setSelectedSpecialization] = useState<string | null>(null);
 
   const bindSkillCategories = () => {
-    fetchSkillCategories('', 0, 100)
+    fetchSkillCategories('', 0, 100, auth)
       .then((data) => setAvailableCategories(data.content))
       .catch((error) => onError(error.message));
   };
 
   const bindSkills = (categoryId: string) => {
-    fetchSkills(`categoryId==${categoryId}`, 0, 100)
+    fetchSkills(`categoryId==${categoryId}`, 0, 100, auth)
       .then((data) => setAvailableSkills(data.content))
       .catch((error) => onError(error.message));
   };
@@ -49,12 +52,12 @@ const SkillSelector: FC<{
         setAvailableSpecializations(undefined);
       } else {
         const realmQuery = realmId ? `;(realmId==${realmId},realmId==null)` : ``;
-        fetchEnumerations(`category==${selectedSkill.specialization}${realmQuery}`, 0, 100)
+        fetchEnumerations(`category==${selectedSkill.specialization}${realmQuery}`, 0, 100, auth)
           .then((response) => setAvailableSpecializations(response.content.map((e) => e.key)))
           .catch((err) => onError(err.message));
       }
     }
-  }, [selectedSkill]);
+  }, [selectedSkill, auth]);
 
   useEffect(() => {
     setAvailableSpecializations(undefined);

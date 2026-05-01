@@ -1,6 +1,5 @@
-import { assetsBaseUrl } from '../config/config.service';
 import { StatKey } from './character.dto';
-import { AccessType, NamedEntity } from './common.dto';
+import { AccessType } from './common.dto';
 
 export const resistances = ['channeling', 'mentalism', 'essence', 'physical', 'poison', 'disease', 'fear'];
 
@@ -8,7 +7,7 @@ export type Race = {
   id: string;
   name: string;
   archetype: string | undefined;
-  realm: NamedEntity;
+  realmId: string;
   sizeId: string;
   stats: Record<StatKey, number>;
   resistances: RaceResistances;
@@ -108,50 +107,3 @@ export type AddRaceTraitDto = {
   tier: number | undefined;
   description: string | undefined;
 };
-
-export const raceCreateTemplate = {
-  name: '',
-  realmId: '',
-  archetype: '',
-  sizeId: 'medium',
-  stats: {
-    ag: 0,
-    co: 0,
-    em: 0,
-    in: 0,
-    me: 0,
-    pr: 0,
-    qu: 0,
-    re: 0,
-    sd: 0,
-    st: 0,
-  },
-  resistances: {
-    channeling: 0,
-    mentalism: 0,
-    essence: 0,
-    physical: 0,
-    poison: 0,
-    disease: 0,
-    fear: 0,
-  },
-  averageHeight: {
-    male: 0,
-    female: 0,
-  },
-  averageWeight: {
-    male: 0,
-    female: 0,
-  },
-  strideBonus: 0,
-  enduranceBonus: 0,
-  recoveryMultiplier: 1,
-  baseHits: 0,
-  baseDevPoints: 60,
-  baseAt: 1,
-  talents: [],
-  traits: [],
-  defaultLanguage: null,
-  description: '',
-  imageUrl: `${assetsBaseUrl}images/races/unknown.png`,
-} as unknown as CreateRaceDto;

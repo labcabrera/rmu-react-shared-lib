@@ -14,7 +14,11 @@ interface RmuBreadcrumbsProps {
 
 const RmuBreadcrumbs: FC<RmuBreadcrumbsProps> = ({ items, children }) => {
   return (
-    <Stack spacing={1} direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+    <Stack
+      direction="row"
+      spacing={1}
+      sx={{ mb: 1, direction: 'row', justifyContent: 'space-between', minHeight: 50, alignItems: 'center' }}
+    >
       <Box sx={{ width: '100%' }}>
         <Breadcrumbs aria-label="breadcrumb">
           {items.map((it, idx) => {

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { t } from 'i18next';
 
 type DeleteDialogProps = {
   message: string;

@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useContext, useState } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { Button, DialogActions, Slide, Stack, Typography } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -23,6 +23,7 @@ const RmuDialog: FC<{
   fullScreen?: boolean;
   avatarImg?: string;
   open: boolean;
+  buttons?: any;
   onConfirmDisabled?: boolean;
   onDelete?: () => void;
   onCancel?: () => void;
@@ -38,6 +39,7 @@ const RmuDialog: FC<{
   avatarImg,
   open,
   onConfirmDisabled = false,
+  buttons,
   onDelete,
   onCancel,
   onClose,
@@ -54,16 +56,23 @@ const RmuDialog: FC<{
       slots={{ transition: Transition }}
     >
       <DialogTitle>
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
           {avatarImg && <GenericAvatar variant="square" imageUrl={avatarImg} />}
           <Stack direction="column">
-            <Typography variant="h6">{title}</Typography>
-            {subtitle && <Typography variant="subtitle1">{subtitle}</Typography>}
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+              {title}
+            </Typography>
+            {subtitle && (
+              <Typography variant="subtitle1" color="secondary" sx={{ fontWeight: 600 }}>
+                {subtitle}
+              </Typography>
+            )}
           </Stack>
         </Stack>
       </DialogTitle>
       <DialogContent>{children}</DialogContent>
       <DialogActions>
+        {buttons}
         {onDelete && (
           <Button onClick={() => onDelete()} color="error">
             Delete

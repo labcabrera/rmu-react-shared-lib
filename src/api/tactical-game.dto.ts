@@ -31,18 +31,3 @@ export type CreateTacticalGameDto = Omit<
 export type UpdateTacticalGameDto = Partial<
   Omit<TacticalGame, 'id' | 'strategicGameId' | 'status' | 'round' | 'phase' | 'factions' | 'actors' | 'owner'>
 >;
-
-export const emptyTacticalGame: TacticalGame = {
-  id: '',
-  strategicGameId: '',
-  name: '',
-  status: '',
-  round: 0,
-  phase: '',
-  factions: [],
-  actors: [],
-  environment: { temperatureFatigueModifier: 0, altitudeFatigueModifier: 0 },
-  description: '',
-  imageUrl: '',
-  owner: '',
-};

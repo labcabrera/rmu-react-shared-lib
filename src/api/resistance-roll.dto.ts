@@ -1,7 +1,5 @@
-export interface KeyValue {
-  key: string;
-  value: number;
-}
+import { KeyValue } from './common.dto';
+
 export interface ResistanceRollQuery {
   attackLevel: number | null;
   targetLevel: number | null;

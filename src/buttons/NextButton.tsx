@@ -5,8 +5,15 @@ import RmuIconButton from './RmuIconButton';
 const EditButton: FC<{
   onClick: (event: MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
-}> = ({ onClick, disabled = false }) => (
-  <RmuIconButton onClick={onClick} aria-label="edit" disabled={disabled} Icon={KeyboardDoubleArrowRightIcon} />
+  tooltip?: string;
+}> = ({ onClick, disabled = false, tooltip = 'Next' }) => (
+  <RmuIconButton
+    onClick={onClick}
+    aria-label="edit"
+    disabled={disabled}
+    Icon={KeyboardDoubleArrowRightIcon}
+    tooltip={tooltip}
+  />
 );
 
 export default EditButton;

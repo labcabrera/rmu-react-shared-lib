@@ -13,10 +13,11 @@ const RmuCard: FC<{
   children?: ReactNode;
   grayscale?: number;
   imageFilter?: string;
-}> = ({ image, onClick, children, grayscale = 0, imageFilter: filter, height }) => {
+  contentBgImage?: string;
+}> = ({ image, onClick, children, grayscale = 0, imageFilter: filter, height, contentBgImage }) => {
   return (
     <Card
-      onClick={onClick}
+      variant="outlined"
       sx={{
         display: 'flex',
         alignItems: 'stretch',
@@ -30,6 +31,7 @@ const RmuCard: FC<{
           },
         }),
       }}
+      onClick={onClick}
     >
       <CardMedia
         component="img"
@@ -52,10 +54,12 @@ const RmuCard: FC<{
           flexDirection: 'column',
           justifyContent: 'center',
           ml: 2,
-          // mb: 0,
-          // paddingBottom: 0,
           maxWidth: '100%',
           minWidth: 0,
+          backgroundImage: contentBgImage ? `url(${contentBgImage})` : undefined,
+          backgroundSize: contentBgImage ? 'cover' : undefined,
+          backgroundPosition: contentBgImage ? 'center' : undefined,
+          backgroundRepeat: contentBgImage ? 'no-repeat' : undefined,
         }}
       >
         {children}

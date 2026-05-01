@@ -1,67 +1,51 @@
-import { getAuthHeaders, mergeJsonHeaders } from '../auth/auth-token-service';
+import { AuthContextProps } from 'react-oidc-context';
 import { apiCoreUrl } from '../config/config.service';
-import { Page } from './common.dto';
+import callApi, { Page } from './api';
 import { CreateEnumerationDto, Enumeration, UpdateEnumerationDto } from './enumerations.dto';
-import { buildErrorFromResponse } from './error-handler';
 
-export async function fetchEnumerationCategories(): Promise<string[]> {
+export async function fetchEnumerationCategories(auth: AuthContextProps): Promise<string[]> {
   const url = `${apiCoreUrl}/enumeration-categories`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function fetchEnumeration(id: string): Promise<Enumeration> {
+export async function fetchEnumeration(id: string, auth: AuthContextProps): Promise<Enumeration> {
   const url = `${apiCoreUrl}/enumerations/${id}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function fetchEnumerations(rsql: string, page: number, size: number): Promise<Page<Enumeration>> {
+export async function fetchEnumerations(
+  rsql: string,
+  page: number,
+  size: number,
+  auth: AuthContextProps
+): Promise<Page<Enumeration>> {
   const url = `${apiCoreUrl}/enumerations?q=${rsql}&page=${page}&size=${size}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  const pageContent = await response.json();
-  return pageContent;
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function createEnumeration(dto: CreateEnumerationDto): Promise<Enumeration> {
+export async function createEnumeration(dto: CreateEnumerationDto, auth: AuthContextProps): Promise<Enumeration> {
   const url = `${apiCoreUrl}/enumerations`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'POST',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dto),
   });
-  if (response.status !== 201) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function updateEnumeration(id: string, dto: UpdateEnumerationDto): Promise<Enumeration> {
+export async function updateEnumeration(
+  id: string,
+  dto: UpdateEnumerationDto,
+  auth: AuthContextProps
+): Promise<Enumeration> {
   const url = `${apiCoreUrl}/enumerations/${id}`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'PATCH',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dto),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function deleteEnumeration(id: string): Promise<void> {
+export async function deleteEnumeration(id: string, auth: AuthContextProps): Promise<void> {
   const url = `${apiCoreUrl}/enumerations/${id}`;
-  const response = await fetch(url, { method: 'DELETE', headers: getAuthHeaders() });
-  if (response.status !== 204) {
-    throw await buildErrorFromResponse(response, url);
-  }
+  return await callApi(auth, url, { method: 'DELETE' });
 }

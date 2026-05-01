@@ -1,57 +1,74 @@
-import { getAuthHeaders, mergeJsonHeaders } from '../auth/auth-token-service';
+import { AuthContextProps } from 'react-oidc-context';
 import { apiCoreUrl } from '../config/config.service';
-import { Page } from './common.dto';
-import { CreateCultureDto, Culture, UpdateCultureDto } from './culture.dto';
-import { buildErrorFromResponse } from './error-handler';
+import callApi, { Page } from './api';
+import { CreateCultureDto, Culture, CultureSkillRank, UpdateCultureDto } from './culture.dto';
 
-export async function fetchCulture(cultureId: string): Promise<Culture> {
+export async function fetchCulture(cultureId: string, auth: AuthContextProps): Promise<Culture> {
   const url = `${apiCoreUrl}/cultures/${cultureId}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function fetchCultures(rsql: string, page: number, size: number): Promise<Page<Culture>> {
+export async function fetchCultures(
+  rsql: string,
+  page: number,
+  size: number,
+  auth: AuthContextProps
+): Promise<Page<Culture>> {
   const url = `${apiCoreUrl}/cultures?q=${rsql}&page=${page}&size=${size}`;
-  const response = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
+  return await callApi(auth, url, { method: 'GET' });
 }
 
-export async function createCulture(data: CreateCultureDto): Promise<Culture> {
+export async function createCulture(data: CreateCultureDto, auth: AuthContextProps): Promise<Culture> {
   const url = `${apiCoreUrl}/cultures`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'POST',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (response.status !== 201) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function updateCulture(cultureId: string, data: UpdateCultureDto): Promise<Culture> {
+export async function updateCulture(
+  cultureId: string,
+  data: UpdateCultureDto,
+  auth: AuthContextProps
+): Promise<Culture> {
   const url = `${apiCoreUrl}/cultures/${cultureId}`;
-  const response = await fetch(url, {
+  return await callApi(auth, url, {
     method: 'PATCH',
-    headers: mergeJsonHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (response.status !== 200) {
-    throw await buildErrorFromResponse(response, url);
-  }
-  return await response.json();
 }
 
-export async function deleteCulture(cultureId: string): Promise<void> {
+export async function deleteCulture(cultureId: string, auth: AuthContextProps): Promise<void> {
   const url = `${apiCoreUrl}/cultures/${cultureId}`;
-  const response = await fetch(url, { method: 'DELETE', headers: getAuthHeaders() });
-  if (response.status !== 204) {
-    throw await buildErrorFromResponse(response, url);
-  }
+  return await callApi(auth, url, { method: 'DELETE' });
+}
+
+export async function addCultureFixedSkillRank(
+  cultureId: string,
+  data: CultureSkillRank,
+  auth: AuthContextProps
+): Promise<Culture> {
+  const url = `${apiCoreUrl}/cultures/${cultureId}/fixed-skills`;
+  return await callApi(auth, url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteCultureFixedSkillRank(
+  cultureId: string,
+  skillId: string,
+  specialization: string | null,
+  auth: AuthContextProps
+): Promise<Culture> {
+  const dto = { skillId, specialization };
+  const url = `${apiCoreUrl}/cultures/${cultureId}/fixed-skills`;
+  return await callApi(auth, url, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dto),
+  });
 }
