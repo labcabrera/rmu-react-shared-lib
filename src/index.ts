@@ -23,6 +23,7 @@ export { default as DeleteDialog } from './dialogs/DeleteDialog';
 export { default as RmuDialog } from './dialogs/RmuDialog';
 
 export { default as CategorySeparator } from './display/CategorySeparator';
+export { default as NotFound } from './display/NotFound';
 export { default as RmuPagination } from './display/RmuPagination';
 export { default as TechnicalInfo } from './display/TechnicalInfo';
 
