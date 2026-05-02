@@ -1,10 +1,9 @@
-import { NamedEntity } from './common.dto';
-
 export type WeaponModeType = 'one-hand' | 'two-hands';
 export type WeaponAttackType = 'melee' | 'ranged' | 'thrown';
 export type ItemArmorSlot = 'head' | 'body' | 'arms' | 'legs';
 export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'very-rare';
-export type ItemModifierType = 'bonus' | 'damage' | 'skill-bonus' | 'material' | 'slayer';
+export type ItemModifierType = 'bonus' | 'item-damage' | 'skill-bonus' | 'material' | 'slayer';
+export type OptionType = 'required' | 'optional' | 'forbidden';
 
 export type Item = {
   id: string;
@@ -79,6 +78,7 @@ export interface ItemModifier {
   type: ItemModifierType;
   value: number | null;
   modifier: string | null;
+  specialization: string | null;
 }
 
 export interface CreateItemDto {
@@ -106,8 +106,8 @@ export interface UpdateItemDto {
 
 export interface ItemModifierOption {
   modifierType: ItemModifierType;
-  selectorType: string | null;
-  allowValue: boolean;
-  allowModifier: boolean;
-  allowSpecialization: boolean;
+  selectorType: string;
+  value: OptionType;
+  modifier: OptionType;
+  specialization: OptionType;
 }
