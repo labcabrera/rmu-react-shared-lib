@@ -2,9 +2,9 @@ import { NamedEntity } from './common.dto';
 
 export type WeaponModeType = 'one-hand' | 'two-hands';
 export type WeaponAttackType = 'melee' | 'ranged' | 'thrown';
-export type ItemModifierType = 'bonus' | 'breakage' | 'skill-bonus' | 'material';
 export type ItemArmorSlot = 'head' | 'body' | 'arms' | 'legs';
 export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'very-rare';
+export type ItemModifierType = 'bonus' | 'damage' | 'skill-bonus' | 'material' | 'slayer';
 
 export type Item = {
   id: string;
