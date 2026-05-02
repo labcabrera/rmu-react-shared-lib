@@ -1,17 +1,19 @@
 import React, { ChangeEvent, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MenuItem, TextField } from '@mui/material';
-import { KeyValue } from '../api/common.dto';
+import { KeyLabel, KeyValue } from '../api/common.dto';
 
-export default function RmuKeyValueSelect({
+export default function RmuKeyLabelSelect({
   value,
   label,
   options,
+  i18n = true,
   onChange,
 }: {
   value: string;
   label: string;
-  options: KeyValue[];
+  options: KeyLabel[];
+  i18n?: boolean;
   onChange: (value: string) => void;
 }) {
   const { t } = useTranslation();
@@ -30,7 +32,7 @@ export default function RmuKeyValueSelect({
     >
       {options.map((option, index) => (
         <MenuItem key={index} value={option.key}>
-          {t(option.key)}
+          {i18n ? t(option.label) : option.label}
         </MenuItem>
       ))}
     </TextField>
