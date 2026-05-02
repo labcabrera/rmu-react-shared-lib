@@ -25,6 +25,7 @@ export { default as RmuDialog } from './dialogs/RmuDialog';
 export { default as CategorySeparator } from './display/CategorySeparator';
 export { default as NotFound } from './display/NotFound';
 export { default as RmuPagination } from './display/RmuPagination';
+export { default as StatRow } from './display/StatRow';
 export { default as TechnicalInfo } from './display/TechnicalInfo';
 
 export { default as ImageSelectorDialog } from './images/ImageSelectorDialog';
