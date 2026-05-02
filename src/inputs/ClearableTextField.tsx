@@ -21,6 +21,7 @@ const ClearableTextField: FC<ClearableTextFieldProps> = ({ value, onChange, labe
       value={value}
       onChange={onChange}
       fullWidth
+      size="small"
       slotProps={{
         input: value
           ? {
