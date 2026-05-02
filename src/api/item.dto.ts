@@ -7,7 +7,7 @@ export type ItemArmorSlot = 'head' | 'body' | 'arms' | 'legs';
 
 export type Item = {
   id: string;
-  realm: NamedEntity | undefined;
+  realmId?: string | undefined;
   category: string;
   weapon: ItemWeapon | undefined;
   armor: ItemArmor | undefined;
@@ -27,9 +27,9 @@ export type ItemArmor = {
   slot: ItemArmorSlot;
   at: number;
   enc: number;
-  maneuver: number;
+  maneuverPenalty: number;
   rangedPenalty: number;
-  perception: number;
+  perceptionPenalty: number;
   baseDifficulty: string;
 };
 
@@ -64,6 +64,8 @@ export type ItemInfo = {
   strength: number | null;
   productionHours: number | null;
   stackable: boolean;
+  rarity?: 'common' | 'uncommon' | 'rare' | 'very-rare';
+  unique?: boolean;
 };
 
 export interface ItemModifier {
