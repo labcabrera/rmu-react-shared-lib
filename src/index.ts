@@ -34,6 +34,7 @@ export { default as NumericInput } from './inputs/NumericInput';
 export { default as NumericReadonlyInput } from './inputs/NumericReadonlyInput';
 export { default as OpenEndedRollInput } from './inputs/OpenEndedRollInput';
 
+export { default as RmuKeyValueSelect } from './selectors/RmuKeyValueSelect';
 export { default as RmuSelect } from './selectors/RmuSelect';
 export { default as SelectDifficulty } from './selectors/SelectDifficulty';
 export { default as SelectRealm } from './selectors/SelectRealm';

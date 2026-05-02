@@ -4,17 +4,20 @@ export type WeaponModeType = 'one-hand' | 'two-hands';
 export type WeaponAttackType = 'melee' | 'ranged' | 'thrown';
 export type ItemModifierType = 'bonus' | 'breakage' | 'skill-bonus' | 'material';
 export type ItemArmorSlot = 'head' | 'body' | 'arms' | 'legs';
+export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'very-rare';
 
 export type Item = {
   id: string;
-  realmId?: string | undefined;
+  name: string;
+  realmId: string | null;
   category: string;
-  weapon: ItemWeapon | undefined;
-  armor: ItemArmor | undefined;
-  shield: ItemShield | undefined;
+  weapon: ItemWeapon | null;
+  armor: ItemArmor | null;
+  shield: ItemShield | null;
   info: ItemInfo;
-  description: string | undefined;
-  imageUrl?: string;
+  description: string | null;
+  imageUrl: string;
+  owner: string;
 };
 
 export type ItemWeapon = {
@@ -52,20 +55,21 @@ export type ItemShield = {
   blockCount: number;
 };
 
+export type ItemCost = {
+  min: number;
+  average: number;
+  max: number;
+};
+
 export type ItemInfo = {
-  cost: {
-    min: number;
-    average: number;
-    max: number;
-  };
+  cost: ItemCost | null;
   length: number | null;
   weight: number | null;
-  weightPercent: number | null;
   strength: number | null;
   productionHours: number | null;
   stackable: boolean;
-  rarity?: 'common' | 'uncommon' | 'rare' | 'very-rare';
-  unique?: boolean;
+  rarity: ItemRarity;
+  unique: boolean;
 };
 
 export interface ItemModifier {
