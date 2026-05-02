@@ -14,6 +14,7 @@ export type Item = {
   weapon: ItemWeapon | null;
   armor: ItemArmor | null;
   shield: ItemShield | null;
+  modifiers: ItemModifier[] | null;
   info: ItemInfo;
   description: string | null;
   imageUrl: string;
@@ -74,10 +75,10 @@ export type ItemInfo = {
 };
 
 export interface ItemModifier {
-  readonly id: string;
-  readonly type: ItemModifierType;
-  readonly modifier: string | undefined;
-  readonly value: number | undefined;
+  id: string;
+  type: ItemModifierType;
+  value: number | null;
+  modifier: string | null;
 }
 
 export interface CreateItemDto {
@@ -101,4 +102,12 @@ export interface UpdateItemDto {
   stackable: boolean | undefined;
   description: string | undefined;
   imageUrl: string | undefined;
+}
+
+export interface ItemModifierOption {
+  modifierType: ItemModifierType;
+  selectorType: string | null;
+  allowValue: boolean;
+  allowModifier: boolean;
+  allowSpecialization: boolean;
 }
