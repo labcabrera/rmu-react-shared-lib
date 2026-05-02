@@ -42,6 +42,7 @@ export type WeaponMode = {
   attackTable: string;
   fumbleTable: string;
   sizeAdjustment: number;
+  ranges: WeaponRange[] | null;
 };
 
 export type WeaponRange = {
