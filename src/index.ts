@@ -30,6 +30,9 @@ export { default as TechnicalInfo } from './display/TechnicalInfo';
 
 export { default as ImageSelectorDialog } from './images/ImageSelectorDialog';
 
+export { default as LayoutBase } from './layouts/LayoutBase';
+export { default as Section } from './layouts/Section';
+
 export { default as ClearableTextField } from './inputs/ClearableTextField';
 export { default as NumericInput } from './inputs/NumericInput';
 export { default as NumericReadonlyInput } from './inputs/NumericReadonlyInput';
