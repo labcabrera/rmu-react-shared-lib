@@ -66,6 +66,8 @@ export * from './api/item.api';
 export * from './api/item.dto';
 export * from './api/maneuver.api';
 export * from './api/maneuver.dto';
+export * from './api/npc.dto';
+export * from './api/npc.api';
 export * from './api/profession.api';
 export * from './api/profession.dto';
 export * from './api/race.api';
