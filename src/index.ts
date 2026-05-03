@@ -80,6 +80,12 @@ export * from './api/skill-category.api';
 export * from './api/skill-category.dto';
 export * from './api/skill.api';
 export * from './api/skill.dto';
+
+export * from './api/spell-list.api';
+export * from './api/spell-list.dto';
+export * from './api/spell.api';
+export * from './api/spell.dto';
+
 export * from './api/strategic-item.api';
 export * from './api/strategic-item.dto';
 export * from './api/strategic-game.api';
