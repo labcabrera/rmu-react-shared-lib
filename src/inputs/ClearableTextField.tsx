@@ -2,16 +2,21 @@ import React, { FC } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import { TextField, InputAdornment, IconButton } from '@mui/material';
 
-export type ClearableTextFieldProps = {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+export default function ClearableTextField({
+  value,
+  label,
+  name,
+  placeholder,
+  onChange,
+}: {
+  value?: string;
   label: string;
-  name: string;
-};
-
-const ClearableTextField: FC<ClearableTextFieldProps> = ({ value, onChange, label, name }) => {
+  name?: string;
+  placeholder?: string;
+  onChange: (e: string | undefined) => void;
+}) {
   const handleClear = () => {
-    onChange({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>);
+    onChange('');
   };
 
   return (
@@ -19,15 +24,16 @@ const ClearableTextField: FC<ClearableTextFieldProps> = ({ value, onChange, labe
       label={label}
       name={name}
       value={value}
-      onChange={onChange}
+      onChange={(e) => onChange(e.target.value)}
       fullWidth
+      placeholder={placeholder}
       size="small"
       slotProps={{
         input: value
           ? {
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton size="small" aria-label="clear name" onClick={handleClear} edge="end">
+                  <IconButton size="small" onClick={handleClear} edge="end" color="primary">
                     <ClearIcon fontSize="small" />
                   </IconButton>
                 </InputAdornment>
@@ -37,6 +43,4 @@ const ClearableTextField: FC<ClearableTextFieldProps> = ({ value, onChange, labe
       }}
     />
   );
-};
-
-export default ClearableTextField;
+}
