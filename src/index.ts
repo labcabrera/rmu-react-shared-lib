@@ -16,6 +16,8 @@ export { default as RefreshButton } from './buttons/RefreshButton';
 export { default as RmuIconButton } from './buttons/RmuIconButton';
 export { default as SaveButton } from './buttons/SaveButton';
 
+export * from './config/config.service';
+
 export { default as RmuCard } from './cards/RmuCard';
 export { default as RmuTextCard } from './cards/RmuTextCard';
 
@@ -51,6 +53,7 @@ export * from './api/api';
 
 export * from './api/common.dto';
 
+export * from './api/attack-table.api';
 export * from './api/character.api';
 export * from './api/character.dto';
 export * from './api/culture.api';
