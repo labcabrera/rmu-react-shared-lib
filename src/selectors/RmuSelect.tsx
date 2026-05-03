@@ -7,12 +7,14 @@ export default function RmuSelect({
   label,
   options,
   emptyOption,
+  error,
   onChange,
 }: {
   value: string;
   label: string;
   options: string[];
   emptyOption?: string;
+  error?: boolean;
   onChange: (value: string) => void;
 }) {
   const { t } = useTranslation();
@@ -29,6 +31,7 @@ export default function RmuSelect({
       size="small"
       onChange={handleChange}
       fullWidth
+      error={error}
     >
       {emptyOption && <MenuItem value="">{t(emptyOption)}</MenuItem>}
       {options.map((option, index) => (
