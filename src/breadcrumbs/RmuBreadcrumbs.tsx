@@ -20,7 +20,7 @@ const RmuBreadcrumbs: FC<RmuBreadcrumbsProps> = ({ items, children }) => {
       sx={{ mb: 1, direction: 'row', justifyContent: 'space-between', minHeight: 50, alignItems: 'center' }}
     >
       <Box sx={{ width: '100%' }}>
-        <Breadcrumbs aria-label="breadcrumb">
+        <Breadcrumbs separator="›" aria-label="breadcrumb">
           {items.map((it, idx) => {
             const display = it.name;
             return it.link ? (
