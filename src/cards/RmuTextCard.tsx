@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import LockIcon from '@mui/icons-material/Lock';
 import { Typography } from '@mui/material';
 import RmuCard from './RmuCard';
 
@@ -13,8 +14,9 @@ const RmuTextCard: FC<{
   grayscale?: number;
   imageFilter?: string;
   color?: 'red' | 'green' | undefined;
+  lock?: boolean;
   onClick?: () => void;
-}> = ({ value, subtitle, applyColor = false, image, grayscale = 0, color, imageFilter, onClick }) => {
+}> = ({ value, subtitle, applyColor = false, image, grayscale = 0, color, imageFilter, lock = false, onClick }) => {
   const getColor = () => {
     if (!applyColor) return undefined;
     if (color) {
@@ -50,6 +52,17 @@ const RmuTextCard: FC<{
         }}
       >
         {value}
+        {lock && (
+          <LockIcon
+            color="primary"
+            sx={{
+              fontSize: 16,
+              // verticalAlign: 'middle',
+              ml: 0.5,
+              mr: 0.5,
+            }}
+          />
+        )}
       </Typography>
       <Typography
         variant="caption"
