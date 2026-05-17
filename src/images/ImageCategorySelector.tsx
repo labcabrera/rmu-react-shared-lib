@@ -45,7 +45,7 @@ export default function ImageCategorySelector({
     let cancelled = false;
     setLoading(true);
     setErrorMessage(undefined);
-    fetchImages(category, page, 24, auth)
+    fetchImages(category, page, 25, auth)
       .then((response) => {
         if (cancelled) return;
         setImages(response);
@@ -89,7 +89,7 @@ export default function ImageCategorySelector({
       ) : images?.content.length === 0 ? (
         <Typography color="text.secondary">No images found</Typography>
       ) : images ? (
-        <ImageList cols={4} gap={12} sx={{ m: 0 }}>
+        <ImageList cols={5} gap={2} sx={{ m: 0 }}>
           {images.content.map((image) => {
             const selected = selectedImageId === image.id;
             return (
@@ -113,6 +113,7 @@ export default function ImageCategorySelector({
                 <ImageListItemBar
                   title={image.altText || image.originalFilename || image.category}
                   subtitle={image.category}
+                  sx={{ display: { xs: 'none', md: 'none', lg: 'flex' } }}
                 />
               </ImageListItem>
             );
