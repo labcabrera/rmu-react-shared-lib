@@ -30,7 +30,9 @@ export { default as RmuPagination } from './display/RmuPagination';
 export { default as StatRow } from './display/StatRow';
 export { default as TechnicalInfo } from './display/TechnicalInfo';
 
+export { default as ImageCategorySelector } from './images/ImageCategorySelector';
 export { default as ImageSelectorDialog } from './images/ImageSelectorDialog';
+export { default as ImageUploadEditor } from './images/ImageUploadEditor';
 
 export { default as LayoutBase } from './layouts/LayoutBase';
 export { default as Section } from './layouts/Section';
@@ -62,6 +64,8 @@ export * from './api/enumerations.api';
 export * from './api/enumerations.dto';
 export * from './api/faction.api';
 export * from './api/faction.dto';
+export * from './api/image.api';
+export * from './api/image.dto';
 export * from './api/item.api';
 export * from './api/item.dto';
 export * from './api/maneuver.api';
@@ -80,12 +84,10 @@ export * from './api/skill-category.api';
 export * from './api/skill-category.dto';
 export * from './api/skill.api';
 export * from './api/skill.dto';
-
 export * from './api/spell-list.api';
 export * from './api/spell-list.dto';
 export * from './api/spell.api';
 export * from './api/spell.dto';
-
 export * from './api/strategic-item.api';
 export * from './api/strategic-item.dto';
 export * from './api/strategic-game.api';

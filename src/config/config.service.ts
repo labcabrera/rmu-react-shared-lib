@@ -6,6 +6,7 @@ export const apiItemsUrl = process.env.RMU_API_ITEMS_URL;
 export const apiAttackTablesUrl = process.env.RMU_API_ATTACK_TABLES_URL;
 export const apiNpcUrl = process.env.RMU_API_NPCS_URL!;
 export const apiSpellsUrl = process.env.RMU_API_SPELLS_URL!;
+export const mediaApiBaseUrl = process.env.RMU_API_MEDIA_URL!;
 
 //deprecated
 export const imageBaseUrl = process.env.RMU_MFE_ASSETS;

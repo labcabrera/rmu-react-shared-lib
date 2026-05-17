@@ -1,104 +1,102 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import CloseIcon from '@mui/icons-material/Close';
+import ImageSearchIcon from '@mui/icons-material/ImageSearch';
+import UploadIcon from '@mui/icons-material/Upload';
 import {
+  Box,
   Button,
-  Card,
-  CardActionArea,
-  CardMedia,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid,
-  TextField,
+  Divider,
+  IconButton,
+  Tab,
+  Tabs,
 } from '@mui/material';
-import { t } from 'i18next';
+import ImageCategorySelector from './ImageCategorySelector';
+import ImageUploadEditor from './ImageUploadEditor';
 
-const ImageSelectorDialog: FC<{
+export type ImageDialogProps = {
   value?: string;
   open: boolean;
-  images: string[];
   onClose: () => void;
   onSelect: (image: string) => void;
-  title?: string;
-}> = ({ value, open, images, onClose, onSelect, title = 'Select an image' }) => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(value ?? null);
+  onUpload?: (image: string) => void;
+};
 
-  useEffect(() => {
-    setSelectedImage(value ?? null);
-  }, [value]);
+function TabPanel({ children, value, index }: { children: React.ReactNode; value: number; index: number }) {
+  return (
+    <div role="tabpanel" hidden={value !== index}>
+      {value === index && <Box sx={{ pt: 2 }}>{children}</Box>}
+    </div>
+  );
+}
 
-  const handleImageClick = (image: string) => {
+export default function ImageSelectorDialog({
+  value,
+  open,
+  onClose,
+  onSelect: onImageSelected,
+  onUpload: onImageUploaded,
+}: ImageDialogProps) {
+  const [tab, setTab] = useState(0);
+  const [selectedImage, setSelectedImage] = useState<MediaImage>();
+
+  const handleUploaded = (image: MediaImage) => {
     setSelectedImage(image);
-  };
-
-  const handleSave = () => {
-    if (selectedImage) {
-      onSelect(selectedImage);
-      onClose();
+    if (onImageUploaded) {
+      onImageUploaded(image.src);
+    } else {
+      onImageSelected(image.src);
     }
   };
 
-  return (
-    <Dialog open={open} onClose={onClose} fullScreen={true} fullWidth maxWidth="md">
-      <DialogTitle>{title}</DialogTitle>
-      <DialogContent dividers sx={{ p: { xs: 1.5, sm: 2 } }}>
-        <Grid container spacing={1}>
-          {images.map((img, index) => {
-            const isSelected = img === selectedImage;
+  const handleSelect = () => {
+    if (!selectedImage) return;
+    onImageSelected(selectedImage.src);
+    onClose();
+  };
 
-            return (
-              <Grid key={index} size={{ xs: 4, md: 1 }}>
-                <Card
-                  variant="outlined"
-                  sx={{
-                    borderWidth: isSelected ? 3 : 1,
-                    borderStyle: 'solid',
-                    borderColor: isSelected ? 'success.main' : 'divider',
-                    boxShadow: isSelected ? 6 : 0,
-                    transform: isSelected ? 'scale(1.02)' : 'none',
-                    transition: 'transform 0.12s, box-shadow 0.12s, border-color 0.12s',
-                  }}
-                >
-                  <CardActionArea
-                    onClick={() => handleImageClick(img)}
-                    sx={{
-                      // feedback visual
-                      outline: 'none',
-                    }}
-                  >
-                    <CardMedia
-                      component="img"
-                      src={img}
-                      alt={img}
-                      loading="lazy"
-                      sx={{
-                        aspectRatio: '1 / 1',
-                        objectFit: 'cover',
-                      }}
-                    />
-                  </CardActionArea>
-                </Card>
-              </Grid>
-            );
-          })}
-          <Grid size={{ xs: 12 }}>
-            <TextField
-              label={t('custom-image-url')}
-              value={selectedImage ?? ''}
-              onChange={(e) => setSelectedImage(e.target.value)}
-              fullWidth
-            />
-          </Grid>
-        </Grid>
+  const handleClose = () => {
+    setSelectedImage(undefined);
+    onClose();
+  };
+
+  return (
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+      <DialogTitle>
+        Images
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{ position: 'absolute', right: 8, top: 8 }}
+          size="large"
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent dividers>
+        <Tabs value={tab} onChange={(_, value) => setTab(value)} variant="scrollable" scrollButtons="auto">
+          <Tab icon={<UploadIcon />} iconPosition="start" label="Upload image" />
+          <Tab icon={<ImageSearchIcon />} iconPosition="start" label="Select image" />
+        </Tabs>
+        <Divider />
+        <TabPanel value={tab} index={0}>
+          <ImageUploadEditor value={value} onUploaded={handleUploaded} />
+        </TabPanel>
+        <TabPanel value={tab} index={1}>
+          <ImageCategorySelector selectedImageId={selectedImage?.src} onSelect={(e) => onImageSelected(e)} />
+        </TabPanel>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSave} disabled={!selectedImage} variant="contained" color="primary">
-          Save
+        <Button variant="contained" onClick={handleClose}>
+          Close
+        </Button>
+        <Button variant="contained" color="success" onClick={handleSelect} disabled={!selectedImage}>
+          Select
         </Button>
       </DialogActions>
     </Dialog>
   );
-};
-
-export default ImageSelectorDialog;
+}

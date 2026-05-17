@@ -34,7 +34,6 @@ const EditableAvatar: FC<{
       <ImageSelectorDialog
         value={imageUrl}
         open={dialogOpen}
-        images={images}
         onClose={() => setDialogOpen(false)}
         onSelect={(image) => onImageChange(image)}
       />
