@@ -88,9 +88,9 @@ export default function ImageCategorySelector({
         <Alert severity="error">{errorMessage}</Alert>
       ) : images?.content.length === 0 ? (
         <Typography color="text.secondary">No images found</Typography>
-      ) : (
-        <ImageList cols={3} gap={12} sx={{ m: 0 }}>
-          {images!.content.map((image) => {
+      ) : images ? (
+        <ImageList cols={4} gap={12} sx={{ m: 0 }}>
+          {images.content.map((image) => {
             const selected = selectedImageId === image.id;
             return (
               <ImageListItem
@@ -118,6 +118,8 @@ export default function ImageCategorySelector({
             );
           })}
         </ImageList>
+      ) : (
+        <></>
       )}
 
       {totalPages > 1 && (

@@ -20,6 +20,7 @@ import ImageUploadEditor from './ImageUploadEditor';
 export type ImageDialogProps = {
   value?: string;
   open: boolean;
+  maxWidth?: 'md' | 'lg' | 'xl';
   onClose: () => void;
   onSelect: (image: string) => void;
   onUpload?: (image: string) => void;
@@ -36,6 +37,7 @@ function TabPanel({ children, value, index }: { children: React.ReactNode; value
 export default function ImageSelectorDialog({
   value,
   open,
+  maxWidth = 'xl',
   onClose,
   onSelect: onImageSelected,
   onUpload: onImageUploaded,
@@ -64,7 +66,7 @@ export default function ImageSelectorDialog({
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth={maxWidth}>
       <DialogTitle>
         Images
         <IconButton

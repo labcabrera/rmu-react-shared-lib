@@ -14,7 +14,7 @@ export async function fetchImages(
     page: String(page),
     size: String(size),
   });
-  return callApi(auth, `${mediaApiBaseUrl}images?${params.toString()}`, { method: 'GET' });
+  return callApi(auth, `${mediaApiBaseUrl}/images?${params.toString()}`, { method: 'GET' });
 }
 
 export async function uploadImage(auth: AuthContextProps, input: UploadImageInput): Promise<MediaImage> {
@@ -23,7 +23,7 @@ export async function uploadImage(auth: AuthContextProps, input: UploadImageInpu
   formData.append('category', input.category);
   if (input.altText) formData.append('altText', input.altText);
   if (input.metadata) formData.append('metadata', JSON.stringify(input.metadata));
-  return callApi(auth, `${mediaApiBaseUrl}images`, {
+  return callApi(auth, `${mediaApiBaseUrl}/images`, {
     method: 'POST',
     body: formData,
   });
