@@ -14,6 +14,7 @@ import {
   Tab,
   Tabs,
 } from '@mui/material';
+import { MediaImage } from '../api/image.dto';
 import ImageCategorySelector from './ImageCategorySelector';
 import ImageUploadEditor from './ImageUploadEditor';
 
@@ -40,23 +41,17 @@ export default function ImageSelectorDialog({
   maxWidth = 'xl',
   onClose,
   onSelect: onImageSelected,
-  onUpload: onImageUploaded,
 }: ImageDialogProps) {
   const [tab, setTab] = useState(0);
   const [selectedImage, setSelectedImage] = useState<MediaImage>();
 
   const handleUploaded = (image: MediaImage) => {
     setSelectedImage(image);
-    if (onImageUploaded) {
-      onImageUploaded(image.src);
-    } else {
-      onImageSelected(image.src);
-    }
   };
 
   const handleSelect = () => {
     if (!selectedImage) return;
-    onImageSelected(selectedImage.src);
+    onImageSelected(selectedImage.url);
     onClose();
   };
 
@@ -88,7 +83,7 @@ export default function ImageSelectorDialog({
           <ImageUploadEditor value={value} onUploaded={handleUploaded} />
         </TabPanel>
         <TabPanel value={tab} index={1}>
-          <ImageCategorySelector selectedImageId={selectedImage?.src} onSelect={(e) => onImageSelected(e)} />
+          <ImageCategorySelector selectedImageId={selectedImage?.id} onSelect={setSelectedImage} />
         </TabPanel>
       </DialogContent>
       <DialogActions>

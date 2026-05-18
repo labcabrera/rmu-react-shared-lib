@@ -18,7 +18,7 @@ import {
   Typography,
 } from '@mui/material';
 import { uploadImage } from '../api/image.api';
-import { IMAGE_CATEGORIES, ImageCategory } from '../api/image.dto';
+import { IMAGE_CATEGORIES, ImageCategory, MediaImage } from '../api/image.dto';
 
 export type ImageUploadEditorProps = {
   value?: string;

@@ -1,7 +1,7 @@
 import { AuthContextProps } from 'react-oidc-context';
 import { mediaApiBaseUrl } from '../config/config.service';
 import callApi from './api';
-import { ImageCategory, MediaImagePage, UploadImageInput } from './image.dto';
+import { ImageCategory, MediaImage, MediaImagePage, UploadImageInput } from './image.dto';
 
 export async function fetchImages(
   category: ImageCategory,

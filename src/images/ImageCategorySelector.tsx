@@ -17,13 +17,13 @@ import {
   Typography,
 } from '@mui/material';
 import { fetchImages } from '../api/image.api';
-import { ImageCategory, MediaImagePage } from '../api/image.dto';
+import { ImageCategory, MediaImage, MediaImagePage } from '../api/image.dto';
 
 export type ImageCategorySelectorProps = {
   defaultCategory?: ImageCategory;
   selectedImageId?: string;
   categories?: string[];
-  onSelect?: (image: string) => void;
+  onSelect?: (image: MediaImage) => void;
 };
 
 export default function ImageCategorySelector({
@@ -95,7 +95,7 @@ export default function ImageCategorySelector({
             return (
               <ImageListItem
                 key={image.id}
-                onClick={() => onSelect?.(image.url)}
+                onClick={() => onSelect?.(image)}
                 sx={{
                   cursor: 'pointer',
                   border: 2,
