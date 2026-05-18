@@ -284,4 +284,5 @@ export interface UpdateTemporaryStatDto {
 export interface StatCreationDto {
   potential: number;
   temporary: number;
+  racial: number | undefined;
 }
