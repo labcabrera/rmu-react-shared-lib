@@ -49,6 +49,7 @@ const RmuTextCard: FC<{
           width: '100%',
           maxWidth: '100%',
           display: 'block',
+          fontWeight: 600,
         }}
       >
         {value}
