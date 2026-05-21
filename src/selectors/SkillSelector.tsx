@@ -1,9 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, FC } from 'react';
+import React, { useState, useEffect, FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from 'react-oidc-context';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
-import { Grid, Stack, Button } from '@mui/material';
+import { Chip, Grid, Paper, Stack } from '@mui/material';
 import { fetchEnumerations } from '../api/enumerations.api';
 import { fetchSkillCategories } from '../api/skill-category.api';
 import { SkillCategory } from '../api/skill-category.dto';
@@ -16,7 +15,6 @@ const SkillSelector: FC<{
   onSkillChange: (skillId: string | null) => void;
   onSpecializationChange: (specialization: string | null) => void;
   onError: (message: string) => void;
-  //TODO fix i18n instance
 }> = ({ realmId, onSkillChange, onSpecializationChange, onError }) => {
   const auth = useAuth();
   const { t } = useTranslation();
@@ -77,26 +75,28 @@ const SkillSelector: FC<{
   return (
     <Grid container spacing={1} sx={{ mt: 1 }}>
       <Grid size={12}>
-        <CategorySeparator text={t('Skill category')} />
+        <CategorySeparator text={t('skill-category')} />
         <SelectionList
           value={selectedCategory}
           options={availableCategories}
-          onChange={(value: any) => setSelectedCategory(value)}
-          formatter={(value: any) => t(value.id as string)}
+          onChange={setSelectedCategory}
+          getKey={(value) => value.id}
+          formatter={(value) => t(value.id)}
         />
       </Grid>
       {selectedCategory && (
         <Grid size={12}>
-          <CategorySeparator text={t('Skill')} />
+          <CategorySeparator text={t('skill')} />
           <SelectionList
             value={selectedSkill}
             options={availableSkills}
-            onChange={(value: any) => setSelectedSkill(value as Skill)}
-            formatter={(value: any) => {
+            onChange={setSelectedSkill}
+            getKey={(value) => value.id}
+            formatter={(value) => {
               return (
                 <>
                   {t(value.id)}
-                  {value.specialization && <EditSquareIcon sx={{ ml: 1, fontSize: '0.8em' }} />}
+                  {value.specialization && <EditSquareIcon sx={{ ml: 0.5 }} />}
                 </>
               );
             }}
@@ -105,12 +105,13 @@ const SkillSelector: FC<{
       )}
       {selectedSkill && availableSpecializations && (
         <Grid size={12}>
-          <CategorySeparator text={t('Specialization')} />
+          <CategorySeparator text={t('specialization')} />
           <SelectionList
             value={selectedSpecialization}
             options={availableSpecializations}
             onChange={(value) => setSelectedSpecialization(value)}
-            formatter={(value: any) => t(value as string)}
+            getKey={(value) => value}
+            formatter={(value) => t(value)}
           />
         </Grid>
       )}
@@ -118,34 +119,50 @@ const SkillSelector: FC<{
   );
 };
 
-const SelectionList: FC<{
-  value: any;
-  options: any[];
-  onChange: (value: any) => void;
-  formatter: (value: any) => any;
-}> = ({ value, options, onChange, formatter }) => {
+type SelectionListProps<T> = {
+  value: T | null | undefined;
+  options: T[];
+  onChange: (value: T) => void;
+  getKey: (value: T) => string;
+  formatter: (value: T) => ReactNode;
+};
+
+const SelectionList = <T,>({ value, options, onChange, getKey, formatter }: SelectionListProps<T>) => {
   return (
     <Stack
       direction={'row'}
-      spacing={1}
       sx={{
         flexWrap: 'wrap',
         alignContent: 'flex-start',
         justifyContent: 'flex-start',
-        rowGap: 1,
+        gap: 1,
       }}
     >
-      {options.map((option, index) => (
-        <Button
-          key={index}
-          value={option}
-          variant={option === value ? 'contained' : 'outlined'}
-          onClick={() => onChange(option)}
-          sx={{ flex: 'none' }}
-        >
-          {formatter(option)}
-        </Button>
-      ))}
+      {options.map((option) => {
+        const selected = option === value;
+
+        return (
+          <Chip
+            key={getKey(option)}
+            label={
+              <Stack direction="row" sx={{ alignItems: 'center' }}>
+                {formatter(option)}
+              </Stack>
+            }
+            clickable
+            color={selected ? 'primary' : 'default'}
+            variant={selected ? 'filled' : 'outlined'}
+            onClick={() => onChange(option)}
+            sx={{
+              flex: 'none',
+              textTransform: 'uppercase',
+              '& .MuiChip-label': {
+                px: 1.5,
+              },
+            }}
+          />
+        );
+      })}
     </Stack>
   );
 };
