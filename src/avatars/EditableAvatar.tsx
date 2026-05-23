@@ -6,7 +6,7 @@ const defaultImage = 'https://assets.labcabrera.com/images/generic/configuration
 
 const EditableAvatar: FC<{
   imageUrl: string | null | undefined;
-  altImageUrl: string | null;
+  altImageUrl?: string;
   variant?: 'circular' | 'rounded' | 'square';
   onImageChange: (newImageUrl: string) => void;
 }> = ({ imageUrl, altImageUrl, variant = 'circular', onImageChange }) => {
