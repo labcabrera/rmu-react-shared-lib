@@ -5,9 +5,8 @@ import ImageSelectorDialog from '../images/ImageSelectorDialog';
 const EditableAvatar: FC<{
   imageUrl: string;
   variant?: 'circular' | 'rounded' | 'square';
-  images: string[];
   onImageChange: (newImageUrl: string) => void;
-}> = ({ imageUrl, images, variant = 'circular', onImageChange }) => {
+}> = ({ imageUrl, variant = 'circular', onImageChange }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
