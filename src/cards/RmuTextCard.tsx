@@ -10,13 +10,25 @@ const RmuTextCard: FC<{
   value: string | number;
   applyColor?: boolean;
   subtitle: string | undefined;
-  image: string;
+  image: string | null | undefined;
+  altImageUrl?: string | null;
   grayscale?: number;
   imageFilter?: string;
   color?: 'red' | 'green' | undefined;
   lock?: boolean;
   onClick?: () => void;
-}> = ({ value, subtitle, applyColor = false, image, grayscale = 0, color, imageFilter, lock = false, onClick }) => {
+}> = ({
+  value,
+  subtitle,
+  applyColor = false,
+  image,
+  altImageUrl,
+  grayscale = 0,
+  color,
+  imageFilter,
+  lock = false,
+  onClick,
+}) => {
   const getColor = () => {
     if (!applyColor) return undefined;
     if (color) {
@@ -37,7 +49,7 @@ const RmuTextCard: FC<{
   };
 
   return (
-    <RmuCard image={image} onClick={onClick} grayscale={grayscale} imageFilter={imageFilter}>
+    <RmuCard image={image} altImageUrl={altImageUrl} onClick={onClick} grayscale={grayscale} imageFilter={imageFilter}>
       <Typography
         component="div"
         variant="body1"

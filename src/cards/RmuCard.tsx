@@ -1,20 +1,24 @@
 import React, { FC, ReactNode } from 'react';
 import { Card, CardContent, CardMedia } from '@mui/material';
 
+const defaultImage = 'https://assets.labcabrera.com/images/generic/configuration.png';
 const smallImageSize = 70;
 
 const RmuCard: FC<{
-  image: string;
+  image: string | null | undefined;
+  altImageUrl?: string | null;
   maxWidth?: number;
   minWidth?: number;
   height?: number;
   imageSize?: number;
-  onClick?: () => void;
   children?: ReactNode;
   grayscale?: number;
   imageFilter?: string;
   contentBgImage?: string;
-}> = ({ image, onClick, children, grayscale = 0, imageFilter: filter, height, contentBgImage }) => {
+  onClick?: () => void;
+}> = ({ image, altImageUrl, children, grayscale = 0, imageFilter: filter, height, contentBgImage, onClick }) => {
+  const effectiveImage = image || altImageUrl || defaultImage;
+
   return (
     <Card
       variant="outlined"
@@ -35,7 +39,7 @@ const RmuCard: FC<{
     >
       <CardMedia
         component="img"
-        image={image}
+        image={effectiveImage}
         sx={{
           width: height || smallImageSize,
           height: height || smallImageSize,
