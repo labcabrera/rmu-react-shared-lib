@@ -12,7 +12,6 @@ const NumericReadonlyInput: FC<{
       label={label}
       value={value === null ? '' : value}
       type="text"
-      variant="standard"
       fullWidth
       sx={{
         '& input': {

@@ -134,7 +134,6 @@ const NumericInput: FC<NumericInputProps> = ({
       type="text"
       inputMode={inputMode ?? (integer ? 'numeric' : 'decimal')}
       name={name}
-      size="small"
       id={id}
       value={text}
       onChange={handleChange}

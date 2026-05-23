@@ -27,7 +27,6 @@ export default function ClearableTextField({
       onChange={(e) => onChange(e.target.value)}
       fullWidth
       placeholder={placeholder}
-      size="small"
       slotProps={{
         input: value
           ? {

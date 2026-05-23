@@ -28,7 +28,6 @@ export default function RmuSelect({
       select
       label={label}
       value={value === undefined || value === null ? '' : value}
-      size="small"
       onChange={handleChange}
       fullWidth
       error={error}
