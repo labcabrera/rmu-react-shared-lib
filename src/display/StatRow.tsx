@@ -13,11 +13,11 @@ export default function StatRow({
 }) {
   return (
     <Stack direction="row" sx={{ py: 0.5, justifyContent: 'space-between' }}>
-      <Typography variant="body2" color="secondary">
+      <Typography variant="body1" color="secondary">
         {label}
       </Typography>
       <Typography
-        variant="body2"
+        variant="body1"
         sx={{
           fontWeight: 600,
           color: success ? 'success.main' : danger ? 'error.main' : 'primary.main',
