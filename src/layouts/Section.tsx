@@ -4,15 +4,17 @@ import { Box, Card, CardContent, Divider, Typography } from '@mui/material';
 export default function Section({
   title,
   actions,
+  elevation = 0.7,
   children,
 }: {
   title?: string;
   actions?: ReactNode;
+  elevation?: number;
   children: ReactNode;
 }) {
   return (
-    <Card elevation={0.7} sx={{ height: '100%' }}>
-      <CardContent>
+    <Card elevation={elevation} sx={{ height: '100%' }}>
+      <CardContent sx={{ '&:last-child': { pb: 1 }, pb: 1 }}>
         {title && (
           <>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -25,7 +27,6 @@ export default function Section({
           </>
         )}
         {children}
-        <pre>{actions}</pre>
       </CardContent>
     </Card>
   );
