@@ -7,6 +7,7 @@ export type EffectPropertyRequirement = (typeof effectPropertyRequirements)[numb
 export interface EffectType {
   id: string;
   isPersistent: boolean;
+  isStackable: boolean;
   value: EffectPropertyRequirement;
   modifier: EffectPropertyRequirement;
   rounds: EffectPropertyRequirement;
