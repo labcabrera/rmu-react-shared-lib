@@ -23,7 +23,7 @@ const RmuDialog: FC<{
   fullScreen?: boolean;
   avatarImg?: string;
   open: boolean;
-  buttons?: any;
+  buttons?: ReactNode;
   onConfirmDisabled?: boolean;
   onDelete?: () => void;
   onCancel?: () => void;
