@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react';
-import { Button, DialogActions, Slide, Stack, Typography } from '@mui/material';
-import Dialog from '@mui/material/Dialog';
+import { Button, DialogActions, Slide, Stack, SxProps, Theme, Typography } from '@mui/material';
+import Dialog, { DialogProps } from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { TransitionProps } from '@mui/material/transitions';
@@ -19,9 +19,10 @@ const RmuDialog: FC<{
   title: string;
   subtitle?: string | undefined;
   children?: ReactNode;
-  maxWidth?: 'md' | 'xl' | undefined;
+  maxWidth?: DialogProps['maxWidth'];
   fullScreen?: boolean;
   avatarImg?: string;
+  paperSx?: SxProps<Theme>;
   open: boolean;
   buttons?: ReactNode;
   onConfirmDisabled?: boolean;
@@ -37,6 +38,7 @@ const RmuDialog: FC<{
   fullScreen = false,
   maxWidth = 'xl',
   avatarImg,
+  paperSx,
   open,
   onConfirmDisabled = false,
   buttons,
@@ -46,6 +48,11 @@ const RmuDialog: FC<{
   onResolve,
   onConfirm,
 }) => {
+  const paperBaseSx: SxProps<Theme> = {
+    backgroundColor: (theme) =>
+      theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.background.paper,
+  };
+
   return (
     <Dialog
       open={open}
@@ -54,8 +61,14 @@ const RmuDialog: FC<{
       maxWidth={maxWidth}
       fullWidth
       slots={{ transition: Transition }}
+      slotProps={{ paper: { sx: (paperSx ? [paperBaseSx, paperSx] : paperBaseSx) as SxProps<Theme> } }}
     >
-      <DialogTitle>
+      <DialogTitle
+        sx={{
+          backgroundColor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.grey[900] : theme.palette.grey[100]),
+          borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+        }}
+      >
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
           {avatarImg && <GenericAvatar variant="square" imageUrl={avatarImg} />}
           <Stack direction="column">

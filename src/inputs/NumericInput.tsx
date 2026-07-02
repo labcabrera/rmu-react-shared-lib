@@ -58,7 +58,7 @@ const NumericInput: FC<NumericInputProps> = ({
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   function formatValue(value: number | null | undefined, formatter: Intl.NumberFormat): string {
-    if (!value || value === null || Number.isNaN(value)) return '';
+    if (value === null || value === undefined || Number.isNaN(value)) return '';
     return formatter.format(value);
   }
 
@@ -123,7 +123,7 @@ const NumericInput: FC<NumericInputProps> = ({
 
   function handleFocus(e: React.FocusEvent<HTMLInputElement>) {
     if (text === formatValue(value, formatter)) {
-      setText(!value || value === null ? '' : toEnglishRaw(value));
+      setText(value === null || value === undefined ? '' : toEnglishRaw(value));
     }
     onFocus?.(e);
   }
