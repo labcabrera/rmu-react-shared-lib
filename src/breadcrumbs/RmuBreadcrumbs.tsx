@@ -28,9 +28,11 @@ const RmuBreadcrumbs: FC<RmuBreadcrumbsProps> = ({ items, children, showHome = t
     >
       <Box sx={{ width: '100%' }}>
         <Breadcrumbs
-          separator={<ChevronRightIcon sx={{ fontSize: 16, color: 'text.disabled' }} />}
+          separator={<ChevronRightIcon sx={{ fontSize: 20, color: 'text.disabled' }} />}
           aria-label="breadcrumb"
           sx={{
+            fontSize: { xs: '1rem', sm: '1.0625rem' },
+            fontWeight: 600,
             '& .MuiBreadcrumbs-ol': {
               alignItems: 'center',
             },
@@ -47,7 +49,7 @@ const RmuBreadcrumbs: FC<RmuBreadcrumbsProps> = ({ items, children, showHome = t
             const isLast = idx === breadcrumbItems.length - 1;
             const content = (
               <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, lineHeight: 1 }}>
-                {isHome && <HomeOutlinedIcon sx={{ display: 'block', fontSize: 16 }} />}
+                {isHome && <HomeOutlinedIcon sx={{ display: 'block', fontSize: 20 }} />}
                 <Box component="span" sx={{ lineHeight: 1 }}>
                   {display}
                 </Box>
@@ -65,6 +67,8 @@ const RmuBreadcrumbs: FC<RmuBreadcrumbsProps> = ({ items, children, showHome = t
                 sx={{
                   display: 'inline-flex',
                   alignItems: 'center',
+                  fontSize: 'inherit',
+                  fontWeight: 'inherit',
                   lineHeight: 1,
                   verticalAlign: 'middle',
                 }}
@@ -80,6 +84,8 @@ const RmuBreadcrumbs: FC<RmuBreadcrumbsProps> = ({ items, children, showHome = t
                 sx={{
                   display: 'inline-flex',
                   alignItems: 'center',
+                  fontSize: 'inherit',
+                  fontWeight: 'inherit',
                   lineHeight: 1,
                   verticalAlign: 'middle',
                 }}
