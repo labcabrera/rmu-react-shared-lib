@@ -15,6 +15,9 @@ const releaseRules = bump
   : [{ breaking: true, release: 'major' }, { type: 'feat', release: 'minor' }, { release: 'patch' }];
 
 module.exports = {
+  // Push over SSH like the git remote. Without this, semantic-release uses the https URL from
+  // package.json "repository", which has no credentials and fails the push check.
+  repositoryUrl: 'git@github.com:labcabrera/rmu-react-shared-lib.git',
   branches: ['master'],
   tagFormat: '${version}',
   plugins: [
