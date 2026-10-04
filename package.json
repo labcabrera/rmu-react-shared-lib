@@ -1,6 +1,6 @@
 {
   "name": "@labcabrera-rmu/rmu-react-shared-lib",
-  "version": "0.1.4",
+  "version": "0.1.5-SNAPSHOT",
   "private": false,
   "description": "RMU React Shared Library",
   "main": "./dist/index.js",
