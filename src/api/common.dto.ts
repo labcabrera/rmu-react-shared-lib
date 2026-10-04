@@ -6,6 +6,11 @@ export type KeyValue = {
   value: number;
 };
 
+export type KeyLabel = {
+  key: string;
+  label: string;
+};
+
 export type NamedEntity = {
   id: string;
   name: string;

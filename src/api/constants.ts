@@ -1,6 +1,8 @@
 import { StatKey, Pace, EquipmentSlot } from './character.dto';
 import { KeyValue } from './common.dto';
+import { ItemRarity } from './item.dto';
 import { RealmType } from './profession.dto';
+import { ListType } from './spell-list.dto';
 
 export const STATS: StatKey[] = ['ag', 'co', 'em', 'in', 'me', 'pr', 'qu', 're', 'sd', 'st'];
 
@@ -24,3 +26,7 @@ export const MANEUVER_DIFFICULTIES: KeyValue[] = [
   { key: 'a', value: -70 },
   { key: 'ni', value: -100 },
 ];
+
+export const ITEM_RARITIES: ItemRarity[] = ['common', 'uncommon', 'rare', 'very-rare'];
+
+export const SPELL_LIST_TYPES: ListType[] = ['open', 'closed', 'base'];

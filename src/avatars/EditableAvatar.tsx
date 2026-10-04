@@ -2,18 +2,21 @@ import React, { FC, useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import ImageSelectorDialog from '../images/ImageSelectorDialog';
 
+const defaultImage = 'https://assets.labcabrera.com/images/generic/configuration.png';
+
 const EditableAvatar: FC<{
-  imageUrl: string;
+  imageUrl: string | null | undefined;
+  altImageUrl?: string;
   variant?: 'circular' | 'rounded' | 'square';
-  images: string[];
   onImageChange: (newImageUrl: string) => void;
-}> = ({ imageUrl, images, variant = 'circular', onImageChange }) => {
+}> = ({ imageUrl, altImageUrl, variant = 'circular', onImageChange }) => {
+  const effectiveImage = imageUrl || altImageUrl || defaultImage;
   const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
     <>
       <Avatar
-        src={imageUrl}
+        src={effectiveImage}
         variant={variant}
         sx={{
           width: {
@@ -32,9 +35,8 @@ const EditableAvatar: FC<{
         onClick={() => setDialogOpen(true)}
       />
       <ImageSelectorDialog
-        value={imageUrl}
+        value={effectiveImage}
         open={dialogOpen}
-        images={images}
         onClose={() => setDialogOpen(false)}
         onSelect={(image) => onImageChange(image)}
       />

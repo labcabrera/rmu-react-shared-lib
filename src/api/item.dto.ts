@@ -1,20 +1,23 @@
-import { NamedEntity } from './common.dto';
-
 export type WeaponModeType = 'one-hand' | 'two-hands';
 export type WeaponAttackType = 'melee' | 'ranged' | 'thrown';
-export type ItemModifierType = 'bonus' | 'breakage' | 'skill-bonus' | 'material';
 export type ItemArmorSlot = 'head' | 'body' | 'arms' | 'legs';
+export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'very-rare';
+export type ItemModifierType = 'bonus' | 'item-damage' | 'skill-bonus' | 'material' | 'slayer';
+export type OptionType = 'required' | 'optional' | 'forbidden';
 
 export type Item = {
   id: string;
-  realm: NamedEntity | undefined;
+  name: string;
+  realmId: string | null;
   category: string;
-  weapon: ItemWeapon | undefined;
-  armor: ItemArmor | undefined;
-  shield: ItemShield | undefined;
+  weapon: ItemWeapon | null;
+  armor: ItemArmor | null;
+  shield: ItemShield | null;
+  modifiers: ItemModifier[] | null;
   info: ItemInfo;
-  description: string | undefined;
-  imageUrl?: string;
+  description: string | null;
+  imageUrl: string;
+  owner: string;
 };
 
 export type ItemWeapon = {
@@ -27,9 +30,9 @@ export type ItemArmor = {
   slot: ItemArmorSlot;
   at: number;
   enc: number;
-  maneuver: number;
+  maneuverPenalty: number;
   rangedPenalty: number;
-  perception: number;
+  perceptionPenalty: number;
   baseDifficulty: string;
 };
 
@@ -39,6 +42,7 @@ export type WeaponMode = {
   attackTable: string;
   fumbleTable: string;
   sizeAdjustment: number;
+  ranges: WeaponRange[] | null;
 };
 
 export type WeaponRange = {
@@ -52,25 +56,29 @@ export type ItemShield = {
   blockCount: number;
 };
 
+export type ItemCost = {
+  min: number;
+  average: number;
+  max: number;
+};
+
 export type ItemInfo = {
-  cost: {
-    min: number;
-    average: number;
-    max: number;
-  };
+  cost: ItemCost | null;
   length: number | null;
   weight: number | null;
-  weightPercent: number | null;
   strength: number | null;
   productionHours: number | null;
   stackable: boolean;
+  rarity: ItemRarity;
+  unique: boolean;
 };
 
 export interface ItemModifier {
-  readonly id: string;
-  readonly type: ItemModifierType;
-  readonly modifier: string | undefined;
-  readonly value: number | undefined;
+  id: string;
+  type: ItemModifierType;
+  value: number | null;
+  modifier: string | null;
+  specialization: string | null;
 }
 
 export interface CreateItemDto {
@@ -94,4 +102,12 @@ export interface UpdateItemDto {
   stackable: boolean | undefined;
   description: string | undefined;
   imageUrl: string | undefined;
+}
+
+export interface ItemModifierOption {
+  modifierType: ItemModifierType;
+  selectorType: string;
+  value: OptionType;
+  modifier: OptionType;
+  specialization: OptionType;
 }

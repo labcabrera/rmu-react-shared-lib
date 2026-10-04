@@ -1,0 +1,30 @@
+import { Stack, Typography } from '@mui/material';
+
+export default function StatRow({
+  label,
+  value,
+  danger,
+  success,
+}: {
+  label: string;
+  value: string | number;
+  danger?: boolean;
+  success?: boolean;
+}) {
+  return (
+    <Stack direction="row" sx={{ py: 0.5, justifyContent: 'space-between' }}>
+      <Typography variant="body1" color="secondary">
+        {label}
+      </Typography>
+      <Typography
+        variant="body1"
+        sx={{
+          fontWeight: 600,
+          color: success ? 'success.main' : danger ? 'error.main' : 'primary.main',
+        }}
+      >
+        {value}
+      </Typography>
+    </Stack>
+  );
+}

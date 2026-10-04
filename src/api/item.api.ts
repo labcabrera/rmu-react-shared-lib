@@ -1,7 +1,7 @@
 import { AuthContextProps } from 'react-oidc-context';
 import { apiItemsUrl } from '../config/config.service';
 import callApi, { Page } from './api';
-import { CreateItemDto, Item, UpdateItemDto } from './item.dto';
+import { CreateItemDto, Item, ItemModifierOption, UpdateItemDto } from './item.dto';
 
 export async function fetchItem(itemId: string, auth: AuthContextProps): Promise<Item> {
   const url = `${apiItemsUrl}/items/${itemId}`;
@@ -39,4 +39,9 @@ export async function updateItem(itemId: string, dto: UpdateItemDto, auth: AuthC
 export async function deleteItem(itemId: string, auth: AuthContextProps): Promise<void> {
   const url = `${apiItemsUrl}/items/${itemId}`;
   return await callApi(auth, url, { method: 'DELETE' });
+}
+
+export async function fetchItemModifierOptions(auth: AuthContextProps): Promise<ItemModifierOption[]> {
+  const url = `${apiItemsUrl}/item-modifiers/options`;
+  return await callApi(auth, url, { method: 'GET' });
 }

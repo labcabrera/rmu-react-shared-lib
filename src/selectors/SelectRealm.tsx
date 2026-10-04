@@ -23,6 +23,7 @@ const SelectRealm: FC<{
       options={realms}
       getOptionLabel={(option) => option.name}
       onChange={(_, newValue) => handleChange(newValue?.id || '')}
+      fullWidth
       renderInput={(params) => <TextField {...params} label={t('realm')} fullWidth error={required && !value} />}
     />
   );

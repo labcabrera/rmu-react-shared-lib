@@ -15,6 +15,7 @@ export interface Character {
   statistics: Record<StatKey, CharacterStat>;
   resistances: CharacterResistance[];
   hp: CharacterHP;
+  power: CharacterPower | null;
   movement: CharacterMovement;
   initiative: CharacterInitiative;
   defense: CharacterDefense;
@@ -123,6 +124,11 @@ export interface CharacterInitiative {
 }
 
 export interface CharacterHP {
+  max: number;
+  current: number;
+}
+
+export interface CharacterPower {
   max: number;
   current: number;
 }
@@ -284,4 +290,5 @@ export interface UpdateTemporaryStatDto {
 export interface StatCreationDto {
   potential: number;
   temporary: number;
+  racial: number | undefined;
 }
