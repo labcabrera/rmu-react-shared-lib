@@ -1,7 +1,8 @@
 import React, { FC, ReactNode } from 'react';
 import { Card, CardContent, CardMedia } from '@mui/material';
+import { resolveAssetUrl } from '../config/asset-url';
 
-const defaultImage = 'https://assets.labcabrera.com/images/generic/configuration.png';
+const defaultImage = 'images/generic/configuration.png';
 const smallImageSize = 70;
 
 const RmuCard: FC<{
@@ -39,7 +40,7 @@ const RmuCard: FC<{
     >
       <CardMedia
         component="img"
-        image={effectiveImage}
+        image={resolveAssetUrl(effectiveImage)}
         sx={{
           width: height || smallImageSize,
           height: height || smallImageSize,
@@ -60,7 +61,7 @@ const RmuCard: FC<{
           ml: 2,
           maxWidth: '100%',
           minWidth: 0,
-          backgroundImage: contentBgImage ? `url(${contentBgImage})` : undefined,
+          backgroundImage: contentBgImage ? `url(${resolveAssetUrl(contentBgImage)})` : undefined,
           backgroundSize: contentBgImage ? 'cover' : undefined,
           backgroundPosition: contentBgImage ? 'center' : undefined,
           backgroundRepeat: contentBgImage ? 'no-repeat' : undefined,

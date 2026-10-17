@@ -1,8 +1,9 @@
 import React, { FC, useState } from 'react';
 import Avatar from '@mui/material/Avatar';
+import { resolveAssetUrl } from '../config/asset-url';
 import ImageSelectorDialog from '../images/ImageSelectorDialog';
 
-const defaultImage = 'https://assets.labcabrera.com/images/generic/configuration.png';
+const defaultImage = 'images/generic/configuration.png';
 
 const EditableAvatar: FC<{
   imageUrl: string | null | undefined;
@@ -16,7 +17,7 @@ const EditableAvatar: FC<{
   return (
     <>
       <Avatar
-        src={effectiveImage}
+        src={resolveAssetUrl(effectiveImage)}
         variant={variant}
         sx={{
           width: {

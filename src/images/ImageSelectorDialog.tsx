@@ -51,7 +51,8 @@ export default function ImageSelectorDialog({
 
   const handleSelect = () => {
     if (!selectedImage) return;
-    onImageSelected(selectedImage.url);
+    // Store the path relative to the assets root (see config/asset-url.ts), not the public URL.
+    onImageSelected(selectedImage.storageKey || selectedImage.url);
     onClose();
   };
 

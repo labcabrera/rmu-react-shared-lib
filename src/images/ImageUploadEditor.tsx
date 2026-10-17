@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import { uploadImage } from '../api/image.api';
 import { IMAGE_CATEGORIES, ImageCategory, MediaImage } from '../api/image.dto';
+import { resolveAssetUrl } from '../config/asset-url';
 
 export type ImageUploadEditorProps = {
   value?: string;
@@ -145,7 +146,7 @@ export default function ImageUploadEditor({
           ) : value ? (
             <Box
               component="img"
-              src={value}
+              src={resolveAssetUrl(value)}
               alt={altText || 'Selected image'}
               sx={{ width, height, objectFit: 'cover' }}
             />
