@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import { fetchImages } from '../api/image.api';
 import { ImageCategory, MediaImage, MediaImagePage } from '../api/image.dto';
+import { resolveAssetUrl } from '../config/asset-url';
 
 export type ImageCategorySelectorProps = {
   defaultCategory?: ImageCategory;
@@ -109,7 +110,11 @@ export default function ImageCategorySelector({
                   },
                 }}
               >
-                <img src={image.url} alt={image.altText || image.originalFilename || image.category} loading="lazy" />
+                <img
+                  src={resolveAssetUrl(image.storageKey || image.url)}
+                  alt={image.altText || image.originalFilename || image.category}
+                  loading="lazy"
+                />
                 <ImageListItemBar
                   title={image.altText || image.originalFilename || image.category}
                   subtitle={image.category}

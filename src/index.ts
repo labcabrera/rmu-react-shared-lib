@@ -17,6 +17,7 @@ export { default as RmuIconButton } from './buttons/RmuIconButton';
 export { default as SaveButton } from './buttons/SaveButton';
 
 export * from './config/config.service';
+export * from './config/asset-url';
 
 export { default as RmuCard } from './cards/RmuCard';
 export { default as RmuTextCard } from './cards/RmuTextCard';

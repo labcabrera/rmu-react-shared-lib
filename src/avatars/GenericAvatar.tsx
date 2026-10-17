@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import Avatar from '@mui/material/Avatar';
+import { resolveAssetUrl } from '../config/asset-url';
 
 const GenericAvatar: FC<{
   imageUrl: string;
@@ -7,7 +8,7 @@ const GenericAvatar: FC<{
 }> = ({ imageUrl, variant = 'circular' }) => {
   return (
     <Avatar
-      src={imageUrl}
+      src={resolveAssetUrl(imageUrl)}
       variant={variant}
       sx={{
         width: {
