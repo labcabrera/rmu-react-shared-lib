@@ -1,11 +1,13 @@
 import React, { ReactNode } from 'react';
 import { Box, Card, CardContent, Container, Grid, Stack, useMediaQuery, useTheme } from '@mui/material';
 import RmuBreadcrumbs from '../breadcrumbs/RmuBreadcrumbs';
+import { enterSx } from '../motion/motion';
 
 export default function LayoutBase({
   breadcrumbs,
   actions,
   leftPanel,
+  plain = false,
   children,
 }: {
   breadcrumbs?: {
@@ -14,6 +16,8 @@ export default function LayoutBase({
   }[];
   actions?: ReactNode;
   leftPanel?: ReactNode | null;
+  /** Content without the surrounding card, for pages that lay out their own cards (dashboards). */
+  plain?: boolean;
   children: ReactNode;
 }) {
   const theme = useTheme();
@@ -35,9 +39,20 @@ export default function LayoutBase({
     </>
   );
 
+  if (plain) {
+    return (
+      <Container maxWidth="xl" disableGutters={isMobile}>
+        <Box sx={[{ p: 1 }, enterSx()]}>
+          {headerSection}
+          <Box sx={{ mt: 1 }}>{children}</Box>
+        </Box>
+      </Container>
+    );
+  }
+
   if (isMobile) {
     return (
-      <Box sx={{ p: 1 }}>
+      <Box sx={[{ p: 1 }, enterSx()]}>
         {headerSection}
         <Card variant="elevation" elevation={0} sx={{ mt: 1 }}>
           <CardContent>
@@ -51,7 +66,7 @@ export default function LayoutBase({
 
   return (
     <Container maxWidth="xl">
-      <Box sx={{ p: 1 }}>
+      <Box sx={[{ p: 1 }, enterSx()]}>
         {headerSection}
         <Card variant="elevation" elevation={0} sx={{ mt: 1 }}>
           <CardContent>

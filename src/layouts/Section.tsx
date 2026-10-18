@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Box, Card, CardContent, Divider, Typography } from '@mui/material';
+import { alpha, Box, Card, CardContent, Divider, Typography } from '@mui/material';
 
 export default function Section({
   title,
@@ -19,10 +19,10 @@ export default function Section({
         height: '100%',
         // Former default elevation 0.7 (not a valid MUI elevation): no shadow and a 2.5% overlay in dark mode.
         ...(elevation === undefined && {
-          backgroundImage: (theme) =>
-            theme.palette.mode === 'dark'
-              ? 'linear-gradient(rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.025))'
-              : 'none',
+          backgroundImage: (theme) => {
+            const overlay = alpha(theme.palette.common.white, 0.025);
+            return theme.palette.mode === 'dark' ? `linear-gradient(${overlay}, ${overlay})` : 'none';
+          },
         }),
       }}
     >

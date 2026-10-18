@@ -9,7 +9,7 @@ import LayoutBase from '../layouts/LayoutBase';
 import EmptyState from '../ui/states/EmptyState';
 import ErrorState from '../ui/states/ErrorState';
 import LoadingState from '../ui/states/LoadingState';
-import CardGrid from './CardGrid';
+import CollectionView, { CollectionConfig, CollectionModeSwitch, useCollectionMode } from './CollectionView';
 import { bottomOffset, usePhone } from './responsive';
 import { Breadcrumb } from './types';
 
@@ -25,6 +25,8 @@ export interface ListPageProps<T> {
   /** Extra header actions, shown before refresh and add. */
   actions?: ReactNode[];
   emptyState?: ReactNode;
+  /** Other views of the items (table, grouped) and the size of the cards; without it, a card grid. */
+  collection?: CollectionConfig<T>;
   children?: ReactNode;
 }
 
@@ -38,12 +40,16 @@ export default function ListPage<T>({
   onAdd,
   actions = [],
   emptyState,
+  collection,
   children,
 }: ListPageProps<T>) {
   const { t } = useTranslation();
   const isPhone = usePhone();
   const { items, error } = query;
+  const modes = collection?.modes ?? ['cards'];
+  const [mode, setMode] = useCollectionMode(collection?.storageKey ?? 'default', modes);
   const headerActions = [
+    ...(modes.length > 1 ? [<CollectionModeSwitch key="mode" modes={modes} value={mode} onChange={setMode} />] : []),
     ...actions.map((action, index) => <React.Fragment key={`action-${index}`}>{action}</React.Fragment>),
     <RefreshButton key="refresh" onClick={query.refresh} />,
     ...(onAdd && !isPhone
@@ -59,7 +65,8 @@ export default function ListPage<T>({
   if (error && !items) content = <ErrorState error={error} onRetry={query.refresh} />;
   else if (!items) content = <LoadingState variant="cards" />;
   else if (items.length === 0) content = emptyState ?? <EmptyState />;
-  else content = <CardGrid items={items} renderItem={renderItem} getKey={getKey} />;
+  else
+    content = <CollectionView items={items} getKey={getKey} renderItem={renderItem} mode={mode} config={collection} />;
 
   return (
     <LayoutBase breadcrumbs={breadcrumbs} actions={headerActions}>

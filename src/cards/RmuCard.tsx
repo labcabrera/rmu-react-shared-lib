@@ -1,6 +1,7 @@
 import React, { FC, ReactNode } from 'react';
 import { Card, CardActionArea, CardContent, CardMedia } from '@mui/material';
 import { resolveAssetUrl } from '../config/asset-url';
+import { hoverLiftSx } from '../motion/motion';
 
 const defaultImage = 'images/generic/configuration.png';
 const smallImageSize = 70;
@@ -60,19 +61,15 @@ const RmuCard: FC<{
   return (
     <Card
       variant="outlined"
-      sx={{
-        display: 'flex',
-        alignItems: 'stretch',
-        height: height || smallImageSize,
-        cursor: onClick ? 'pointer' : 'default',
-        ...(onClick && {
-          transition: 'box-shadow 0.2s, background 0.2s',
-          '&:hover': {
-            boxShadow: 6,
-            backgroundColor: 'action.hover',
-          },
-        }),
-      }}
+      sx={[
+        {
+          display: 'flex',
+          alignItems: 'stretch',
+          height: height || smallImageSize,
+          cursor: onClick ? 'pointer' : 'default',
+        },
+        Boolean(onClick) && hoverLiftSx,
+      ]}
     >
       {onClick ? (
         <CardActionArea

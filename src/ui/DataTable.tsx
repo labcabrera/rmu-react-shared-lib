@@ -31,12 +31,15 @@ export default function DataTable<T>({
   getKey,
   cardsOnMobile = true,
   size = 'small',
+  onRowClick,
 }: {
   columns: DataTableColumn<T>[];
   rows: T[];
   getKey: (row: T) => string;
   cardsOnMobile?: boolean;
   size?: 'small' | 'medium';
+  /** Makes rows (cards on phones) clickable. */
+  onRowClick?: (row: T) => void;
 }) {
   const theme = useTheme();
   const isPhone = useMediaQuery(theme.breakpoints.down('sm'));
@@ -45,7 +48,12 @@ export default function DataTable<T>({
     return (
       <Stack spacing={1}>
         {rows.map((row) => (
-          <Card key={getKey(row)} variant="outlined">
+          <Card
+            key={getKey(row)}
+            variant="outlined"
+            onClick={onRowClick ? () => onRowClick(row) : undefined}
+            sx={onRowClick ? { cursor: 'pointer' } : undefined}
+          >
             <CardContent sx={{ py: 1, '&:last-child': { pb: 1 } }}>
               {columns.map((column) => (
                 <Stack key={column.key} direction="row" sx={{ justifyContent: 'space-between', gap: 2, py: 0.25 }}>
@@ -78,7 +86,12 @@ export default function DataTable<T>({
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={getKey(row)}>
+            <TableRow
+              key={getKey(row)}
+              hover={Boolean(onRowClick)}
+              onClick={onRowClick ? () => onRowClick(row) : undefined}
+              sx={onRowClick ? { cursor: 'pointer' } : undefined}
+            >
               {columns.map((column) => (
                 <TableCell key={column.key} align={column.align}>
                   {column.render(row)}

@@ -1,5 +1,7 @@
-// Color tokens of the RMU palette. Components read them through the MUI theme (theme.palette.*),
-// never directly: these values only feed createAppTheme.
+// Design tokens of the RMU applications. Components read them through the MUI theme
+// (theme.palette.*, theme.shape.radius, theme.motion...), never directly: these values only feed createAppTheme.
+
+/** Original slate palette. Kept for the slate preset and for consumers that still import it. */
 export const baseColors = {
   scrollbarTrack: '#0f1115',
   scrollbarThumb: '#2a2f3a',
@@ -43,5 +45,37 @@ export const baseColors = {
     error: '#f97249',
     warning: '#c8c830',
     info: '#64b5f6',
+  },
+} as const;
+
+/** Corner radius scale in px. `shape.borderRadius` (the `sx` unit) is set per preset. */
+export const radius = { sm: 8, md: 12, lg: 16, xl: 24 } as const;
+
+/** Durations (ms) and easing curves for transitions. */
+export const motion = {
+  duration: { fast: 150, base: 240, slow: 360 },
+  easing: {
+    standard: 'cubic-bezier(0.2, 0, 0, 1)',
+    emphasized: 'cubic-bezier(0.2, 0.9, 0.2, 1)',
+    exit: 'cubic-bezier(0.3, 0, 1, 1)',
+  },
+} as const;
+
+/** Font stacks. The shell (and Storybook) bundle the webfonts from @fontsource; until they load, the fallbacks apply. */
+export const fonts = {
+  ui: '"Inter Variable", "Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+  serif: '"Cormorant Garamond", "Georgia", "Times New Roman", serif',
+  engraved: '"Cinzel", "Georgia", "Times New Roman", serif',
+} as const;
+
+/** Game colors shared by every preset unless the preset overrides them. */
+export const gameColors = {
+  dark: {
+    resource: { hp: '#ef7a76', pp: '#7fb2ff', xp: '#e6c15a', fatigue: '#e0a165' },
+    rarity: { common: '#b4bcbf', uncommon: '#7ccf86', rare: '#6fa8f5', veryRare: '#b892f0', unique: '#f0b44c' },
+  },
+  light: {
+    resource: { hp: '#c62828', pp: '#1e5bb8', xp: '#8a6a08', fatigue: '#a8561a' },
+    rarity: { common: '#5f6b6e', uncommon: '#2e7d32', rare: '#1e5bb8', veryRare: '#7340b8', unique: '#9a6200' },
   },
 } as const;

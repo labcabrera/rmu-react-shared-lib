@@ -1,10 +1,11 @@
 import React, { ReactNode } from 'react';
 import { Grid } from '@mui/material';
 import { gridSizeCard } from '../layouts/grid';
+import { enterSx } from '../motion/motion';
 
 type GridSize = Partial<Record<'xs' | 'sm' | 'md' | 'lg' | 'xl', number>>;
 
-/** Responsive grid of cards: one column on phones, up to four on desktop. */
+/** Responsive grid of cards: one column on phones, up to four on desktop. The cards enter staggered. */
 export default function CardGrid<T>({
   items,
   renderItem,
@@ -18,8 +19,8 @@ export default function CardGrid<T>({
 }) {
   return (
     <Grid container spacing={1}>
-      {items.map((item) => (
-        <Grid key={getKey(item)} size={size}>
+      {items.map((item, index) => (
+        <Grid key={getKey(item)} size={size} sx={enterSx(index)}>
           {renderItem(item)}
         </Grid>
       ))}

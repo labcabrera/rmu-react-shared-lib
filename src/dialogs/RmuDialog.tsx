@@ -17,9 +17,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { TransitionProps } from '@mui/material/transitions';
 import GenericAvatar from '../avatars/GenericAvatar';
-import { baseColors } from '../theme/tokens';
-
-const dialog = baseColors.dark;
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -68,10 +65,10 @@ const RmuDialog: FC<{
   // Full screen on phones unless the caller decides.
   const isPhone = useMediaQuery(theme.breakpoints.down('sm'));
   const paperBaseSx: SxProps<Theme> = {
-    backgroundColor: (theme) => (theme.palette.mode === 'dark' ? dialog.dialogPaper : theme.palette.background.paper),
+    backgroundColor: 'background.paper',
     backgroundImage: (theme) =>
       theme.palette.mode === 'dark'
-        ? `linear-gradient(135deg, ${dialog.dialogPaperGradientStart} 0%, ${dialog.dialogPaperGradientMiddle} 52%, ${dialog.dialogPaperGradientEnd} 100%)`
+        ? `linear-gradient(135deg, ${theme.palette.background.paper} 0%, ${theme.palette.background.light} 52%, ${theme.palette.background.paper} 100%)`
         : undefined,
     border: (theme) =>
       theme.palette.mode === 'dark' ? `1px solid ${alpha(theme.palette.primary.light, 0.18)}` : undefined,
@@ -93,10 +90,10 @@ const RmuDialog: FC<{
         sx={{
           px: 3,
           py: 2,
-          backgroundColor: (theme) => (theme.palette.mode === 'dark' ? dialog.dialogTitle : theme.palette.grey[100]),
+          backgroundColor: 'background.light',
           backgroundImage: (theme) =>
             theme.palette.mode === 'dark'
-              ? `linear-gradient(90deg, ${dialog.dialogTitleGradientStart} 0%, ${alpha(theme.palette.primary.dark, 0.34)} 52%, ${dialog.dialogTitleGradientEnd} 100%)`
+              ? `linear-gradient(90deg, ${theme.palette.background.light} 0%, ${alpha(theme.palette.primary.dark, 0.2)} 52%, ${theme.palette.background.paper} 100%)`
               : undefined,
           borderBottom: (theme) =>
             `1px solid ${theme.palette.mode === 'dark' ? alpha(theme.palette.primary.light, 0.22) : theme.palette.divider}`,
@@ -122,8 +119,7 @@ const RmuDialog: FC<{
         sx={{
           px: 3,
           py: 2.5,
-          backgroundColor: (theme) =>
-            theme.palette.mode === 'dark' ? dialog.dialogContent : theme.palette.background.paper,
+          backgroundColor: 'background.paper',
           backgroundImage: (theme) =>
             theme.palette.mode === 'dark'
               ? `linear-gradient(180deg, ${alpha(theme.palette.common.white, 0.018)} 0%, transparent 36%)`
@@ -137,8 +133,7 @@ const RmuDialog: FC<{
         sx={{
           px: 3,
           py: 1.5,
-          backgroundColor: (theme) =>
-            theme.palette.mode === 'dark' ? dialog.dialogActions : theme.palette.background.paper,
+          backgroundColor: 'background.paper',
           borderTop: (theme) =>
             `1px solid ${theme.palette.mode === 'dark' ? alpha(theme.palette.primary.light, 0.16) : theme.palette.divider}`,
         }}

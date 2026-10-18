@@ -21,6 +21,8 @@ export * from './config/asset-url';
 
 export { default as RmuCard } from './cards/RmuCard';
 export { default as RmuTextCard } from './cards/RmuTextCard';
+export { default as EntityCard } from './cards/EntityCard';
+export type { EntityMetric } from './cards/EntityCard';
 
 export { default as DeleteDialog } from './dialogs/DeleteDialog';
 export { default as OpenEndedRollDialog } from './dialogs/OpenEndedRollDialog';
@@ -38,6 +40,11 @@ export { default as ImageUploadEditor } from './images/ImageUploadEditor';
 
 export { default as LayoutBase } from './layouts/LayoutBase';
 export { default as Section } from './layouts/Section';
+export { default as HeroHeader } from './layouts/HeroHeader';
+export type { HeroHeaderProps } from './layouts/HeroHeader';
+export { default as Panel } from './layouts/Panel';
+export { default as SectionNav, useSectionParam } from './layouts/SectionNav';
+export type { SectionDef } from './layouts/SectionNav';
 
 export { default as ClearableTextField } from './inputs/ClearableTextField';
 export { default as NumericInput } from './inputs/NumericInput';
@@ -102,9 +109,13 @@ export * from './api/trait.api';
 export * from './api/trait.dto';
 
 // Theme
-export { createAppTheme } from './theme/createAppTheme';
-export type { ThemeMode } from './theme/createAppTheme';
+export { createAppTheme, defaultThemeConfig, parseThemeConfig, presetSwatch } from './theme/createAppTheme';
+export type { ThemeConfig, ThemeDensity, ThemeMode, ThemePreset } from './theme/createAppTheme';
+export { themePresetNames } from './theme/presets';
 export { baseColors } from './theme/tokens';
+
+// Motion
+export { enterSx, hoverLiftSx, useViewTransitionNavigate, viewTransitionName } from './motion/motion';
 
 // App
 export { default as MfeRoot } from './app/MfeRoot';
@@ -137,6 +148,13 @@ export type { DetailPageProps } from './templates/DetailPage';
 export { default as FormPage } from './templates/FormPage';
 export type { FormPageProps } from './templates/FormPage';
 export { default as CardGrid } from './templates/CardGrid';
+export {
+  default as CollectionView,
+  CollectionModeSwitch,
+  gridSizeShowcase,
+  useCollectionMode,
+} from './templates/CollectionView';
+export type { CollectionConfig, CollectionMode } from './templates/CollectionView';
 export { default as FilterBar } from './templates/FilterBar';
 export { default as SearchField } from './templates/SearchField';
 export type { Breadcrumb } from './templates/types';
@@ -146,6 +164,7 @@ export { default as EntitySelect } from './ui/EntitySelect';
 export type { EntitySelectProps } from './ui/EntitySelect';
 export { default as DataTable } from './ui/DataTable';
 export type { DataTableColumn } from './ui/DataTable';
+export { default as PreviewDrawer } from './ui/PreviewDrawer';
 export { rsqlAnd } from './data/rsql';
 
 // Rolemaster-specific selects shared by several MFEs
@@ -154,3 +173,10 @@ export { default as RollBreakdown, useModifierLabel } from './rmu/RollBreakdown'
 export type { RollModifier, RollModifierGroup } from './rmu/RollBreakdown';
 export { default as EffectList } from './rmu/EffectList';
 export type { ActorEffect, ActorPenalty } from './rmu/EffectList';
+export { default as AttackCard } from './rmu/character/AttackCard';
+export { default as ResistanceList } from './rmu/character/ResistanceList';
+export { default as ResourceBar } from './rmu/character/ResourceBar';
+export type { ResourceKind } from './rmu/character/ResourceBar';
+export { default as SkillGroupList } from './rmu/character/SkillGroupList';
+export { default as StatBlock, statKeys } from './rmu/character/StatBlock';
+export { default as StatPill, formatBonus } from './rmu/character/StatPill';

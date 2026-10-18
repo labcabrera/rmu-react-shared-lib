@@ -10,6 +10,7 @@ import { EntityState } from '../data/useEntity';
 import DeleteDialog from '../dialogs/DeleteDialog';
 import NotFound from '../display/NotFound';
 import TechnicalInfo from '../display/TechnicalInfo';
+import HeroHeader, { HeroHeaderProps } from '../layouts/HeroHeader';
 import LayoutBase from '../layouts/LayoutBase';
 import ErrorState from '../ui/states/ErrorState';
 import LoadingState from '../ui/states/LoadingState';
@@ -22,6 +23,11 @@ export interface DetailPageProps<T> {
   entity: EntityState<T>;
   children: (entity: T) => ReactNode;
   leftPanel?: (entity: T) => ReactNode;
+  /**
+   * Header with the entity's image, title and key numbers, in place of the side panel. It sticks while
+   * scrolling, holds the page actions, and the content takes the full width without a surrounding card.
+   */
+  hero?: (entity: T) => Omit<HeroHeaderProps, 'actions'>;
   /** Title of the collapsed side panel on phones (usually the entity name). Defaults to "Summary". */
   summaryTitle?: (entity: T) => ReactNode;
   onEdit?: (entity: T) => void;
@@ -41,6 +47,7 @@ export default function DetailPage<T>({
   entity: state,
   children,
   leftPanel,
+  hero,
   summaryTitle,
   onEdit,
   onDelete,
@@ -86,6 +93,38 @@ export default function DetailPage<T>({
     ...(onDelete ? [<DeleteButton key="delete" onClick={() => setDeleteOpen(true)} />] : []),
   ];
 
+  const technical = technicalInfo && (
+    <TechnicalInfo>
+      <pre>{JSON.stringify(entity, null, 2)}</pre>
+    </TechnicalInfo>
+  );
+  const deleteDialog = onDelete && (
+    <DeleteDialog
+      open={deleteOpen}
+      message={
+        typeof deleteMessage === 'function'
+          ? deleteMessage(entity)
+          : (deleteMessage ?? t('confirmation-delete-message'))
+      }
+      onClose={() => setDeleteOpen(false)}
+      onDelete={() => {
+        setDeleteOpen(false);
+        onDelete(entity);
+      }}
+    />
+  );
+
+  if (hero) {
+    return (
+      <LayoutBase breadcrumbs={breadcrumbs} plain>
+        <HeroHeader {...hero(entity)} actions={headerActions} />
+        <Box sx={{ mt: 2 }}>{children(entity)}</Box>
+        {technical}
+        {deleteDialog}
+      </LayoutBase>
+    );
+  }
+
   return (
     <LayoutBase breadcrumbs={breadcrumbs} actions={headerActions} leftPanel={isPhone ? undefined : leftPanel?.(entity)}>
       {isPhone && leftPanel && (
@@ -102,26 +141,8 @@ export default function DetailPage<T>({
         </Accordion>
       )}
       {children(entity)}
-      {technicalInfo && (
-        <TechnicalInfo>
-          <pre>{JSON.stringify(entity, null, 2)}</pre>
-        </TechnicalInfo>
-      )}
-      {onDelete && (
-        <DeleteDialog
-          open={deleteOpen}
-          message={
-            typeof deleteMessage === 'function'
-              ? deleteMessage(entity)
-              : (deleteMessage ?? t('confirmation-delete-message'))
-          }
-          onClose={() => setDeleteOpen(false)}
-          onDelete={() => {
-            setDeleteOpen(false);
-            onDelete(entity);
-          }}
-        />
-      )}
+      {technical}
+      {deleteDialog}
     </LayoutBase>
   );
 }
