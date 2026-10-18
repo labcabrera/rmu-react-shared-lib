@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { FC, useEffect, useState } from 'react';
-import { Grid } from '@mui/material';
+import React, { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Grid, Typography } from '@mui/material';
 import ClearButton from '../buttons/ClearButton';
 import NumericInput from './NumericInput';
 
@@ -10,100 +11,132 @@ const BOTTOM_LIMIT = 5;
 export type OpenEndedRollProps = {
   gridColumns?: number;
   inputGridSize?: number;
+  /**
+   * Called with the final result once the roll is complete (each field is committed on blur or Enter), and with `null`
+   * when it is cleared. It is not called again for the same result.
+   */
   onChange: (result: number | null) => void;
+  /**
+   * A stored result to show, e.g. a roll saved earlier. A result from 6 to 95 fills the first field; any other one is
+   * shown as a caption, since the dice behind it are unknown. When it changes to something other than the last
+   * result, the fields are reset to it.
+   */
+  value?: number | null;
+  /** Label of the first field. Defaults to the `open-ended-roll` translation. */
+  label?: string;
+  disabled?: boolean;
 };
 
-const OpenEndedRollInput: FC<OpenEndedRollProps> = ({ gridColumns = 12, inputGridSize = 2, onChange }) => {
-  const [rolls, setRolls] = useState<Array<number | null>>(() => {
-    return [null];
-  });
+const rollsFromValue = (value: number | null | undefined): Array<number | null> =>
+  value !== null && value !== undefined && value > BOTTOM_LIMIT && value < TOP_LIMIT ? [value] : [null];
 
-  const finalizeIfDone = (currentRolls: Array<number | null>) => {
-    if (currentRolls.length === 0) return;
-    const first = currentRolls[0];
-    if (first === null) return;
-    if (first > BOTTOM_LIMIT && first < TOP_LIMIT) {
-      onChange(first);
-      return;
-    }
-    if (first >= TOP_LIMIT) {
-      if (currentRolls.some((r) => r === null)) return;
-      const last = currentRolls[currentRolls.length - 1] as number;
-      if (last >= TOP_LIMIT) return; // still exploding
-      const sum = currentRolls.reduce((s, r) => s! + (r || 0), 0);
-      onChange(sum);
-      return;
-    }
-    if (first <= BOTTOM_LIMIT) {
-      if (currentRolls.some((r, idx) => idx > 0 && r === null)) return;
-      const last = currentRolls[currentRolls.length - 1] as number;
-      if (last >= TOP_LIMIT) return; // still exploding negatively
-      const rest = currentRolls.slice(1).reduce((s, r) => s! + (r || 0), 0)!;
-      onChange(first - rest);
-      return;
-    }
-  };
+/** Final result of the rolls, or `undefined` while a roll is still missing (open-ended rolls ask for another die). */
+export const computeOpenEndedResult = (rolls: Array<number | null>): number | undefined => {
+  if (rolls.length === 0) return undefined;
+  const first = rolls[0];
+  if (first === null) return undefined;
+  if (first > BOTTOM_LIMIT && first < TOP_LIMIT) return first;
+  if (first >= TOP_LIMIT) {
+    if (rolls.some((r) => r === null)) return undefined;
+    const last = rolls[rolls.length - 1] as number;
+    if (last >= TOP_LIMIT) return undefined; // still exploding
+    return rolls.reduce<number>((s, r) => s + (r || 0), 0);
+  }
+  if (rolls.some((r, idx) => idx > 0 && r === null)) return undefined;
+  const last = rolls[rolls.length - 1] as number;
+  if (rolls.length > 1 && last >= TOP_LIMIT) return undefined; // still exploding negatively
+  const rest = rolls.slice(1).reduce<number>((s, r) => s + (r || 0), 0);
+  return first - rest;
+};
 
-  const handleValueChange = (index: number, roll: number) => {
+const OpenEndedRollInput: FC<OpenEndedRollProps> = ({
+  gridColumns = 12,
+  inputGridSize = 2,
+  onChange,
+  value,
+  label,
+  disabled = false,
+}) => {
+  const { t } = useTranslation();
+  const [rolls, setRolls] = useState<Array<number | null>>(() => rollsFromValue(value));
+  // Last result reported to (or received from) the parent, so the same result is not sent twice.
+  const lastResult = useRef<number | null>(value ?? null);
+
+  const handleValueChange = (index: number, roll: number | null) => {
     setRolls((prev) => {
-      const copy = prev ? prev.slice(0, index) : [];
+      const copy = prev.slice(0, index);
       copy[index] = roll;
+      if (index !== prev.length - 1 || roll === null) return copy;
       const first = copy[0];
-      if (index === (prev ? prev.length - 1 : 0)) {
-        if (first === null) {
-          if (copy[0] === null) return copy;
-        }
-        if (copy.length === 1 && roll !== null) {
-          if (roll >= TOP_LIMIT || roll <= BOTTOM_LIMIT) {
-            copy.push(null);
-            return copy;
-          }
-          return copy;
-        }
-        if (first !== null && first >= TOP_LIMIT) {
-          if (roll === null) return copy;
-          if (roll >= TOP_LIMIT) {
-            copy.push(null);
-            return copy;
-          }
-          return copy;
-        }
-        if (first !== null && first <= BOTTOM_LIMIT) {
-          if (roll === null) return copy;
-          if (roll >= TOP_LIMIT) {
-            copy.push(null);
-            return copy;
-          }
-          return copy;
-        }
+      if (copy.length === 1) {
+        if (roll >= TOP_LIMIT || roll <= BOTTOM_LIMIT) copy.push(null);
+        return copy;
       }
+      if (first !== null && roll >= TOP_LIMIT) copy.push(null);
       return copy;
     });
   };
 
   const onClear = () => {
     setRolls([null]);
-    onChange(null);
+    if (lastResult.current !== null) {
+      lastResult.current = null;
+      onChange(null);
+    }
+  };
+
+  // Enter commits the field like a blur does.
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' && e.target instanceof HTMLInputElement) {
+      e.preventDefault();
+      e.target.blur();
+    }
   };
 
   useEffect(() => {
-    finalizeIfDone(rolls);
+    const result = computeOpenEndedResult(rolls);
+    if (result === undefined || result === lastResult.current) return;
+    lastResult.current = result;
+    onChange(result);
   }, [rolls]);
 
+  useEffect(() => {
+    const next = value ?? null;
+    if (next === lastResult.current) return;
+    lastResult.current = next;
+    setRolls(rollsFromValue(next));
+  }, [value]);
+
+  const fieldLabel = (idx: number) =>
+    idx === 0
+      ? label || t('open-ended-roll', 'Open-ended roll')
+      : `${t('open-ended-roll', 'Open-ended roll')} ${idx + 1}`;
+
+  const showStored = value !== null && value !== undefined && rolls[0] === null;
+
   return (
-    <Grid container spacing={1} columns={gridColumns} sx={{ alignItems: 'center' }}>
+    <Grid container spacing={1} columns={gridColumns} sx={{ alignItems: 'center' }} onKeyDown={onKeyDown}>
       {rolls.map((r, idx) => (
         <Grid size={inputGridSize} key={idx}>
           <NumericInput
-            label={`Open-Ended Roll${idx > 0 ? ` ${idx + 1}` : ''}`}
+            label={fieldLabel(idx)}
             value={r}
-            onChange={(e) => handleValueChange(idx, e!)}
+            onChange={(e) => handleValueChange(idx, e)}
             min={1}
             max={100}
+            integer
+            disabled={disabled}
           />
         </Grid>
       ))}
-      {rolls[0] !== null && <ClearButton onClick={onClear} />}
+      {!disabled && (rolls[0] !== null || showStored) && <ClearButton onClick={onClear} />}
+      {showStored && (
+        <Grid size={gridColumns}>
+          <Typography variant="caption" color="text.secondary">
+            {t('open-ended-roll-stored', 'Stored roll')}: {value}
+          </Typography>
+        </Grid>
+      )}
     </Grid>
   );
 };

@@ -150,3 +150,7 @@ export { rsqlAnd } from './data/rsql';
 
 // Rolemaster-specific selects shared by several MFEs
 export { SelectAttackTable, SelectFumbleTable } from './rmu/SelectAttackTable';
+export { default as RollBreakdown, useModifierLabel } from './rmu/RollBreakdown';
+export type { RollModifier, RollModifierGroup } from './rmu/RollBreakdown';
+export { default as EffectList } from './rmu/EffectList';
+export type { ActorEffect, ActorPenalty } from './rmu/EffectList';

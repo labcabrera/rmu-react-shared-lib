@@ -1,0 +1,42 @@
+import React from 'react';
+import { screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { renderWithProviders } from '../test/render';
+import EffectList from './EffectList';
+
+describe('EffectList', () => {
+  it('shows the most severe effects first', () => {
+    renderWithProviders(
+      <EffectList
+        effects={[
+          { status: 'bleeding', value: 4 },
+          { status: 'stunned', value: -25 },
+        ]}
+      />
+    );
+
+    const labels = screen.getAllByText(/bleeding|stunned/).map((element) => element.textContent);
+    expect(labels).toEqual(['stunned -25', 'bleeding 4']);
+  });
+
+  it('sums the penalties in one chip and hides empty ones', () => {
+    renderWithProviders(
+      <EffectList
+        effects={[{ status: 'penalty', value: 0 }]}
+        penalties={[
+          { source: 'hp', value: -50 },
+          { source: 'critical', value: -5 },
+        ]}
+      />
+    );
+
+    expect(screen.getByText('penalty -55')).toBeInTheDocument();
+    expect(screen.queryByText('penalty 0')).not.toBeInTheDocument();
+  });
+
+  it('renders nothing without effects or penalties', () => {
+    const { container } = renderWithProviders(<EffectList effects={[]} penalties={[{ source: 'hp', value: 0 }]} />);
+
+    expect(container).toBeEmptyDOMElement();
+  });
+});
