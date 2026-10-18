@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from 'react-oidc-context';
 import {
   Alert,
@@ -34,6 +35,7 @@ export default function ImageCategorySelector({
   onSelect,
 }: ImageCategorySelectorProps) {
   const auth = useAuth();
+  const { t } = useTranslation();
   const [category, setCategory] = useState<ImageCategory>(defaultCategory);
   const [images, setImages] = useState<MediaImagePage>();
   const [page, setPage] = useState(0);
@@ -71,8 +73,13 @@ export default function ImageCategorySelector({
   return (
     <Stack spacing={2}>
       <FormControl fullWidth size="small">
-        <InputLabel id="select-image-category-label">Category</InputLabel>
-        <Select labelId="select-image-category-label" value={category} label="Category" onChange={handleCategoryChange}>
+        <InputLabel id="select-image-category-label">{t('category')}</InputLabel>
+        <Select
+          labelId="select-image-category-label"
+          value={category}
+          label={t('category')}
+          onChange={handleCategoryChange}
+        >
           {categories.map((imageCategory) => (
             <MenuItem key={imageCategory} value={imageCategory}>
               {imageCategory}
@@ -88,7 +95,7 @@ export default function ImageCategorySelector({
       ) : errorMessage ? (
         <Alert severity="error">{errorMessage}</Alert>
       ) : images?.content.length === 0 ? (
-        <Typography color="text.secondary">No images found</Typography>
+        <Typography color="text.secondary">{t('no-images-found')}</Typography>
       ) : images ? (
         <ImageList cols={5} gap={2} sx={{ m: 0 }}>
           {images.content.map((image) => {

@@ -1,4 +1,5 @@
 import React, { FC, MouseEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useTheme, useMediaQuery, Tooltip } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
@@ -20,24 +21,26 @@ const RmuIconButton: FC<Props> = ({
   disabled = false,
   tooltip,
 }) => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'));
   const btnSize: 'small' | 'medium' = isSmDown ? 'small' : 'medium';
   const iconFontSize: 'small' | 'inherit' = isSmDown ? 'small' : 'inherit';
 
   const IconComp = Icon as React.ElementType;
+  // ariaLabel and tooltip are i18n keys; free text passes through t() unchanged when there is no key.
 
   if (!tooltip) {
     return (
-      <IconButton onClick={onClick} aria-label={ariaLabel} size={btnSize} color={color} disabled={disabled}>
+      <IconButton onClick={onClick} aria-label={t(ariaLabel)} size={btnSize} color={color} disabled={disabled}>
         <IconComp fontSize={iconFontSize} color="inherit" />
       </IconButton>
     );
   }
 
   return (
-    <Tooltip title={tooltip}>
-      <IconButton onClick={onClick} aria-label={ariaLabel} size={btnSize} color={color} disabled={disabled}>
+    <Tooltip title={t(tooltip)}>
+      <IconButton onClick={onClick} aria-label={t(ariaLabel)} size={btnSize} color={color} disabled={disabled}>
         <IconComp fontSize={iconFontSize} color="inherit" />
       </IconButton>
     </Tooltip>

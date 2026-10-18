@@ -1,4 +1,5 @@
 import React, { FC, PropsWithChildren } from 'react';
+import { useTranslation } from 'react-i18next';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionSummary, AccordionDetails, Typography, Box, Paper } from '@mui/material';
 
@@ -7,16 +8,13 @@ type Props = {
   defaultExpanded?: boolean;
 };
 
-const TechnicalInfo: FC<PropsWithChildren<Props>> = ({
-  children,
-  title = 'Technical info',
-  defaultExpanded = false,
-}) => {
+const TechnicalInfo: FC<PropsWithChildren<Props>> = ({ children, title, defaultExpanded = false }) => {
+  const { t } = useTranslation();
   return (
     <Box sx={{ mt: 5 }}>
       <Accordion defaultExpanded={defaultExpanded} disableGutters>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="subtitle2">{title}</Typography>
+          <Typography variant="subtitle2">{title ?? t('technical-info')}</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Paper elevation={5}>

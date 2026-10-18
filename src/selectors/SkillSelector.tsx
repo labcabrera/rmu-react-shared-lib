@@ -79,7 +79,7 @@ const SkillSelector: FC<{
     bindAllSkills();
   }, [realmId]);
 
-  if (!availableCategories) return <p>Loading...</p>;
+  if (!availableCategories) return <p>{t('loading')}</p>;
 
   return (
     <Grid container spacing={2} sx={{ mt: 1 }}>
@@ -138,7 +138,14 @@ type CategoryListProps<T> = {
 
 const CategoryList = <T,>({ value, options, onChange, getKey, formatter, getCount }: CategoryListProps<T>) => {
   return (
-    <SelectionList value={value} options={options} onChange={onChange} getKey={getKey} formatter={formatter} getCount={getCount} />
+    <SelectionList
+      value={value}
+      options={options}
+      onChange={onChange}
+      getKey={getKey}
+      formatter={formatter}
+      getCount={getCount}
+    />
   );
 };
 
@@ -152,7 +159,15 @@ type SelectionListProps<T> = {
   endAdornment?: (value: T) => ReactNode;
 };
 
-const SelectionList = <T,>({ value, options, onChange, getKey, formatter, getCount, endAdornment }: SelectionListProps<T>) => {
+const SelectionList = <T,>({
+  value,
+  options,
+  onChange,
+  getKey,
+  formatter,
+  getCount,
+  endAdornment,
+}: SelectionListProps<T>) => {
   return (
     <Paper
       variant="outlined"

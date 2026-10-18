@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import AvatarEditor, { AvatarEditorRef } from 'react-avatar-editor';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from 'react-oidc-context';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -52,6 +53,7 @@ export default function ImageUploadEditor({
   height = 240,
   onUploaded,
 }: ImageUploadEditorProps) {
+  const { t } = useTranslation();
   const auth = useAuth();
   const isAdmin = ((auth.user?.profile.groups as string[]) || []).includes('rmu-admin');
   const editorRef = useRef<AvatarEditorRef>(null);
@@ -94,7 +96,7 @@ export default function ImageUploadEditor({
       setUploadedImage(image);
       onUploaded?.(image);
     } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Image upload failed');
+      setErrorMessage(err instanceof Error ? err.message : t('image-upload-failed'));
     } finally {
       setUploading(false);
     }
@@ -104,11 +106,11 @@ export default function ImageUploadEditor({
     <Stack spacing={2}>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <Button component="label" variant="outlined" startIcon={<CloudUploadIcon />}>
-          Select image
+          {t('select-image')}
           <input hidden accept="image/jpeg,image/png,image/webp" type="file" onChange={handleFileChange} />
         </Button>
         <Button variant="outlined" startIcon={<RestartAltIcon />} onClick={handleReset} disabled={!file && !altText}>
-          Reset
+          {t('reset')}
         </Button>
       </Stack>
 
@@ -147,22 +149,22 @@ export default function ImageUploadEditor({
             <Box
               component="img"
               src={resolveAssetUrl(value)}
-              alt={altText || 'Selected image'}
+              alt={altText || t('selected-image')}
               sx={{ width, height, objectFit: 'cover' }}
             />
           ) : (
-            <Typography color="text.secondary">No image selected</Typography>
+            <Typography color="text.secondary">{t('no-image-selected')}</Typography>
           )}
         </Box>
 
         <Stack spacing={2} sx={{ flex: 1, minWidth: 220 }}>
           {isAdmin && (
             <FormControl fullWidth size="small">
-              <InputLabel id="upload-image-category-label">Category</InputLabel>
+              <InputLabel id="upload-image-category-label">{t('category')}</InputLabel>
               <Select
                 labelId="upload-image-category-label"
                 value={category}
-                label="Category"
+                label={t('category')}
                 onChange={(event: SelectChangeEvent<ImageCategory>) => setCategory(event.target.value as ImageCategory)}
               >
                 {IMAGE_CATEGORIES.map((imageCategory) => (
@@ -176,7 +178,7 @@ export default function ImageUploadEditor({
 
           {displayAltText && (
             <TextField
-              label="Alternative text"
+              label={t('alternative-text')}
               size="small"
               value={altText}
               onChange={(event) => setAltText(event.target.value)}
@@ -186,7 +188,7 @@ export default function ImageUploadEditor({
 
           <Box>
             <Typography variant="body2" color="text.secondary">
-              Zoom
+              {t('zoom')}
             </Typography>
             <Slider
               value={scale}
@@ -203,13 +205,13 @@ export default function ImageUploadEditor({
             onClick={handleUpload}
             disabled={!file || uploading || !auth.isAuthenticated}
           >
-            {uploading ? 'Uploading...' : 'Upload'}
+            {uploading ? t('uploading') : t('upload')}
           </Button>
         </Stack>
       </Stack>
 
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-      {uploadedImage && <Alert severity="success">Image uploaded</Alert>}
+      {uploadedImage && <Alert severity="success">{t('image-uploaded')}</Alert>}
     </Stack>
   );
 }

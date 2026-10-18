@@ -2,18 +2,18 @@ import React, { FC, MouseEvent } from 'react';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import RmuIconButton from './RmuIconButton';
 
-const EditButton: FC<{
+const NextButton: FC<{
   onClick: (event: MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
   tooltip?: string;
-}> = ({ onClick, disabled = false, tooltip = 'Next' }) => (
+}> = ({ onClick, disabled = false, tooltip = 'next' }) => (
   <RmuIconButton
     onClick={onClick}
-    aria-label="edit"
+    ariaLabel="next"
     disabled={disabled}
     Icon={KeyboardDoubleArrowRightIcon}
     tooltip={tooltip}
   />
 );
 
-export default EditButton;
+export default NextButton;

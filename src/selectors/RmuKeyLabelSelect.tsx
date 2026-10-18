@@ -1,7 +1,7 @@
-import React, { ChangeEvent, FC } from 'react';
+import React, { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MenuItem, TextField } from '@mui/material';
-import { KeyLabel, KeyValue } from '../api/common.dto';
+import { KeyLabel } from '../api/common.dto';
 
 export default function RmuKeyLabelSelect({
   value,

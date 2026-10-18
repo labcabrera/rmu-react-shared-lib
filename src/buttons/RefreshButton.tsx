@@ -5,7 +5,7 @@ import RmuIconButton from './RmuIconButton';
 const RefreshButton: FC<{
   onClick: (event: MouseEvent<HTMLButtonElement>) => void;
 }> = ({ onClick }) => {
-  return <RmuIconButton onClick={onClick} ariaLabel="refresh" Icon={RefreshIcon} tooltip="Refresh" />;
+  return <RmuIconButton onClick={onClick} ariaLabel="refresh" Icon={RefreshIcon} tooltip="refresh" />;
 };
 
 export default RefreshButton;

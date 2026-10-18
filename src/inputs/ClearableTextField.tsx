@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import ClearIcon from '@mui/icons-material/Clear';
 import { TextField, InputAdornment, IconButton } from '@mui/material';
 
@@ -15,6 +16,7 @@ export default function ClearableTextField({
   placeholder?: string;
   onChange: (e: string | undefined) => void;
 }) {
+  const { t } = useTranslation();
   const handleClear = () => {
     onChange('');
   };
@@ -32,7 +34,7 @@ export default function ClearableTextField({
           ? {
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton size="small" onClick={handleClear} edge="end" color="primary">
+                  <IconButton size="small" onClick={handleClear} edge="end" color="primary" aria-label={t('clear')}>
                     <ClearIcon fontSize="small" />
                   </IconButton>
                 </InputAdornment>

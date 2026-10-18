@@ -1,10 +1,13 @@
 import React, { FC } from 'react';
 import LockIcon from '@mui/icons-material/Lock';
 import { Typography } from '@mui/material';
+import { baseColors } from '../theme/tokens';
 import RmuCard from './RmuCard';
 
-export const textRed = '#ffab91';
-export const textGreen = '#a5d6a7';
+/** @deprecated Use the theme palette (`error.main`). */
+export const textRed = baseColors.dark.error;
+/** @deprecated Use the theme palette (`success.main`). */
+export const textGreen = baseColors.dark.success;
 
 const RmuTextCard: FC<{
   value: string | number;
@@ -34,16 +37,16 @@ const RmuTextCard: FC<{
     if (color) {
       switch (color) {
         case 'red':
-          return textRed;
+          return 'error.main';
         case 'green':
-          return textRed;
+          return 'success.main';
         default:
           return undefined;
       }
     }
     if (typeof value === 'number') {
-      if (value > 0) return textGreen;
-      if (value < 0) return textRed;
+      if (value > 0) return 'success.main';
+      if (value < 0) return 'error.main';
       return undefined;
     }
   };

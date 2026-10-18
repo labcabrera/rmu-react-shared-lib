@@ -9,7 +9,7 @@ import { fetchTraits } from '../api/trait.api';
 import { Trait, traitCategories } from '../api/trait.dto';
 import CategorySeparator from '../display/CategorySeparator';
 
-const SkillSelector: FC<{
+const TraitSelector: FC<{
   realmId?: string;
   onTraitChange: (trait: Trait | null) => void;
   onTierChange: (tier: number | null) => void;
@@ -65,7 +65,7 @@ const SkillSelector: FC<{
     }
   }, [selectedCategory]);
 
-  if (!availableCategories) return <p>Loading...</p>;
+  if (!availableCategories) return <p>{t('loading')}</p>;
 
   return (
     <Grid container spacing={1} sx={{ mt: 1 }}>
@@ -172,4 +172,4 @@ const SelectionList: FC<{
   );
 };
 
-export default SkillSelector;
+export default TraitSelector;

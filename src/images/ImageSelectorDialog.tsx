@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import CloseIcon from '@mui/icons-material/Close';
 import ImageSearchIcon from '@mui/icons-material/ImageSearch';
 import UploadIcon from '@mui/icons-material/Upload';
@@ -41,12 +42,16 @@ export default function ImageSelectorDialog({
   maxWidth = 'xl',
   onClose,
   onSelect: onImageSelected,
+  onUpload: onImageUploaded,
 }: ImageDialogProps) {
+  const { t } = useTranslation();
   const [tab, setTab] = useState(0);
   const [selectedImage, setSelectedImage] = useState<MediaImage>();
 
+  // With onUpload, an uploaded image is applied right away; without it, it becomes the selection.
   const handleUploaded = (image: MediaImage) => {
     setSelectedImage(image);
+    onImageUploaded?.(image.storageKey || image.url);
   };
 
   const handleSelect = () => {
@@ -64,9 +69,9 @@ export default function ImageSelectorDialog({
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth={maxWidth}>
       <DialogTitle>
-        Images
+        {t('images')}
         <IconButton
-          aria-label="close"
+          aria-label={t('close')}
           onClick={handleClose}
           sx={{ position: 'absolute', right: 8, top: 8 }}
           size="large"
@@ -76,8 +81,8 @@ export default function ImageSelectorDialog({
       </DialogTitle>
       <DialogContent dividers>
         <Tabs value={tab} onChange={(_, value) => setTab(value)} variant="scrollable" scrollButtons="auto">
-          <Tab icon={<UploadIcon />} iconPosition="start" label="Upload image" />
-          <Tab icon={<ImageSearchIcon />} iconPosition="start" label="Select image" />
+          <Tab icon={<UploadIcon />} iconPosition="start" label={t('upload-image')} />
+          <Tab icon={<ImageSearchIcon />} iconPosition="start" label={t('select-image')} />
         </Tabs>
         <Divider />
         <TabPanel value={tab} index={0}>
@@ -89,10 +94,10 @@ export default function ImageSelectorDialog({
       </DialogContent>
       <DialogActions>
         <Button variant="contained" onClick={handleClose}>
-          Close
+          {t('close')}
         </Button>
         <Button variant="contained" color="success" onClick={handleSelect} disabled={!selectedImage}>
-          Select
+          {t('select')}
         </Button>
       </DialogActions>
     </Dialog>

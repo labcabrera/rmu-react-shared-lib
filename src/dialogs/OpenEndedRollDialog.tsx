@@ -93,7 +93,7 @@ const OpenEndedRollDialog: FC<OpenEndedRollDialogProps> = ({
       maxWidth="md"
       onConfirm={handleConfirm}
       onConfirmDisabled={value === null}
-      buttons={<Button onClick={handleRandom}>Random</Button>}
+      buttons={<Button onClick={handleRandom}>{t('random')}</Button>}
     >
       <Stack direction="column" spacing={2}>
         <Section title={t('roll')} elevation={-1}>
@@ -102,7 +102,7 @@ const OpenEndedRollDialog: FC<OpenEndedRollDialogProps> = ({
         {value !== null && (
           <Section title={t('result')} elevation={-1}>
             <Typography variant="caption" color="text.secondary" component="div">
-              Result
+              {t('result')}
             </Typography>
             {randomRolls && (
               <Typography variant="body2" color="text.secondary" component="div">

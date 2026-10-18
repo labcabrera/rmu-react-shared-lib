@@ -1,4 +1,5 @@
 import { type AuthContextProps } from 'react-oidc-context';
+import { ApiError } from '../data/api-error';
 
 export interface Pagination {
   page: number;
@@ -22,10 +23,15 @@ export async function callApi(auth: AuthContextProps, url: string, init: Request
   headers.set('Authorization', `Bearer ${token}`);
   init.headers = headers;
 
-  const res = await fetch(url, init);
+  let res: Response;
+  try {
+    res = await fetch(url, init);
+  } catch (err) {
+    throw new ApiError(0, 'Network error', String(err), url);
+  }
   if (!res.ok) {
     const text = await res.text().catch(() => '');
-    throw new Error(`API request failed: ${res.status} ${res.statusText} ${text}. Url: ${url}`);
+    throw new ApiError(res.status, res.statusText, text, url);
   }
   if (res.status === 204) {
     return null;

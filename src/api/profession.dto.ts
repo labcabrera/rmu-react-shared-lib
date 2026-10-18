@@ -10,7 +10,7 @@ export interface Profession {
   availableRealmTypes: RealmType[];
   fixedRealmTypes: RealmType[];
   skillCosts: ProfessionSkillCosts;
-  professionalSkills: [];
+  professionalSkills: string[];
   description: string;
   imageUrl?: string;
   accessType: AccessType;

@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react';
-import { Card, CardContent, CardMedia } from '@mui/material';
+import { Card, CardActionArea, CardContent, CardMedia } from '@mui/material';
 import { resolveAssetUrl } from '../config/asset-url';
 
 const defaultImage = 'images/generic/configuration.png';
@@ -20,24 +20,9 @@ const RmuCard: FC<{
 }> = ({ image, altImageUrl, children, grayscale = 0, imageFilter: filter, height, contentBgImage, onClick }) => {
   const effectiveImage = image || altImageUrl || defaultImage;
 
-  return (
-    <Card
-      variant="outlined"
-      sx={{
-        display: 'flex',
-        alignItems: 'stretch',
-        height: height || smallImageSize,
-        cursor: onClick ? 'pointer' : 'default',
-        ...(onClick && {
-          transition: 'box-shadow 0.2s, background 0.2s',
-          '&:hover': {
-            boxShadow: 6,
-            backgroundColor: 'action.hover',
-          },
-        }),
-      }}
-      onClick={onClick}
-    >
+  // Clickable cards are a button (keyboard focus, Enter/Space, announced by screen readers).
+  const content = (
+    <>
       <CardMedia
         component="img"
         image={resolveAssetUrl(effectiveImage)}
@@ -69,6 +54,36 @@ const RmuCard: FC<{
       >
         {children}
       </CardContent>
+    </>
+  );
+
+  return (
+    <Card
+      variant="outlined"
+      sx={{
+        display: 'flex',
+        alignItems: 'stretch',
+        height: height || smallImageSize,
+        cursor: onClick ? 'pointer' : 'default',
+        ...(onClick && {
+          transition: 'box-shadow 0.2s, background 0.2s',
+          '&:hover': {
+            boxShadow: 6,
+            backgroundColor: 'action.hover',
+          },
+        }),
+      }}
+    >
+      {onClick ? (
+        <CardActionArea
+          onClick={onClick}
+          sx={{ display: 'flex', alignItems: 'stretch', justifyContent: 'flex-start', height: '100%' }}
+        >
+          {content}
+        </CardActionArea>
+      ) : (
+        content
+      )}
     </Card>
   );
 };

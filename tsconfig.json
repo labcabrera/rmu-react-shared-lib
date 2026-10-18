@@ -22,5 +22,5 @@
     "strictPropertyInitialization": false
   },
   "include": ["src/**/*", "public/**/*"],
-  "exclude": ["node_modules", "dist", "build", "scripts"]
+  "exclude": ["node_modules", "dist", "build", "scripts", "src/**/*.stories.tsx", "src/**/*.test.tsx", "src/test"]
 }

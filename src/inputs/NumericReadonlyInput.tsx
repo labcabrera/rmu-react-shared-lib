@@ -13,6 +13,7 @@ const NumericReadonlyInput: FC<{
       value={value === null ? '' : value}
       type="text"
       fullWidth
+      slotProps={{ input: { readOnly: true } }}
       sx={{
         '& input': {
           textAlign: 'right',

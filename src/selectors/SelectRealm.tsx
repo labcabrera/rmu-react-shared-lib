@@ -1,30 +1,30 @@
-import React, { FC, ChangeEvent } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Autocomplete, TextField } from '@mui/material';
 import { Realm } from '../api/realm.dto';
+import EntitySelect from '../ui/EntitySelect';
 
+/** Searchable realm select (an EntitySelect preset). It can be cleared, which reports null. */
 const SelectRealm: FC<{
   realms: Realm[];
-  value: string | null;
+  value: string | null | undefined;
   onChange: (realmId: string | null, realm: Realm | null) => void;
+  label?: string;
   required?: boolean;
-}> = ({ realms, value, onChange, required = false }) => {
+  disabled?: boolean;
+  name?: string;
+}> = ({ realms, value, onChange, label, required = false, disabled = false, name = 'realm' }) => {
   const { t } = useTranslation();
-  const handleChange = (realmId: string) => {
-    const selectedRealm = realms.find((realm) => realm.id === realmId);
-    onChange(realmId, selectedRealm || null);
-  };
-
-  if (!realms) return <p>Loading...</p>;
-
   return (
-    <Autocomplete
-      disablePortal
-      options={realms}
-      getOptionLabel={(option) => option.name}
-      onChange={(_, newValue) => handleChange(newValue?.id || '')}
-      fullWidth
-      renderInput={(params) => <TextField {...params} label={t('realm')} fullWidth error={required && !value} />}
+    <EntitySelect
+      options={realms ?? []}
+      value={value}
+      onChange={onChange}
+      label={label ?? t('realm')}
+      getLabel={(realm) => t(realm.name)}
+      required={required}
+      disabled={disabled}
+      loading={!realms}
+      name={name}
     />
   );
 };
