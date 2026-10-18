@@ -43,13 +43,16 @@ export { default as Section } from './layouts/Section';
 export { default as HeroHeader } from './layouts/HeroHeader';
 export type { HeroHeaderProps } from './layouts/HeroHeader';
 export { default as Panel } from './layouts/Panel';
+export { default as SidePanelLayout, useSidePanelMode } from './layouts/SidePanelLayout';
+export type { SidePanelMode } from './layouts/SidePanelLayout';
 export { default as SectionNav, useSectionParam } from './layouts/SectionNav';
 export type { SectionDef } from './layouts/SectionNav';
 
 export { default as ClearableTextField } from './inputs/ClearableTextField';
 export { default as NumericInput } from './inputs/NumericInput';
 export { default as NumericReadonlyInput } from './inputs/NumericReadonlyInput';
-export { default as OpenEndedRollInput } from './inputs/OpenEndedRollInput';
+export { default as OpenEndedRollInput, randomD100 } from './inputs/OpenEndedRollInput';
+export { default as ConfirmedRollInput } from './inputs/ConfirmedRollInput';
 
 export { default as RmuKeyLabelSelect } from './selectors/RmuKeyLabelSelect';
 export { default as RmuSelect } from './selectors/RmuSelect';
@@ -165,6 +168,8 @@ export type { EntitySelectProps } from './ui/EntitySelect';
 export { default as DataTable } from './ui/DataTable';
 export type { DataTableColumn } from './ui/DataTable';
 export { default as PreviewDrawer } from './ui/PreviewDrawer';
+export { default as FlowSteps } from './ui/FlowSteps';
+export type { FlowStep } from './ui/FlowSteps';
 export { rsqlAnd } from './data/rsql';
 
 // Rolemaster-specific selects shared by several MFEs
@@ -173,6 +178,10 @@ export { default as RollBreakdown, useModifierLabel } from './rmu/RollBreakdown'
 export type { RollModifier, RollModifierGroup } from './rmu/RollBreakdown';
 export { default as EffectList } from './rmu/EffectList';
 export type { ActorEffect, ActorPenalty } from './rmu/EffectList';
+export { default as ActionTypeChip } from './rmu/combat/ActionTypeChip';
+export { default as ActionStateMarker } from './rmu/combat/ActionStateMarker';
+export { combatActionInfo, combatActionTypes, combatColors, factionColor } from './rmu/combat/actionTypes';
+export type { CombatActionCategory, CombatActionState, CombatActionType } from './rmu/combat/actionTypes';
 export { default as AttackCard } from './rmu/character/AttackCard';
 export { default as ResistanceList } from './rmu/character/ResistanceList';
 export { default as ResourceBar } from './rmu/character/ResourceBar';

@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Grid, Typography } from '@mui/material';
+import CasinoIcon from '@mui/icons-material/Casino';
+import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import ClearButton from '../buttons/ClearButton';
 import NumericInput from './NumericInput';
 
@@ -25,7 +26,12 @@ export type OpenEndedRollProps = {
   /** Label of the first field. Defaults to the `open-ended-roll` translation. */
   label?: string;
   disabled?: boolean;
+  /** Shows a dice button that fills the next missing roll with a random d100 (default true). */
+  allowRandom?: boolean;
 };
+
+/** A random d100 roll, 1 to 100. */
+export const randomD100 = () => Math.floor(Math.random() * 100) + 1;
 
 const rollsFromValue = (value: number | null | undefined): Array<number | null> =>
   value !== null && value !== undefined && value > BOTTOM_LIMIT && value < TOP_LIMIT ? [value] : [null];
@@ -56,6 +62,7 @@ const OpenEndedRollInput: FC<OpenEndedRollProps> = ({
   value,
   label,
   disabled = false,
+  allowRandom = true,
 }) => {
   const { t } = useTranslation();
   const [rolls, setRolls] = useState<Array<number | null>>(() => rollsFromValue(value));
@@ -129,6 +136,21 @@ const OpenEndedRollInput: FC<OpenEndedRollProps> = ({
           />
         </Grid>
       ))}
+      {!disabled && allowRandom && rolls.some((r) => r === null) && (
+        <Tooltip title={t('roll-dice')}>
+          <IconButton
+            aria-label={t('roll-dice')}
+            onClick={() =>
+              handleValueChange(
+                rolls.findIndex((r) => r === null),
+                randomD100()
+              )
+            }
+          >
+            <CasinoIcon />
+          </IconButton>
+        </Tooltip>
+      )}
       {!disabled && (rolls[0] !== null || showStored) && <ClearButton onClick={onClear} />}
       {showStored && (
         <Grid size={gridColumns}>

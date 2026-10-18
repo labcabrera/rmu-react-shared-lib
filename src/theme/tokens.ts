@@ -73,9 +73,36 @@ export const gameColors = {
   dark: {
     resource: { hp: '#ef7a76', pp: '#7fb2ff', xp: '#e6c15a', fatigue: '#e0a165' },
     rarity: { common: '#b4bcbf', uncommon: '#7ccf86', rare: '#6fa8f5', veryRare: '#b892f0', unique: '#f0b44c' },
+    combat: {
+      melee: '#f08c7d',
+      ranged: '#e8b55c',
+      movement: '#6fc9a8',
+      maneuver: '#93b3f5',
+      spell: '#c69df3',
+      other: '#b4bcbf',
+      pending: '#f0b44c',
+      waiting: '#93b3f5',
+      resolved: '#7ccf86',
+      failed: '#ff9a85',
+    },
+    /** Factions of a combat, in the order of the game: told apart by stripes, rings and dots. */
+    factions: ['#6fa8f5', '#f08c7d', '#7ccf86', '#e8b55c', '#c69df3', '#5fd0d6', '#f28ac2', '#b4bcbf'],
   },
   light: {
     resource: { hp: '#c62828', pp: '#1e5bb8', xp: '#8a6a08', fatigue: '#a8561a' },
     rarity: { common: '#5f6b6e', uncommon: '#2e7d32', rare: '#1e5bb8', veryRare: '#7340b8', unique: '#9a6200' },
+    combat: {
+      melee: '#a8321c',
+      ranged: '#7f5300',
+      movement: '#0f6b51',
+      maneuver: '#2a4fae',
+      spell: '#6a3aab',
+      other: '#55636a',
+      pending: '#8a5800',
+      waiting: '#2a4fae',
+      resolved: '#2a6e2e',
+      failed: '#b03a17',
+    },
+    factions: ['#1e5bb8', '#b3361f', '#2a7a30', '#8f5c00', '#6a3aab', '#0e7480', '#a8336f', '#55636a'],
   },
 } as const;

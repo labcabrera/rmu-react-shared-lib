@@ -21,6 +21,22 @@ describe('createAppTheme', () => {
     expect(getContrastRatio(palette.primary.contrastText, palette.primary.main)).toBeGreaterThanOrEqual(4.5);
   });
 
+  it.each(combinations)('$preset $mode faction colors stand out from the surfaces', ({ preset, mode }) => {
+    const { palette } = createAppTheme({ preset, mode });
+    for (const color of palette.factions) {
+      expect(getContrastRatio(color, palette.background.paper)).toBeGreaterThanOrEqual(3);
+      expect(getContrastRatio(color, palette.background.light)).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it.each(combinations)('$preset $mode combat colors are readable as text on paper', ({ preset, mode }) => {
+    const { palette } = createAppTheme({ preset, mode });
+    for (const color of Object.values(palette.combat)) {
+      expect(getContrastRatio(color, palette.background.paper)).toBeGreaterThanOrEqual(4.5);
+      expect(getContrastRatio(color, palette.background.light)).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
   it.each(combinations)('$preset $mode exposes the game palette and tokens', ({ preset, mode }) => {
     const theme = createAppTheme({ preset, mode });
     expect(theme.palette.resource.hp).toMatch(/^#/);

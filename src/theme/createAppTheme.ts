@@ -16,6 +16,7 @@ export const defaultThemeConfig: ThemeConfig = { preset: 'slate', mode: 'dark', 
 
 type ResourceColors = PresetPalette['resource'];
 type RarityColors = (typeof gameColors)['dark']['rarity'];
+type CombatColors = Record<keyof (typeof gameColors)['dark']['combat'], string>;
 type StatColors = { positive: string; negative: string; neutral: string };
 
 declare module '@mui/material/styles' {
@@ -33,11 +34,17 @@ declare module '@mui/material/styles' {
     resource: ResourceColors;
     /** Item rarity, keyed like `ItemRarity` in camelCase. */
     rarity: Record<keyof RarityColors, string>;
+    /** Combat dashboard: one color per action category and per action state. */
+    combat: CombatColors;
+    /** One color per faction of a combat, by position (see `factionColor`). */
+    factions: readonly string[];
   }
   interface PaletteOptions {
     stat?: StatColors;
     resource?: ResourceColors;
     rarity?: Record<keyof RarityColors, string>;
+    combat?: CombatColors;
+    factions?: readonly string[];
   }
   interface Theme {
     preset: ThemePreset;
@@ -97,6 +104,8 @@ const toPalette = (mode: ThemeMode, colors: PresetPalette): PaletteOptions => ({
   stat: { positive: colors.status.success, negative: colors.status.error, neutral: colors.text.secondary },
   resource: colors.resource,
   rarity: gameColors[mode].rarity,
+  combat: gameColors[mode].combat,
+  factions: gameColors[mode].factions,
 });
 
 /** Soft, wide shadows: a light lift instead of MUI's hard material shadows. */
