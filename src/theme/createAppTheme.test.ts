@@ -21,6 +21,25 @@ describe('createAppTheme', () => {
     expect(getContrastRatio(palette.primary.contrastText, palette.primary.main)).toBeGreaterThanOrEqual(4.5);
   });
 
+  // Factions must not look like a state: no reds (hit points, errors) and no blues (power points, info).
+  it.each(modes)('%s faction colors avoid red and blue hues', (mode) => {
+    const hue = (hex: string) => {
+      const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+      const max = Math.max(r, g, b);
+      const delta = max - Math.min(r, g, b);
+      // Near-greys (the neutral color of unknown factions) have no hue to mistake.
+      if (delta < 0.1) return null;
+      const h = max === r ? ((g - b) / delta) % 6 : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4;
+      return (h * 60 + 360) % 360;
+    };
+    for (const color of createAppTheme({ mode }).palette.factions) {
+      const h = hue(color);
+      if (h === null) continue;
+      expect(h < 15 || h > 340, `${color} is red`).toBe(false);
+      expect(h > 195 && h < 255, `${color} is blue`).toBe(false);
+    }
+  });
+
   it.each(combinations)('$preset $mode faction colors stand out from the surfaces', ({ preset, mode }) => {
     const { palette } = createAppTheme({ preset, mode });
     for (const color of palette.factions) {

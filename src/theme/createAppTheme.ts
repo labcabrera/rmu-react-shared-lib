@@ -143,7 +143,7 @@ export const createAppTheme = (config: Partial<ThemeConfig> | ThemeMode = defaul
     shape: { borderRadius: definition.borderRadius },
     shadows: softShadows(mode),
     typography: {
-      fontFamily: fonts.ui,
+      fontFamily: definition.uiFont ?? fonts.ui,
       h1: display,
       h2: display,
       h3: display,
@@ -158,7 +158,7 @@ export const createAppTheme = (config: Partial<ThemeConfig> | ThemeMode = defaul
     density,
     radius,
     motion,
-    fonts: { ui: fonts.ui, display: definition.displayFont },
+    fonts: { ui: definition.uiFont ?? fonts.ui, display: definition.displayFont },
   });
   const { palette, breakpoints } = base;
   const transition = (...props: string[]) =>

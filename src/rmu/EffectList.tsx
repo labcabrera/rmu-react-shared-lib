@@ -47,12 +47,16 @@ const COLORS: Record<Severity, 'error' | 'warning' | 'default'> = {
   other: 'default',
 };
 
+// Effects whose color does not follow their severity group: bleeding sorts with the ongoing effects but is
+// shown red, like the hit points it takes.
+const STATUS_COLORS: Record<string, 'error' | 'warning' | 'default'> = { bleeding: 'error' };
+
 const icon = (status: string) =>
   ICONS[status] ? <Avatar alt="" src={resolveAssetUrl(`images/icons/${ICONS[status]}.png`)} /> : undefined;
 
 /**
- * Effects of an actor, most severe first: incapacitating (red), ongoing (amber), the rest, and one chip with the
- * total penalty (its sources in the tooltip). Penalties of 0 are not shown.
+ * Effects of an actor as solid chips, most severe first: incapacitating (red), ongoing (amber, bleeding red), the
+ * rest, and one chip with the total penalty (its sources in the tooltip). Penalties of 0 are not shown.
  */
 const EffectList: FC<{ effects: ActorEffect[]; penalties?: ActorPenalty[]; size?: 'small' | 'medium' }> = ({
   effects,
@@ -80,7 +84,12 @@ const EffectList: FC<{ effects: ActorEffect[]; penalties?: ActorPenalty[]; size?
         const severity = severityOf(effect.status);
         const help = t(`effect-${effect.status}-help`, { defaultValue: '' });
         const chip = (
-          <Chip size={size} avatar={icon(effect.status)} label={label(effect)} color={COLORS[severity]} variant="outlined" />
+          <Chip
+            size={size}
+            avatar={icon(effect.status)}
+            label={label(effect)}
+            color={STATUS_COLORS[effect.status] ?? COLORS[severity]}
+          />
         );
         return help ? (
           <Tooltip key={`${effect.status}-${index}`} title={help}>
@@ -97,7 +106,7 @@ const EffectList: FC<{ effects: ActorEffect[]; penalties?: ActorPenalty[]; size?
             .map((penalty) => `${t(`penalty-${penalty.source}`, { defaultValue: t(penalty.source) })} ${penalty.value}`)
             .join(' · ')}
         >
-          <Chip size={size} avatar={icon('penalty')} label={`${t('penalty')} ${penaltyTotal}`} variant="outlined" />
+          <Chip size={size} avatar={icon('penalty')} label={`${t('penalty')} ${penaltyTotal}`} />
         </Tooltip>
       )}
     </Stack>

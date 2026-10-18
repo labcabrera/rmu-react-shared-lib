@@ -34,6 +34,15 @@ describe('EffectList', () => {
     expect(screen.queryByText('penalty 0')).not.toBeInTheDocument();
   });
 
+  it('shows solid chips and bleeding in red, like the hit points it takes', () => {
+    renderWithProviders(<EffectList effects={[{ status: 'bleeding', value: 3 }, { status: 'fatigue' }]} />);
+
+    const bleeding = screen.getByText('bleeding 3').closest('.MuiChip-root')!;
+    const fatigue = screen.getByText('fatigue').closest('.MuiChip-root')!;
+    expect(bleeding).toHaveClass('MuiChip-colorError', 'MuiChip-filled');
+    expect(fatigue).toHaveClass('MuiChip-colorWarning', 'MuiChip-filled');
+  });
+
   it('renders nothing without effects or penalties', () => {
     const { container } = renderWithProviders(<EffectList effects={[]} penalties={[{ source: 'hp', value: 0 }]} />);
 

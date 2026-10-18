@@ -66,6 +66,7 @@ export const fonts = {
   ui: '"Inter Variable", "Inter", "Roboto", "Helvetica", "Arial", sans-serif',
   serif: '"Cormorant Garamond", "Georgia", "Times New Roman", serif',
   engraved: '"Cinzel", "Georgia", "Times New Roman", serif',
+  mono: '"JetBrains Mono", "Fira Code", "Consolas", "Menlo", monospace',
 } as const;
 
 /** Game colors shared by every preset unless the preset overrides them. */
@@ -86,7 +87,9 @@ export const gameColors = {
       failed: '#ff9a85',
     },
     /** Factions of a combat, in the order of the game: told apart by stripes, rings and dots. */
-    factions: ['#6fa8f5', '#f08c7d', '#7ccf86', '#e8b55c', '#c69df3', '#5fd0d6', '#f28ac2', '#b4bcbf'],
+    // Soft, muted hues away from red (hit points, errors) and blue (power points, info), so a faction is never
+    // mistaken for a state. The last one is neutral, for unknown factions.
+    factions: ['#9fbf8f', '#d6b46a', '#c39bc4', '#7fc4ad', '#b7b86e', '#d1a98a', '#c2b59b', '#b4bcbf'],
   },
   light: {
     resource: { hp: '#c62828', pp: '#1e5bb8', xp: '#8a6a08', fatigue: '#a8561a' },
@@ -103,6 +106,6 @@ export const gameColors = {
       resolved: '#2a6e2e',
       failed: '#b03a17',
     },
-    factions: ['#1e5bb8', '#b3361f', '#2a7a30', '#8f5c00', '#6a3aab', '#0e7480', '#a8336f', '#55636a'],
+    factions: ['#55794a', '#8a6a1e', '#7d527e', '#2f7a63', '#6b6b24', '#8a5f40', '#6e6550', '#5f6b6e'],
   },
 } as const;
