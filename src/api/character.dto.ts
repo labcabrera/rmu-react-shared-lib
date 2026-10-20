@@ -48,6 +48,25 @@ export interface CreateCharacterDto {
   weaponDevelopment: string[];
   description: string | undefined;
   imageUrl: string | undefined;
+  /** Optional culture: its ranks are applied before level 1 without spending development points. */
+  culture?: CreateCharacterCultureDto;
+}
+
+/**
+ * Culture chosen at creation. `assignments` distributes the ranks of every entry of `culture.skillRanks` that is not
+ * of type `skill` (those are applied automatically); the ranks of each entry must add up exactly to the entry ranks.
+ */
+export interface CreateCharacterCultureDto {
+  cultureId: string;
+  assignments?: CultureAssignmentDto[];
+}
+
+export interface CultureAssignmentDto {
+  /** Index of the entry in `culture.skillRanks`. */
+  entry: number;
+  skillId: string;
+  specialization?: string;
+  ranks: number;
 }
 
 export interface CreateCharacterInfoDto {
@@ -112,6 +131,8 @@ export interface CharacterInfo {
   realmType: string;
   height: number;
   weight: number;
+  /** Culture chosen at creation, if any. */
+  cultureId?: string | null;
 }
 
 export interface CharacterMovement {
@@ -158,6 +179,18 @@ export interface CharacterTrait {
   specialization: string | undefined;
   /** `race` traits come from the character's race: they cost nothing and cannot be deleted. */
   source?: CharacterTraitSource;
+  /** Development points the trait was paid with, by pool (absent on traits stored before it was tracked). */
+  paidWith?: TraitPayment;
+}
+
+export interface TraitPayment {
+  normal: number;
+  bonus: number;
+  flaw: number;
+  /** Part of the bonus points that counted towards the per level limit. */
+  cappedBonus: number;
+  /** Character level when the points were spent. */
+  level: number;
 }
 
 export type CharacterTraitSource = 'character' | 'race';
@@ -169,8 +202,14 @@ export interface CharacterSkill {
   development: number[];
   category?: string;
   statistics: string[];
+  /** Total ranks, culture ranks included. */
   ranks: number;
+  /** Ranks developed in the current level. */
   ranksDeveloped: number;
+  /** Ranks granted by the culture at creation: the skill cannot be leveled down below them. */
+  cultureRanks?: number;
+  /** Development points spent on the skill in the current level, by pool. */
+  devPointsSpent?: SkillDevPointsSpent;
   statBonus: number;
   racialBonus: number;
   professionalBonus: number;
@@ -180,6 +219,11 @@ export interface CharacterSkill {
   traitBonus?: number;
   totalBonus: number;
   professional?: string[];
+}
+
+export interface SkillDevPointsSpent {
+  normal: number;
+  bonus: number;
 }
 
 export interface CharacterEquipment {
@@ -240,6 +284,8 @@ export interface CharacterResistance {
   customBonus: number;
   /** Bonus from the character's traits, included in totalBonus. */
   traitBonus?: number;
+  /** +2 per character level, included in totalBonus. */
+  levelBonus?: number;
   totalBonus: number;
 }
 
@@ -249,7 +295,12 @@ export interface CharacterExperience {
   xp: number;
   devPoints: number;
   availableDevPoints: number;
-  availableRaceDevPoints: number;
+  /** Bonus development points left: race extra points plus the game master creation bonus. */
+  availableBonusDevPoints: number;
+  /** Bonus points spent in the current level, limited by the game's powerLevel.raceDevPointsPerLevel. */
+  bonusDevPointsSpentThisLevel: number;
+  /** Points returned by flaws at creation; under the 'flaw-points-at-creation' policy they only pay talents. */
+  flawDevPoints: number;
   availableStatLevelUp: number;
   developedStatLevelUp: number;
   weaponDevelopment: string[];
