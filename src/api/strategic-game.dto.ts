@@ -26,6 +26,8 @@ export interface StrategicGamePowerLevel {
   statBoostTemporary: number;
   statCreationBoost: number;
   statCreationSwap: number;
+  /** Maximum development points a character can spend on traits (default 20). */
+  maxTraitCost?: number;
 }
 
 export type CreateStrategicGameDto = Omit<StrategicGame, 'id' | 'realmName' | 'status' | 'owner'>;

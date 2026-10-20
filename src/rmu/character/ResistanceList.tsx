@@ -14,8 +14,11 @@ const ResistanceList: FC<{ resistances: CharacterResistance[] }> = ({ resistance
           `${t('stat')} ${formatBonus(resistance.statBonus)}`,
           `${t('racial')} ${formatBonus(resistance.racialBonus)}`,
           `${t('realm')} ${formatBonus(resistance.realmBonus)}`,
+          resistance.traitBonus ? `${t('trait-bonus')} ${formatBonus(resistance.traitBonus)}` : undefined,
           `${t('custom')} ${formatBonus(resistance.customBonus)}`,
-        ].join(' · ');
+        ]
+          .filter(Boolean)
+          .join(' · ');
         return (
           <Tooltip key={resistance.resistance} title={breakdown} placement="left">
             <Stack direction="row" sx={{ justifyContent: 'space-between', py: 0.75 }}>
