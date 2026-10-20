@@ -14,6 +14,7 @@ const ResistanceList: FC<{ resistances: CharacterResistance[] }> = ({ resistance
           `${t('stat')} ${formatBonus(resistance.statBonus)}`,
           `${t('racial')} ${formatBonus(resistance.racialBonus)}`,
           `${t('realm')} ${formatBonus(resistance.realmBonus)}`,
+          resistance.levelBonus ? `${t('level')} ${formatBonus(resistance.levelBonus)}` : undefined,
           resistance.traitBonus ? `${t('trait-bonus')} ${formatBonus(resistance.traitBonus)}` : undefined,
           `${t('custom')} ${formatBonus(resistance.customBonus)}`,
         ]
