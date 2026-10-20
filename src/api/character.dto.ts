@@ -60,6 +60,8 @@ export interface CreateCharacterInfoDto {
 
 export interface CharacterDefense {
   defensiveBonus: number;
+  /** Parts of the defensive bonus by source (quickness, defensive-aura, natural-armor); zeros are omitted. */
+  modifiers?: Record<string, number>;
   armor: CharacterArmor;
   shield: CharacterDefenseShield | null;
   protect: number;
@@ -154,7 +156,11 @@ export interface CharacterTrait {
   tier: number | undefined;
   cost: number;
   specialization: string | undefined;
+  /** `race` traits come from the character's race: they cost nothing and cannot be deleted. */
+  source?: CharacterTraitSource;
 }
+
+export type CharacterTraitSource = 'character' | 'race';
 
 export interface CharacterSkill {
   id: string;
@@ -170,6 +176,8 @@ export interface CharacterSkill {
   professionalBonus: number;
   developmentBonus: number;
   customBonus: number;
+  /** Bonus from the character's traits (talents and flaws), included in totalBonus. */
+  traitBonus?: number;
   totalBonus: number;
   professional?: string[];
 }
@@ -230,6 +238,8 @@ export interface CharacterResistance {
   racialBonus: number;
   realmBonus: number;
   customBonus: number;
+  /** Bonus from the character's traits, included in totalBonus. */
+  traitBonus?: number;
   totalBonus: number;
 }
 
@@ -268,6 +278,8 @@ export interface CharacterAttack {
   type: string;
   defaultAttack: boolean;
   meleeRange: number | null;
+  /** Skill used by the attack (null for attacks without a skill). */
+  skillId?: string | null;
   boModifiers: Record<string, number>;
 }
 
