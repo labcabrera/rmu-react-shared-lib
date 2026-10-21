@@ -25,6 +25,8 @@ export interface StrategicGameOptions {
   bonusDevPointsCapAtCreation?: boolean;
   /** Stat generation method at creation (default 'roll'). */
   statGeneration?: StatGeneration;
+  /** Open rounds: an action unresolved at the end of a round carries over to the next one, keeping its action points (default true). */
+  openRounds?: boolean;
 }
 
 export const TALENT_POLICIES = ['free', 'race-points-at-creation', 'flaw-points-at-creation'] as const;

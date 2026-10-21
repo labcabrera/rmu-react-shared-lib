@@ -183,6 +183,8 @@ export { default as EffectList } from './rmu/EffectList';
 export type { ActorEffect, ActorPenalty } from './rmu/EffectList';
 export { default as ActionTypeChip } from './rmu/combat/ActionTypeChip';
 export { default as ActionStateMarker } from './rmu/combat/ActionStateMarker';
+export { default as ApPips, apPhasePips } from './rmu/combat/ApPips';
+export type { ApLedgerItem, ApPip, ApPipState } from './rmu/combat/ApPips';
 export { combatActionInfo, combatActionTypes, combatColors, factionColor } from './rmu/combat/actionTypes';
 export type { CombatActionCategory, CombatActionState, CombatActionType } from './rmu/combat/actionTypes';
 export { default as AttackCard } from './rmu/character/AttackCard';

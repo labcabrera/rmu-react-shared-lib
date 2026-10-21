@@ -82,6 +82,8 @@ export const gameColors = {
       spell: '#c69df3',
       other: '#b4bcbf',
       pending: '#f0b44c',
+      /** An action with its maximum action points: it resolves without an AP penalty (spec 011). */
+      optimal: '#c3d65a',
       waiting: '#93b3f5',
       resolved: '#7ccf86',
       failed: '#ff9a85',
@@ -102,6 +104,7 @@ export const gameColors = {
       spell: '#6a3aab',
       other: '#55636a',
       pending: '#8a5800',
+      optimal: '#4f6300',
       waiting: '#2a4fae',
       resolved: '#2a6e2e',
       failed: '#b03a17',
