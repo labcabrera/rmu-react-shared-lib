@@ -146,7 +146,7 @@ describe('roll inputs with dice', () => {
     expect(onChange).not.toHaveBeenCalled();
     random.mockReturnValueOnce(0.04); // 5
     await user.click(screen.getByRole('button', { name: 'roll-dice' }));
-    expect(onChange).toHaveBeenCalledWith(103);
+    expect(onChange).toHaveBeenCalledWith(103, { unmodified: 98, rolls: [98, 5] });
   });
 
   it('confirms a random roll in range', async () => {

@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Stack, Typography } from '@mui/material';
-import OpenEndedRollInput from '../inputs/OpenEndedRollInput';
+import OpenEndedRollInput, { OpenEndedRollDetails } from '../inputs/OpenEndedRollInput';
 import Section from '../layouts/Section';
 import RmuDialog from './RmuDialog';
 
@@ -45,7 +45,8 @@ export type OpenEndedRollDialogProps = {
   title?: string;
   subtitle?: string;
   onClose: () => void;
-  onConfirm: (value: number) => void;
+  /** The result and, when known, its dice (the first one is the unmodified roll). */
+  onConfirm: (value: number, details?: OpenEndedRollDetails) => void;
 };
 
 const OpenEndedRollDialog: FC<OpenEndedRollDialogProps> = ({
@@ -58,12 +59,14 @@ const OpenEndedRollDialog: FC<OpenEndedRollDialogProps> = ({
   const { t } = useTranslation();
   const [value, setValue] = useState<number | null>(null);
   const [randomRolls, setRandomRolls] = useState<number[] | null>(null);
+  const [details, setDetails] = useState<OpenEndedRollDetails | undefined>(undefined);
   const [inputKey, setInputKey] = useState(0);
 
   useEffect(() => {
     if (open) {
       setValue(null);
       setRandomRolls(null);
+      setDetails(undefined);
       setInputKey((k) => k + 1);
     }
   }, [open]);
@@ -72,16 +75,18 @@ const OpenEndedRollDialog: FC<OpenEndedRollDialogProps> = ({
     const result = generateRandomRoll();
     setValue(result.value);
     setRandomRolls(result.rolls);
+    setDetails({ unmodified: result.rolls[0], rolls: result.rolls });
     setInputKey((k) => k + 1);
   };
 
-  const handleInputChange = (result: number | null) => {
+  const handleInputChange = (result: number | null, rollDetails?: OpenEndedRollDetails) => {
     setValue(result);
     setRandomRolls(null);
+    setDetails(rollDetails);
   };
 
   const handleConfirm = () => {
-    if (value !== null) onConfirm(value);
+    if (value !== null) onConfirm(value, details);
   };
 
   return (

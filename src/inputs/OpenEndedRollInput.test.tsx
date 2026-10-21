@@ -37,7 +37,7 @@ describe('OpenEndedRollInput', () => {
     fireEvent.blur(input);
 
     expect(onChange).toHaveBeenCalledTimes(1);
-    expect(onChange).toHaveBeenCalledWith(80);
+    expect(onChange).toHaveBeenCalledWith(80, { unmodified: 80, rolls: [80] });
   });
 
   it('commits a field on Enter', () => {
@@ -49,7 +49,7 @@ describe('OpenEndedRollInput', () => {
     fireEvent.change(input, { target: { value: '42' } });
     fireEvent.keyDown(input, { key: 'Enter' });
 
-    expect(onChange).toHaveBeenCalledWith(42);
+    expect(onChange).toHaveBeenCalledWith(42, { unmodified: 42, rolls: [42] });
   });
 
   it('asks for another die on an open-ended roll', () => {
@@ -60,7 +60,26 @@ describe('OpenEndedRollInput', () => {
     expect(onChange).not.toHaveBeenCalled();
     typeAndBlur(screen.getAllByRole('textbox')[1], '20');
 
-    expect(onChange).toHaveBeenCalledWith(118);
+    expect(onChange).toHaveBeenCalledWith(118, { unmodified: 98, rolls: [98, 20] });
+  });
+
+  it('reports the first die as the unmodified roll', () => {
+    const onChange = vi.fn();
+    renderWithProviders(<OpenEndedRollInput onChange={onChange} />);
+
+    typeAndBlur(screen.getByRole('textbox'), '66');
+
+    expect(onChange).toHaveBeenCalledWith(66, { unmodified: 66, rolls: [66] });
+  });
+
+  it('reports the dice of a negative open-ended roll', () => {
+    const onChange = vi.fn();
+    renderWithProviders(<OpenEndedRollInput onChange={onChange} />);
+
+    typeAndBlur(screen.getByRole('textbox'), '3');
+    typeAndBlur(screen.getAllByRole('textbox')[1], '40');
+
+    expect(onChange).toHaveBeenCalledWith(-37, { unmodified: 3, rolls: [3, 40] });
   });
 
   it('shows a stored roll without reporting it again', () => {

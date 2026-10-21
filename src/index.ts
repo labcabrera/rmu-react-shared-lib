@@ -52,6 +52,7 @@ export { default as ClearableTextField } from './inputs/ClearableTextField';
 export { default as NumericInput } from './inputs/NumericInput';
 export { default as NumericReadonlyInput } from './inputs/NumericReadonlyInput';
 export { default as OpenEndedRollInput, randomD100 } from './inputs/OpenEndedRollInput';
+export type { OpenEndedRollDetails, OpenEndedRollProps } from './inputs/OpenEndedRollInput';
 export { default as ConfirmedRollInput } from './inputs/ConfirmedRollInput';
 
 export { default as RmuKeyLabelSelect } from './selectors/RmuKeyLabelSelect';
@@ -84,6 +85,8 @@ export * from './api/item.api';
 export * from './api/item.dto';
 export * from './api/maneuver.api';
 export * from './api/maneuver.dto';
+export * from './api/maneuver-modifier.api';
+export * from './api/maneuver-modifier.dto';
 export * from './api/npc.dto';
 export * from './api/npc.api';
 export * from './api/profession.api';

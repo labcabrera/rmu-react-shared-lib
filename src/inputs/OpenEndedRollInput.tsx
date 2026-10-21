@@ -9,14 +9,23 @@ import NumericInput from './NumericInput';
 const TOP_LIMIT = 96;
 const BOTTOM_LIMIT = 5;
 
+/** Dice behind a complete open-ended roll. */
+export type OpenEndedRollDetails = {
+  /** First die (1-100), the unmodified roll: unusual events (66) and fumbles are read from it. */
+  unmodified: number;
+  /** Every die rolled, in order. */
+  rolls: number[];
+};
+
 export type OpenEndedRollProps = {
   gridColumns?: number;
   inputGridSize?: number;
   /**
    * Called with the final result once the roll is complete (each field is committed on blur or Enter), and with `null`
-   * when it is cleared. It is not called again for the same result.
+   * when it is cleared. It is not called again for the same result. `details` has the dice of the result (the first
+   * one is the unmodified roll); it is absent when the result is cleared.
    */
-  onChange: (result: number | null) => void;
+  onChange: (result: number | null, details?: OpenEndedRollDetails) => void;
   /**
    * A stored result to show, e.g. a roll saved earlier. A result from 6 to 95 fills the first field; any other one is
    * shown as a caption, since the dice behind it are unknown. When it changes to something other than the last
@@ -104,7 +113,7 @@ const OpenEndedRollInput: FC<OpenEndedRollProps> = ({
     const result = computeOpenEndedResult(rolls);
     if (result === undefined || result === lastResult.current) return;
     lastResult.current = result;
-    onChange(result);
+    onChange(result, { unmodified: rolls[0] as number, rolls: rolls as number[] });
   }, [rolls]);
 
   useEffect(() => {
