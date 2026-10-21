@@ -26,9 +26,11 @@ export async function fetchTacticalGames(
   rsql: string,
   page: number,
   size: number,
-  auth: AuthContextProps
+  auth: AuthContextProps,
+  sort?: string
 ): Promise<Page<TacticalGame>> {
-  const url = `${apiTacticalUrl}/tactical-games?q=${rsql}&page=${page}&size=${size}`;
+  const sortParam = sort ? `&sort=${encodeURIComponent(sort)}` : '';
+  const url = `${apiTacticalUrl}/tactical-games?q=${rsql}&page=${page}&size=${size}${sortParam}`;
   return await callApi(auth, url, { method: 'GET' });
 }
 

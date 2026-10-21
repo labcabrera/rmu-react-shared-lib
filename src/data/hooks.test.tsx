@@ -12,11 +12,23 @@ const page = (content: string[], totalPages = 3): Page<string> => ({
 });
 
 describe('usePagedQuery', () => {
+  it('passes the sort to the fetcher and goes back to the first page when it changes', async () => {
+    const fetcher = vi.fn().mockResolvedValue(page(['a']));
+    const { result, rerender } = renderHook(({ sort }) => usePagedQuery({ fetcher, sort }), {
+      initialProps: { sort: 'name' },
+    });
+    await waitFor(() => expect(fetcher).toHaveBeenCalledWith('', 0, 24, 'name'));
+    act(() => result.current.setPage(2));
+    await waitFor(() => expect(fetcher).toHaveBeenLastCalledWith('', 2, 24, 'name'));
+    rerender({ sort: '-createdAt' });
+    await waitFor(() => expect(fetcher).toHaveBeenLastCalledWith('', 0, 24, '-createdAt'));
+  });
+
   it('fetches the first page and exposes the pagination', async () => {
     const fetcher = vi.fn().mockResolvedValue(page(['a', 'b']));
     const { result } = renderHook(() => usePagedQuery({ fetcher, pageSize: 2 }));
     await waitFor(() => expect(result.current.items).toEqual(['a', 'b']));
-    expect(fetcher).toHaveBeenCalledWith('', 0, 2);
+    expect(fetcher).toHaveBeenCalledWith('', 0, 2, undefined);
     expect(result.current.totalPages).toBe(3);
     expect(result.current.totalElements).toBe(6);
   });
@@ -26,9 +38,9 @@ describe('usePagedQuery', () => {
     const { result } = renderHook(() => usePagedQuery({ fetcher }));
     await waitFor(() => expect(fetcher).toHaveBeenCalledTimes(1));
     act(() => result.current.setPage(2));
-    await waitFor(() => expect(fetcher).toHaveBeenLastCalledWith('', 2, 24));
+    await waitFor(() => expect(fetcher).toHaveBeenLastCalledWith('', 2, 24, undefined));
     act(() => result.current.setPageSize(48));
-    await waitFor(() => expect(fetcher).toHaveBeenLastCalledWith('', 0, 48));
+    await waitFor(() => expect(fetcher).toHaveBeenLastCalledWith('', 0, 48, undefined));
     act(() => result.current.refresh());
     await waitFor(() => expect(fetcher).toHaveBeenCalledTimes(4));
   });
@@ -39,9 +51,9 @@ describe('usePagedQuery', () => {
       initialProps: { rsql: '' },
     });
     act(() => result.current.setPage(2));
-    await waitFor(() => expect(fetcher).toHaveBeenLastCalledWith('', 2, 24));
+    await waitFor(() => expect(fetcher).toHaveBeenLastCalledWith('', 2, 24, undefined));
     rerender({ rsql: 'name=re=sword' });
-    await waitFor(() => expect(fetcher).toHaveBeenLastCalledWith('name=re=sword', 0, 24));
+    await waitFor(() => expect(fetcher).toHaveBeenLastCalledWith('name=re=sword', 0, 24, undefined));
     expect(result.current.page).toBe(0);
   });
 
