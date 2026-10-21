@@ -1,8 +1,10 @@
 import { NamedEntity } from './common.dto';
+import { CharacterCondition, Injury } from './health.dto';
 
 export type StatKey = 'ag' | 'co' | 'em' | 'in' | 'me' | 'pr' | 'qu' | 're' | 'sd' | 'st';
 export type Pace = 'creep' | 'walk' | 'jog' | 'run' | 'sprint' | 'dash';
 export type EquipmentSlot = 'mainHand' | 'offHand' | 'body' | 'head' | 'arms' | 'legs';
+export type CharacterStatus = 'partially_created' | 'created' | 'dead';
 
 export interface Character {
   id: string;
@@ -15,6 +17,7 @@ export interface Character {
   statistics: Record<StatKey, CharacterStat>;
   resistances: CharacterResistance[];
   hp: CharacterHP;
+  endurance?: CharacterEndurance;
   power: CharacterPower | null;
   movement: CharacterMovement;
   initiative: CharacterInitiative;
@@ -25,6 +28,29 @@ export interface Character {
   traits: CharacterTrait[];
   description: string | undefined;
   imageUrl: string | undefined;
+  status?: CharacterStatus;
+  /** Every injury of the character, healed ones included (spec 013). */
+  injuries?: Injury[];
+  conditions?: CharacterCondition[];
+  healthSummary?: CharacterHealthSummary;
+}
+
+export interface CharacterHealthSummary {
+  /** Sum of the penalties of the active, recovering and permanent injuries (0 or less). */
+  injuryPenalty: number;
+  activeInjuries: number;
+  /** Hit points lost per round by the injuries that still bleed. */
+  bleeding: number;
+}
+
+export interface CharacterEndurance {
+  base?: number;
+  racialBonus?: number;
+  customBonus: number;
+  max: number;
+  current: number;
+  accumulator: number;
+  fatiguePenalty: number;
 }
 
 export interface CreateCharacterDto {
@@ -133,6 +159,8 @@ export interface CharacterInfo {
   weight: number;
   /** Culture chosen at creation, if any. */
   cultureId?: string | null;
+  /** Recovery multiplier of the race: it multiplies the healing time (spec 013). */
+  recoveryMultiplier?: number;
 }
 
 export interface CharacterMovement {
