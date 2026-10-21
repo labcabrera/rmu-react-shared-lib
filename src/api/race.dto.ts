@@ -35,6 +35,7 @@ export type RaceResistances = {
   physical: number;
   poison: number;
   disease: number;
+  fear: number;
 };
 
 export type GenderBasedStat = {

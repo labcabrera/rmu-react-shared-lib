@@ -33,6 +33,8 @@ export { default as NotFound } from './display/NotFound';
 export { default as RmuPagination } from './display/RmuPagination';
 export { default as StatRow } from './display/StatRow';
 export { default as TechnicalInfo } from './display/TechnicalInfo';
+export { default as KeyValuePanel, KeyValueList } from './display/KeyValuePanel';
+export type { KeyValueRow } from './display/KeyValuePanel';
 
 export { default as ImageCategorySelector } from './images/ImageCategorySelector';
 export { default as ImageSelectorDialog } from './images/ImageSelectorDialog';
@@ -193,4 +195,15 @@ export { default as ResourceBar } from './rmu/character/ResourceBar';
 export type { ResourceKind } from './rmu/character/ResourceBar';
 export { default as SkillGroupList } from './rmu/character/SkillGroupList';
 export { default as StatBlock, statKeys } from './rmu/character/StatBlock';
-export { default as StatPill, formatBonus } from './rmu/character/StatPill';
+export { default as StatPill, bonusColor, formatBonus } from './rmu/character/StatPill';
+export { default as StatBonusGrid } from './rmu/character/StatBonusGrid';
+export {
+  default as BonusDevPointsSummary,
+  DEFAULT_RACE_DEV_POINTS_PER_LEVEL,
+} from './rmu/character/BonusDevPointsSummary';
+export { default as TraitTypeChip, traitTypeColor } from './rmu/trait/TraitTypeChip';
+export { default as ManeuverProfilePanel } from './rmu/maneuver/ManeuverProfilePanel';
+export { default as ManeuverModifierList } from './rmu/maneuver/ManeuverModifierList';
+export type { ManeuverModifierWithOrigin } from './rmu/maneuver/ManeuverModifierList';
+export { default as ManeuverOriginChip } from './rmu/maneuver/ManeuverOriginChip';
+export type { ManeuverOrigin } from './rmu/maneuver/ManeuverOriginChip';

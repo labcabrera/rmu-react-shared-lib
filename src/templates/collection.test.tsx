@@ -85,6 +85,19 @@ describe('EntityCard', () => {
     await userEvent.setup().click(screen.getByRole('button'));
     expect(onClick).toHaveBeenCalled();
   });
+
+  it('renders an image by default and none with imageRatio none', () => {
+    const { container, rerender } = renderWithProviders(<EntityCard title="Climbing" image="images/climb.png" />);
+    expect(container.querySelector('img')).not.toBeNull();
+    rerender(<EntityCard title="Climbing" image="images/climb.png" imageRatio="none" locked lockedLabel="private" />);
+    expect(container.querySelector('img')).toBeNull();
+    expect(screen.getByLabelText('private')).toBeInTheDocument();
+  });
+
+  it('clamps the description to the given lines', () => {
+    renderWithProviders(<EntityCard title="Campaign" description="A long story" descriptionLines={3} />);
+    expect(screen.getByText('A long story')).toHaveStyle({ WebkitLineClamp: '3' });
+  });
 });
 
 describe('PreviewDrawer', () => {

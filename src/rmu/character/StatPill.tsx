@@ -4,6 +4,13 @@ import { Box, Tooltip, Typography } from '@mui/material';
 /** Formats a bonus with its sign: +4, -3, 0. */
 export const formatBonus = (value: number) => (value > 0 ? `+${value}` : `${value}`);
 
+/** Theme color of a bonus: `stat.positive`, `stat.negative` or the secondary text color for zero. */
+export const bonusColor = (value: number) => {
+  if (value > 0) return 'stat.positive';
+  if (value < 0) return 'stat.negative';
+  return 'text.secondary';
+};
+
 /**
  * A key number with a short label under it (DB, AT, initiative…). `signed` shows the sign and colors
  * positive and negative values.
