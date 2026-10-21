@@ -49,3 +49,13 @@ describe('EffectList', () => {
     expect(container).toBeEmptyDOMElement();
   });
 });
+
+describe('EffectList legacy status', () => {
+  it('reads the legacy unconcious as unconscious', () => {
+    renderWithProviders(<EffectList effects={[{ status: 'unconcious' }, { status: 'unconscious' }]} />);
+
+    const chips = screen.getAllByText('unconscious');
+    expect(chips).toHaveLength(2);
+    chips.forEach((chip) => expect(chip.closest('.MuiChip-root')).toHaveClass('MuiChip-colorError'));
+  });
+});

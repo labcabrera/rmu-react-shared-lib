@@ -1,0 +1,261 @@
+// Health model shared by the strategic and the tactical modules (spec 013 §1): injuries with a stable UUID and
+// their origin, treatments, recovery, conditions and the healing log of a character.
+
+export type InjuryType = 'bone' | 'cut-burn' | 'muscle-tendon' | 'organ' | 'poison-disease' | 'skin-tissue' | 'unknown';
+
+export type InjurySeverity = 'light' | 'medium' | 'severe';
+
+export type BodyLocation = 'head' | 'chest' | 'abdomen' | 'arm' | 'leg';
+
+export type BodySide = 'left' | 'right';
+
+export type InjuryStatus = 'active' | 'recovering' | 'permanent' | 'healed';
+
+export type InjuryFlag = 'permanent-risk' | 'limb-loss' | 'blinding' | 'paralysis';
+
+export type BleedingControl = 'pressure' | 'stitches' | 'tourniquet' | 'cauterized' | 'magic';
+
+export type InjurySourceKind = 'critical' | 'fumble' | 'fatigue' | 'manual';
+
+/** Where an injury, an effect or a condition comes from. */
+export interface InjurySource {
+  kind: InjurySourceKind;
+  tacticalGameId?: string;
+  tacticalGameName?: string;
+  actionId?: string;
+  round?: number;
+  attackerId?: string;
+  attackerName?: string;
+  /** `${table}-${severity}-${roll}`, e.g. "S-C-91". */
+  criticalKey?: string;
+}
+
+export type TreatmentProcedure =
+  | 'pressure'
+  | 'stitches'
+  | 'tourniquet'
+  | 'cauterize'
+  | 'dress'
+  | 'splint'
+  | 'cast'
+  | 'salve'
+  | 'surgery'
+  | 'magic'
+  | 'herbs';
+
+export type TreatmentResult = 'absolute-failure' | 'failure' | 'partial-success' | 'success' | 'absolute-success';
+
+export type HealingType = 'none' | 'medicine' | 'medicine-absolute' | 'magic-or-herbs' | 'magic-and-herbs';
+
+export interface InjuryTreatmentHealer {
+  characterId?: string;
+  actorId?: string;
+  name: string;
+  external?: boolean;
+  bonus: number;
+}
+
+export interface InjuryTreatment {
+  id: string;
+  procedure: TreatmentProcedure;
+  healer: InjuryTreatmentHealer;
+  /** Difficulty modifier applied. */
+  difficulty: number;
+  roll: number;
+  total: number;
+  result: TreatmentResult;
+  healingType: HealingType;
+  /** Recovery modifier from the core medical table. */
+  recoveryModifier: number;
+  at: string;
+  context: 'tactical' | 'strategic';
+  tacticalGameId?: string;
+}
+
+export interface InjuryRecovery {
+  roll: number;
+  modifiers: number;
+  total: number;
+  /** Days by injury type and result, times the severity. */
+  baseDays: number;
+  /** Race times talents (Fast/Slow Healer). */
+  multiplier: number;
+  /** Rounded up, at least 1. */
+  totalDays: number;
+  remainingDays: number;
+  startedAt: string;
+}
+
+export interface InjuryPermanent {
+  penalty: number;
+  roll?: number;
+}
+
+export interface Injury {
+  /** UUID, stable between the strategic and the tactical modules. */
+  id: string;
+  type: InjuryType;
+  severity: InjurySeverity;
+  location?: BodyLocation;
+  side?: BodySide;
+  /** Current penalty, 0 or less. */
+  penalty: number;
+  initialPenalty: number;
+  /** Hit points per round; 0 means stopped. */
+  bleeding?: number;
+  bleedingControl?: BleedingControl;
+  flags?: InjuryFlag[];
+  /** Free text of the game master. */
+  description?: string;
+  source: InjurySource;
+  treatments: InjuryTreatment[];
+  recovery?: InjuryRecovery;
+  permanent?: InjuryPermanent;
+  status: InjuryStatus;
+  createdAt: string;
+  updatedAt?: string;
+  healedAt?: string;
+}
+
+export type CharacterConditionStatus = 'unconscious' | 'permanent-unconscious' | 'dead';
+
+export interface CharacterCondition {
+  id: string;
+  status: CharacterConditionStatus;
+  source: InjurySource;
+  description?: string;
+  createdAt: string;
+  resolvedAt?: string;
+}
+
+export type HealingLogKind = 'tactical-outcome' | 'treatment' | 'recovery-roll' | 'permanent-roll' | 'rest' | 'manual';
+
+export interface HealingLogEntry {
+  id: string;
+  at: string;
+  kind: HealingLogKind;
+  injuryId?: string;
+  tacticalGameId?: string;
+  healerName?: string;
+  /** Data to show with i18n. */
+  summary: Record<string, unknown>;
+}
+
+/** Fate chosen at the end of a tactical game for a character who bleeds or is dying. */
+export type CharacterFate = 'dead' | 'permanent-unconscious';
+
+// Requests of the strategic character health endpoints (spec 013 §4).
+
+/** `POST v1/characters/:id/injuries`: manual injury of the game master. */
+export interface AddInjuryDto {
+  type: InjuryType;
+  severity?: InjurySeverity;
+  location?: BodyLocation;
+  side?: BodySide;
+  penalty: number;
+  bleeding?: number;
+  flags?: InjuryFlag[];
+  description?: string;
+}
+
+/** `PATCH v1/characters/:id/injuries/:injuryId`. */
+export interface UpdateInjuryDto {
+  type?: InjuryType;
+  severity?: InjurySeverity;
+  location?: BodyLocation | null;
+  side?: BodySide | null;
+  penalty?: number;
+  initialPenalty?: number;
+  bleeding?: number;
+  bleedingControl?: BleedingControl;
+  flags?: InjuryFlag[];
+  description?: string;
+  permanent?: InjuryPermanent | null;
+  status?: InjuryStatus;
+}
+
+/** Healer given by hand (not a character of the campaign). */
+export interface ExternalHealerDto {
+  name: string;
+  bonus: number;
+  /** Herbalism bonus of the external healer (strategic treatments). */
+  herbalismBonus?: number;
+}
+
+/** `POST v1/characters/:id/injuries/:injuryId/treatments`: give either `healerCharacterId` or `healer`. */
+export interface TreatInjuryDto {
+  procedure: TreatmentProcedure;
+  healerCharacterId?: string;
+  healer?: ExternalHealerDto;
+  /** Not needed for magic, which takes no Medicine roll. */
+  roll?: number;
+  difficulty?: number;
+  healingType?: HealingType;
+  /** Herbalism roll; a success adds +25 to the Medicine roll. Give `healerCharacterId` or `bonus`. */
+  herbalism?: { healerCharacterId?: string; bonus?: number; roll: number };
+}
+
+/** `POST v1/actor-rounds/:id/injuries/:injuryId/treatments` in the tactical module. */
+export interface TreatActorInjuryDto {
+  procedure: Extract<TreatmentProcedure, 'pressure' | 'stitches' | 'tourniquet' | 'cauterize' | 'dress' | 'magic'>;
+  /** Another actor of the game (or the same one). */
+  healerActorId?: string;
+  /** External healer. */
+  healer?: ExternalHealerDto;
+  roll: number;
+  /** Defaults to the difficulty of the procedure. */
+  difficulty?: number;
+}
+
+/** `POST v1/characters/:id/injuries/:injuryId/recovery`. */
+export interface RecoveryRollDto {
+  roll: number;
+}
+
+/** `POST v1/characters/:id/injuries/:injuryId/permanent`. */
+export interface PermanentRollDto {
+  roll: number;
+}
+
+/** `POST v1/characters/:id/rest`. */
+export interface RestDto {
+  hours?: number;
+  days?: number;
+  fullRest?: boolean;
+}
+
+/** Where a change of hits of a tactical game comes from (spec 013, §1.1). */
+export type HpLogKind = 'attack' | 'critical' | 'fumble' | 'bleeding' | 'endurance' | 'treatment' | 'manual';
+
+export const HP_LOG_KINDS: HpLogKind[] = [
+  'attack',
+  'critical',
+  'fumble',
+  'bleeding',
+  'endurance',
+  'treatment',
+  'manual',
+];
+
+/** A change of the hits of an actor round: negative is damage, positive healing. */
+export interface HpLogEntry {
+  id: string;
+  round: number;
+  /** 0 before the action phases, 1-4 in them, 5 in the upkeep. */
+  phase?: number;
+  amount: number;
+  kind: HpLogKind;
+  actionId?: string;
+  attackerId?: string;
+  attackerName?: string;
+  /** The injury that bleeds or is treated. */
+  injuryId?: string;
+  criticalKey?: string;
+  at: string;
+}
+
+/** Totals of a hits log by kind and by attacker. */
+export interface HpBySource {
+  byKind: Partial<Record<HpLogKind, number>>;
+  byAttacker: { attackerId: string; attackerName?: string; amount: number }[];
+}

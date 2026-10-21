@@ -10,10 +10,15 @@ export type ActorPenalty = { source: string; value: number };
 
 type Severity = 'incapacitating' | 'ongoing' | 'other';
 
+/** Legacy status names stored before spec 013, read as the current ones. */
+const LEGACY_STATUS: Record<string, string> = { unconcious: 'unconscious' };
+
+/** Status of an effect with the legacy spelling `unconcious` read as `unconscious`. */
+export const normalizeEffectStatus = (status: string): string => LEGACY_STATUS[status] ?? status;
+
 const SEVERITY: Record<string, Severity> = {
   dead: 'incapacitating',
   dying: 'incapacitating',
-  unconcious: 'incapacitating',
   unconscious: 'incapacitating',
   stunned: 'incapacitating',
   surprised: 'incapacitating',
@@ -36,7 +41,6 @@ const ICONS: Record<string, string> = {
   prone: 'prone',
   staggered: 'staggered',
   stunned: 'stunned',
-  unconcious: 'unconscios',
   unconscious: 'unconscios',
   dmg: 'dmg',
 };
@@ -64,7 +68,8 @@ const EffectList: FC<{ effects: ActorEffect[]; penalties?: ActorPenalty[]; size?
   size = 'small',
 }) => {
   const { t } = useTranslation();
-  const ordered = [...effects]
+  const ordered = effects
+    .map((effect) => ({ ...effect, status: normalizeEffectStatus(effect.status) }))
     .filter((effect) => effect.status !== 'penalty' || effect.value)
     .sort((a, b) => rank(a.status) - rank(b.status));
   const penaltyTotal = penalties.reduce((sum, penalty) => sum + penalty.value, 0);

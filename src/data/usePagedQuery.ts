@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Page } from '../api/api';
 
-export type PagedFetcher<T> = (rsql: string, page: number, size: number) => Promise<Page<T>>;
+export type PagedFetcher<T> = (rsql: string, page: number, size: number, sort?: string) => Promise<Page<T>>;
 
 export interface PagedQueryOptions<T> {
   fetcher: PagedFetcher<T>;
   /** RSQL filter. Changing it goes back to the first page. */
   rsql?: string;
+  /** Sort expression passed to the fetcher as is (e.g. `name` or `-createdAt`). Changing it goes back to the first page. */
+  sort?: string;
   pageSize?: number;
   /** Skip fetching while false (for example until a required filter is known). */
   enabled?: boolean;
@@ -30,6 +32,7 @@ export interface PagedQuery<T> {
 export function usePagedQuery<T>({
   fetcher,
   rsql = '',
+  sort,
   pageSize: initialPageSize = 24,
   enabled = true,
   onError,
@@ -41,6 +44,7 @@ export function usePagedQuery<T>({
   const [error, setError] = useState<unknown>();
   const [reloads, setReloads] = useState(0);
   const [appliedRsql, setAppliedRsql] = useState(rsql);
+  const [appliedSort, setAppliedSort] = useState(sort);
   // Callers usually pass inline functions: keep the latest ones without refetching on every render.
   const fetcherRef = useRef(fetcher);
   const onErrorRef = useRef(onError);
@@ -51,13 +55,17 @@ export function usePagedQuery<T>({
     setAppliedRsql(rsql);
     setPage(0);
   }
+  if (sort !== appliedSort) {
+    setAppliedSort(sort);
+    setPage(0);
+  }
 
   useEffect(() => {
     if (!enabled) return;
     let cancelled = false;
     setLoading(true);
     fetcherRef
-      .current(appliedRsql, page, pageSize)
+      .current(appliedRsql, page, pageSize, appliedSort)
       .then((response) => {
         if (cancelled) return;
         setData(response);
@@ -72,7 +80,7 @@ export function usePagedQuery<T>({
     return () => {
       cancelled = true;
     };
-  }, [appliedRsql, page, pageSize, enabled, reloads]);
+  }, [appliedRsql, appliedSort, page, pageSize, enabled, reloads]);
 
   const setPageSize = useCallback((size: number) => {
     setPageSizeState(size);

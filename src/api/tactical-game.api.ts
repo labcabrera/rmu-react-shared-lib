@@ -1,7 +1,13 @@
 import { AuthContextProps } from 'react-oidc-context';
 import { apiTacticalUrl } from '../config/config.service';
 import callApi, { Page } from './api';
-import { CreateTacticalGameDto, TacticalGame, UpdateTacticalGameDto } from './tactical-game.dto';
+import {
+  CreateTacticalGameDto,
+  FinishPreview,
+  FinishTacticalGameDto,
+  TacticalGame,
+  UpdateTacticalGameDto,
+} from './tactical-game.dto';
 
 export function getPhaseAsNumber(game: TacticalGame): number | undefined {
   if (!game) return undefined;
@@ -20,9 +26,11 @@ export async function fetchTacticalGames(
   rsql: string,
   page: number,
   size: number,
-  auth: AuthContextProps
+  auth: AuthContextProps,
+  sort?: string
 ): Promise<Page<TacticalGame>> {
-  const url = `${apiTacticalUrl}/tactical-games?q=${rsql}&page=${page}&size=${size}`;
+  const sortParam = sort ? `&sort=${encodeURIComponent(sort)}` : '';
+  const url = `${apiTacticalUrl}/tactical-games?q=${rsql}&page=${page}&size=${size}${sortParam}`;
   return await callApi(auth, url, { method: 'GET' });
 }
 
@@ -126,5 +134,31 @@ export async function startPhase(gameId: string, auth: AuthContextProps): Promis
 
 export async function randomizeInitiatives(gameId: string, auth: AuthContextProps): Promise<TacticalGame> {
   const url = `${apiTacticalUrl}/tactical-games/${gameId}/initiatives/randomize`;
+  return await callApi(auth, url, { method: 'POST' });
+}
+
+/** What finishing the game would leave: characters, hit points, injuries, conditions and who is at risk. */
+export async function fetchFinishPreview(gameId: string, auth: AuthContextProps): Promise<FinishPreview> {
+  const url = `${apiTacticalUrl}/tactical-games/${gameId}/finish-preview`;
+  return await callApi(auth, url, { method: 'GET' });
+}
+
+/** Finishes an `in_progress` game; every character at risk needs a fate. */
+export async function finishTacticalGame(
+  gameId: string,
+  dto: FinishTacticalGameDto,
+  auth: AuthContextProps
+): Promise<TacticalGame> {
+  const url = `${apiTacticalUrl}/tactical-games/${gameId}/finish`;
+  return await callApi(auth, url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dto),
+  });
+}
+
+/** Applies the outcome of a finished game to the strategic characters; only the ones not applied yet are sent. */
+export async function applyTacticalGame(gameId: string, auth: AuthContextProps): Promise<TacticalGame> {
+  const url = `${apiTacticalUrl}/tactical-games/${gameId}/apply`;
   return await callApi(auth, url, { method: 'POST' });
 }
