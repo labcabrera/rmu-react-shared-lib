@@ -2,15 +2,9 @@ import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, ButtonBase, LinearProgress, Stack, Typography } from '@mui/material';
 import { CharacterStat, StatKey } from '../../api/character.dto';
-import { formatBonus } from './StatPill';
+import { bonusColor, formatBonus } from './StatPill';
 
 export const statKeys: StatKey[] = ['ag', 'co', 'em', 'in', 'me', 'pr', 'qu', 're', 'sd', 'st'];
-
-const bonusColor = (value: number) => {
-  if (value > 0) return 'stat.positive';
-  if (value < 0) return 'stat.negative';
-  return 'text.secondary';
-};
 
 /**
  * The ten stats as compact tiles: abbreviation, total bonus, and temporary over potential with a bar.

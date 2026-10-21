@@ -21,13 +21,18 @@ const EntityCard: FC<{
   title: string;
   subtitle?: ReactNode;
   image?: string | null;
-  /** Image shape: `wide` (16:9, default), `portrait` (3:4, for people and creatures) or `square`. */
-  imageRatio?: keyof typeof ratios;
+  /**
+   * Image shape: `wide` (16:9, default), `portrait` (3:4, for people and creatures), `square`, or `none` for a
+   * compact card without media (for example skills).
+   */
+  imageRatio?: keyof typeof ratios | 'none';
   /** CSS filter for the image (for example the sepia filter of the item illustrations). */
   imageFilter?: string;
   chips?: ReactNode;
   metrics?: EntityMetric[];
   description?: string;
+  /** Lines of the description before it is clamped (default 2). */
+  descriptionLines?: number;
   /** Shows a lock badge (private entities). */
   locked?: boolean;
   lockedLabel?: string;
@@ -43,40 +48,56 @@ const EntityCard: FC<{
   chips,
   metrics,
   description,
+  descriptionLines = 2,
   locked = false,
   lockedLabel,
   imageTransitionName,
   onClick,
 }) => {
+  const lockBadge = locked && (
+    <Tooltip title={lockedLabel ?? ''}>
+      <LockIcon
+        fontSize="small"
+        aria-label={lockedLabel}
+        sx={
+          imageRatio === 'none'
+            ? { flex: 'none', color: 'text.secondary' }
+            : { position: 'absolute', top: 8, right: 8, p: 0.5, borderRadius: '50%', bgcolor: 'background.paper' }
+        }
+      />
+    </Tooltip>
+  );
   const content = (
     <>
-      <Box sx={{ position: 'relative' }}>
-        <CardMedia
-          component="img"
-          image={resolveAssetUrl(image || defaultImage)}
-          alt=""
-          sx={{
-            aspectRatio: ratios[imageRatio],
-            objectFit: 'cover',
-            filter: imageFilter,
-            viewTransitionName: imageTransitionName,
-          }}
-        />
-        {locked && (
-          <Tooltip title={lockedLabel ?? ''}>
-            <LockIcon
-              fontSize="small"
-              aria-label={lockedLabel}
-              sx={{ position: 'absolute', top: 8, right: 8, p: 0.5, borderRadius: '50%', bgcolor: 'background.paper' }}
-            />
-          </Tooltip>
-        )}
-      </Box>
+      {imageRatio !== 'none' && (
+        <Box sx={{ position: 'relative' }}>
+          <CardMedia
+            component="img"
+            image={resolveAssetUrl(image || defaultImage)}
+            alt=""
+            sx={{
+              aspectRatio: ratios[imageRatio],
+              objectFit: 'cover',
+              filter: imageFilter,
+              viewTransitionName: imageTransitionName,
+            }}
+          />
+          {lockBadge}
+        </Box>
+      )}
       <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="h6" component="h3" sx={{ fontFamily: (theme) => theme.fonts.display }} noWrap>
-            {title}
-          </Typography>
+          <Stack direction="row" sx={{ alignItems: 'center', gap: 1 }}>
+            <Typography
+              variant="h6"
+              component="h3"
+              sx={{ fontFamily: (theme) => theme.fonts.display, flex: 1, minWidth: 0 }}
+              noWrap
+            >
+              {title}
+            </Typography>
+            {imageRatio === 'none' && lockBadge}
+          </Stack>
           {subtitle && (
             <Typography variant="body2" color="text.secondary" noWrap>
               {subtitle}
@@ -92,7 +113,12 @@ const EntityCard: FC<{
           <Typography
             variant="body2"
             color="text.secondary"
-            sx={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+            sx={{
+              display: '-webkit-box',
+              WebkitLineClamp: descriptionLines,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            }}
           >
             {description}
           </Typography>
