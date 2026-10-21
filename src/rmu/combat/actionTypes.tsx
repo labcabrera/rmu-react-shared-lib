@@ -32,8 +32,19 @@ export type CombatActionType =
 /** Groups of action types: each has a color in `palette.combat`. */
 export type CombatActionCategory = 'melee' | 'ranged' | 'movement' | 'maneuver' | 'spell' | 'other';
 
-/** State of an action as the board shows it. */
-export type CombatActionState = 'pending' | 'waiting' | 'resolved' | 'failed';
+/**
+ * State of an action as the board shows it. `blocked`, `unreachable`, `optimal` and `held` come from the action's
+ * readiness (spec 011): below its minimum AP, unable to reach it this round, with its maximum AP, or held.
+ */
+export type CombatActionState =
+  | 'pending'
+  | 'waiting'
+  | 'resolved'
+  | 'failed'
+  | 'blocked'
+  | 'unreachable'
+  | 'optimal'
+  | 'held';
 
 type ActionTypeInfo = {
   category: CombatActionCategory;
@@ -67,8 +78,11 @@ export const combatActionInfo = (type: string): ActionTypeInfo =>
  * Combat colors of the theme. A remote can be newer than the shell that builds the theme: when the theme has
  * no `palette.combat`, the default colors of its mode are used instead of failing.
  */
-export const combatColors = (theme: Theme): Theme['palette']['combat'] =>
-  theme.palette.combat ?? gameColors[theme.palette.mode].combat;
+export const combatColors = (theme: Theme): Theme['palette']['combat'] => ({
+  // An older shell may build a theme without the newer colors (`optimal`): the defaults fill them in.
+  ...gameColors[theme.palette.mode].combat,
+  ...theme.palette.combat,
+});
 
 /**
  * Color of a faction by its position in the game (`game.factions`), cycling when there are more factions than

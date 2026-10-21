@@ -11,6 +11,7 @@ import { renderWithProviders } from '../../test/render';
 import FlowSteps from '../../ui/FlowSteps';
 import ActionStateMarker from './ActionStateMarker';
 import ActionTypeChip from './ActionTypeChip';
+import ApPips, { apPhasePips } from './ApPips';
 import { combatActionInfo, combatColors, factionColor } from './actionTypes';
 
 // Without an i18n instance, t() returns the key: labels below are translation keys.
@@ -78,6 +79,63 @@ describe('action types', () => {
   it('names the state of an action, with its result', () => {
     renderWithProviders(<ActionStateMarker state="resolved" text="+42" />);
     expect(screen.getByRole('img', { name: 'action-state-resolved: +42' })).toBeInTheDocument();
+  });
+
+  it('names the readiness states of an action', () => {
+    renderWithProviders(
+      <>
+        <ActionStateMarker state="blocked" />
+        <ActionStateMarker state="unreachable" />
+        <ActionStateMarker state="optimal" text="4/4" />
+        <ActionStateMarker state="held" />
+      </>
+    );
+    expect(screen.getByRole('img', { name: 'action-readiness-blocked' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'action-readiness-unreachable' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'action-readiness-optimal: 4/4' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'action-readiness-held' })).toBeInTheDocument();
+  });
+
+  // An older shell builds a theme whose combat colors have no `optimal`.
+  it('fills in the combat colors missing from the theme', () => {
+    const theme = createTheme({ palette: { combat: { melee: '#ff0000' } } as never });
+    expect(combatColors(theme).melee).toBe('#ff0000');
+    expect(combatColors(theme).optimal).toMatch(/^#/);
+  });
+});
+
+describe('action points', () => {
+  it('spends the base point first and shows capacity over 1 as bonus points', () => {
+    const pips = apPhasePips(
+      [1, 1, 2, 2],
+      [
+        { phase: 1, ap: 1, kind: 'spent' },
+        { phase: 3, ap: 1, kind: 'spent' },
+      ]
+    );
+    expect(pips[0]).toEqual([{ state: 'spent', bonus: false }]);
+    expect(pips[1]).toEqual([{ state: 'available', bonus: false }]);
+    expect(pips[2]).toEqual([
+      { state: 'spent', bonus: false },
+      { state: 'available', bonus: true },
+    ]);
+  });
+
+  it('shows phases without capacity and lost ledger points as lost', () => {
+    const pips = apPhasePips([0, 0, 1, 1], [{ phase: 4, ap: 1, kind: 'lost' }]);
+    expect(pips[0]).toEqual([{ state: 'lost', bonus: false }]);
+    expect(pips[3]).toEqual([
+      { state: 'available', bonus: false },
+      { state: 'lost', bonus: false },
+    ]);
+    // A lost point where the capacity is already missing is not counted twice.
+    expect(apPhasePips([1, 0, 1, 1], [{ phase: 2, ap: 1, kind: 'lost' }])[1]).toHaveLength(1);
+  });
+
+  it('names the points of each phase', () => {
+    renderWithProviders(<ApPips capacity={[1, 1, 1, 2]} ledger={[{ phase: 1, ap: 1, kind: 'spent' }]} />);
+    expect(screen.getAllByRole('img')).toHaveLength(4);
+    expect(screen.getAllByRole('img', { name: 'ap-pips-phase' })).toHaveLength(4);
   });
 });
 

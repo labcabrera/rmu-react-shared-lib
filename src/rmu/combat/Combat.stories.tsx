@@ -7,12 +7,22 @@ import SidePanelLayout from '../../layouts/SidePanelLayout';
 import FlowSteps from '../../ui/FlowSteps';
 import ActionStateMarker from './ActionStateMarker';
 import ActionTypeChip from './ActionTypeChip';
+import ApPips from './ApPips';
 import { CombatActionState, combatActionTypes, CombatActionType } from './actionTypes';
 
 // Building blocks of the combat dashboard of spec 005: action type chips, state markers, the side panel
 // and the guided flow. Sample data only.
 
-const states: CombatActionState[] = ['pending', 'waiting', 'resolved', 'failed'];
+const states: CombatActionState[] = [
+  'blocked',
+  'unreachable',
+  'pending',
+  'optimal',
+  'held',
+  'waiting',
+  'resolved',
+  'failed',
+];
 
 const Catalog = () => (
   <Stack spacing={3}>
@@ -34,6 +44,23 @@ const Catalog = () => (
         {states.map((state) => (
           <ActionStateMarker key={state} state={state} text={state === 'resolved' ? '+42' : undefined} />
         ))}
+      </Stack>
+    </Box>
+    <Box sx={{ maxWidth: 480 }}>
+      <Typography variant="overline" color="text.secondary">
+        Action points by phase (surprised 2 with haste 2; then haste 2 with an AP lost in phase 4)
+      </Typography>
+      <Stack spacing={1} sx={{ mt: 1 }}>
+        <ApPips capacity={[0, 0, 2, 2]} ledger={[{ phase: 3, ap: 1, kind: 'spent' }]} currentPhase={3} />
+        <ApPips
+          capacity={[1, 1, 2, 2]}
+          ledger={[
+            { phase: 1, ap: 1, kind: 'spent' },
+            { phase: 3, ap: 2, kind: 'spent' },
+            { phase: 4, ap: 1, kind: 'lost' },
+          ]}
+          currentPhase={4}
+        />
       </Stack>
     </Box>
   </Stack>
