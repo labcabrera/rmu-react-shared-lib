@@ -216,6 +216,7 @@ export { default as ManeuverOriginChip } from './rmu/maneuver/ManeuverOriginChip
 export type { ManeuverOrigin } from './rmu/maneuver/ManeuverOriginChip';
 export { default as InjuryTypeChip } from './rmu/health/InjuryTypeChip';
 export { default as ItemConditionChip } from './rmu/item/ItemConditionChip';
+export { default as ItemModifierChips } from './rmu/item/ItemModifierChips';
 export { default as InjurySourceLine } from './rmu/health/InjurySourceLine';
 export { default as InjuryCard, recoveryProgress } from './rmu/health/InjuryCard';
 export { default as InjuryList, sortInjuries } from './rmu/health/InjuryList';

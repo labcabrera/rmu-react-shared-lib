@@ -1,9 +1,10 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { itemCondition } from '../../api/item-modifier.dto';
+import { itemCondition, StrategicItemModifier } from '../../api/item-modifier.dto';
 import { renderWithProviders } from '../../test/render';
 import ItemConditionChip from './ItemConditionChip';
+import ItemModifierChips from './ItemModifierChips';
 
 // Without an i18n instance, t() returns the key: labels below are translation keys.
 
@@ -41,5 +42,39 @@ describe('ItemConditionChip', () => {
     expect(container).toBeEmptyDOMElement();
     renderWithProviders(<ItemConditionChip condition={undefined} showIntact />);
     expect(screen.getByLabelText(/item-condition-intact/)).toBeInTheDocument();
+  });
+});
+
+describe('ItemModifierChips', () => {
+  const modifier = (id: string, extra: Partial<StrategicItemModifier>): StrategicItemModifier => ({
+    id,
+    type: 'breakage',
+    value: -10,
+    appliesTo: 'all',
+    createdAt: '',
+    ...extra,
+  });
+
+  it('shows one badge per modifier with its kind and signed value', () => {
+    renderWithProviders(
+      <ItemModifierChips
+        modifiers={[modifier('a', {}), modifier('b', { type: 'quality', value: 5, appliesTo: 'attack' })]}
+      />
+    );
+    expect(screen.getByLabelText('item-modifier-type-breakage -10')).toBeInTheDocument();
+    expect(screen.getByLabelText('item-modifier-type-quality +5')).toBeInTheDocument();
+  });
+
+  it('folds the modifiers above max into one badge', () => {
+    renderWithProviders(
+      <ItemModifierChips modifiers={[modifier('a', {}), modifier('b', {}), modifier('c', {})]} max={1} />
+    );
+    expect(screen.getAllByLabelText('item-modifier-type-breakage -10')).toHaveLength(1);
+    expect(screen.getByLabelText('item-modifiers-more')).toBeInTheDocument();
+  });
+
+  it('shows nothing without modifiers', () => {
+    const { container } = renderWithProviders(<ItemModifierChips modifiers={[]} />);
+    expect(container).toBeEmptyDOMElement();
   });
 });
