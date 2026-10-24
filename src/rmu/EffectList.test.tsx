@@ -43,6 +43,19 @@ describe('EffectList', () => {
     expect(fatigue).toHaveClass('MuiChip-colorWarning', 'MuiChip-filled');
   });
 
+  it('shows compact badges with the full text for screen readers', () => {
+    renderWithProviders(
+      <EffectList
+        variant="compact"
+        effects={[{ status: 'stunned', value: -25, rounds: 2 }]}
+        penalties={[{ source: 'hp', value: -10 }]}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: /^stunned -25/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'penalty -10' })).toBeInTheDocument();
+  });
+
   it('renders nothing without effects or penalties', () => {
     const { container } = renderWithProviders(<EffectList effects={[]} penalties={[{ source: 'hp', value: 0 }]} />);
 
