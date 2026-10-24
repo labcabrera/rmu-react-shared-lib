@@ -24,6 +24,15 @@ describe('ApiError', () => {
     expect(new ApiError(status, '', '', '/x').messageKey).toBe(key);
   });
 
+  it('reads the code of the body and explains a concurrent change', () => {
+    const stale = new ApiError(409, '', '{"statusCode":409,"code":"version-conflict","message":"x"}', '/x');
+    expect(stale.code).toBe('version-conflict');
+    expect(stale.messageKey).toBe('error-version-conflict');
+    const duplicated = new ApiError(409, '', '{"code":"duplicate-key"}', '/x');
+    expect(duplicated.messageKey).toBe('error-conflict');
+    expect(new ApiError(500, '', 'not json', '/x').code).toBeUndefined();
+  });
+
   it('extracts the detail from NestJS and validation bodies', () => {
     expect(new ApiError(404, '', '{"message":"Item not found"}', '/x').detail).toBe('Item not found');
     expect(new ApiError(400, '', '{"message":["name is required","size must be positive"]}', '/x').detail).toBe(
