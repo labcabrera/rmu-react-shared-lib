@@ -53,7 +53,12 @@ export interface InjuryTreatmentHealer {
   name: string;
   external?: boolean;
   bonus: number;
+  /** Own injury penalties of a healer character, already added to the total (spec 022). */
+  penalty?: number;
 }
+
+/** Where the difficulty of a treatment comes from: the core table (or its default) or the game master (spec 022). */
+export type TreatmentDifficultySource = 'table' | 'override';
 
 export interface InjuryTreatment {
   id: string;
@@ -61,6 +66,8 @@ export interface InjuryTreatment {
   healer: InjuryTreatmentHealer;
   /** Difficulty modifier applied. */
   difficulty: number;
+  /** Missing in treatments before spec 022 and in the tactical ones. */
+  difficultySource?: TreatmentDifficultySource;
   roll: number;
   total: number;
   result: TreatmentResult;
@@ -70,6 +77,8 @@ export interface InjuryTreatment {
   at: string;
   context: 'tactical' | 'strategic';
   tacticalGameId?: string;
+  /** Severity of the heat critical a cauterization inflicts, for the game master to resolve (e.g. "A"). */
+  heatCritical?: string;
 }
 
 export interface InjuryRecovery {
@@ -84,6 +93,10 @@ export interface InjuryRecovery {
   totalDays: number;
   remainingDays: number;
   startedAt: string;
+  /** Treatment the roll used (none when untreated): one recovery roll per treatment (spec 022). */
+  treatmentId?: string;
+  /** Rolled without care (no treatment or a failed one): the injury becomes permanent when it ends (spec 022). */
+  untreated?: boolean;
 }
 
 export interface InjuryPermanent {
@@ -189,6 +202,7 @@ export interface TreatInjuryDto {
   healer?: ExternalHealerDto;
   /** Not needed for magic, which takes no Medicine roll. */
   roll?: number;
+  /** Difficulty override of the game master; without it the server computes it from the core table (spec 022). */
   difficulty?: number;
   healingType?: HealingType;
   /** Herbalism roll; a success adds +25 to the Medicine roll. Give `healerCharacterId` or `bonus`. */
@@ -205,6 +219,25 @@ export interface TreatActorInjuryDto {
   roll: number;
   /** Defaults to the difficulty of the procedure. */
   difficulty?: number;
+}
+
+/** `GET v1/characters/:id/injuries/:injuryId/treatment-difficulty?procedure=`: the difficulty the server uses. */
+export interface TreatmentDifficulty {
+  procedure: TreatmentProcedure;
+  /** Difficulty key (see MANEUVER_DIFFICULTIES) after the head step; none for magic and herbs. */
+  grade?: string;
+  /** Steps harder because the injury is on the head. */
+  headSteps: number;
+  /** Modifier of the difficulty, the head step included. */
+  base: number;
+  /** Extra modifier of cauterizing a bleeding wound. */
+  bleedingModifier: number;
+  /** Total difficulty modifier of the Medicine roll. */
+  difficulty: number;
+  /** A row of the core table matched; false means the medium default. */
+  matched: boolean;
+  /** The procedure applies to the injury; without an override the server refuses it otherwise. */
+  applicable: boolean;
 }
 
 /** `POST v1/characters/:id/injuries/:injuryId/recovery`. */

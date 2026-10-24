@@ -9,6 +9,8 @@ import {
   RecoveryRollDto,
   RestDto,
   TreatInjuryDto,
+  TreatmentDifficulty,
+  TreatmentProcedure,
   UpdateInjuryDto,
 } from './health.dto';
 
@@ -53,6 +55,20 @@ export async function treatCharacterInjury(
   auth: AuthContextProps
 ): Promise<Character> {
   return await callApi(auth, `${characterUrl(characterId)}/injuries/${injuryId}/treatments`, jsonPost(dto));
+}
+
+/** Difficulty the server would use for the procedure on the injury (core table, head and bleeding). */
+export async function fetchCharacterTreatmentDifficulty(
+  characterId: string,
+  injuryId: string,
+  procedure: TreatmentProcedure,
+  auth: AuthContextProps
+): Promise<TreatmentDifficulty> {
+  return await callApi(
+    auth,
+    `${characterUrl(characterId)}/injuries/${injuryId}/treatment-difficulty?procedure=${encodeURIComponent(procedure)}`,
+    { method: 'GET' }
+  );
 }
 
 export async function rollCharacterInjuryRecovery(
