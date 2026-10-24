@@ -19,6 +19,11 @@ export interface DataTableColumn<T> {
   header: ReactNode;
   render: (row: T) => ReactNode;
   align?: 'left' | 'right' | 'center';
+  /**
+   * Fixed width (px or any CSS length). When a column sets one, the table uses a fixed layout: the columns without
+   * a width share the rest, and tables of the same columns (the groups of a grouped list) line up (spec 017).
+   */
+  width?: number | string;
 }
 
 /**
@@ -43,6 +48,7 @@ export default function DataTable<T>({
 }) {
   const theme = useTheme();
   const isPhone = useMediaQuery(theme.breakpoints.down('sm'));
+  const fixedLayout = columns.some((column) => column.width !== undefined);
 
   if (isPhone && cardsOnMobile) {
     return (
@@ -74,7 +80,14 @@ export default function DataTable<T>({
 
   return (
     <TableContainer sx={{ overflowX: 'auto' }}>
-      <Table size={size}>
+      <Table size={size} sx={fixedLayout ? { tableLayout: 'fixed' } : undefined}>
+        {fixedLayout && (
+          <colgroup>
+            {columns.map((column) => (
+              <col key={column.key} style={{ width: column.width }} />
+            ))}
+          </colgroup>
+        )}
         <TableHead>
           <TableRow>
             {columns.map((column) => (

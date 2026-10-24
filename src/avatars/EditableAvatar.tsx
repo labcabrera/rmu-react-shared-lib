@@ -19,19 +19,13 @@ const EditableAvatar: FC<{
       <Avatar
         src={resolveAssetUrl(effectiveImage)}
         variant={variant}
+        // From lg it fills its column up to 200 px: the side panel of detail pages is narrower than that below
+        // ~1440 px, and a fixed 200 px image spilled over the content next to it (spec 017).
         sx={{
-          width: {
-            xs: 80,
-            sm: 56,
-            md: 72,
-            lg: 200,
-          },
-          height: {
-            xs: 80,
-            sm: 56,
-            md: 72,
-            lg: 200,
-          },
+          width: { xs: 80, sm: 56, md: 72, lg: '100%' },
+          height: { xs: 80, sm: 56, md: 72, lg: 'auto' },
+          maxWidth: { lg: 200 },
+          aspectRatio: '1',
         }}
         onClick={() => setDialogOpen(true)}
       />
