@@ -21,6 +21,15 @@ describe('createAppTheme', () => {
     expect(getContrastRatio(palette.primary.contrastText, palette.primary.main)).toBeGreaterThanOrEqual(4.5);
   });
 
+  // Tonal status chips (spec 017) write the status color on the dark surfaces: it must stay readable.
+  it.each(themePresetNames)('%s dark status colors reach AA on the dark surfaces', (preset) => {
+    const { palette } = createAppTheme({ preset, mode: 'dark' });
+    for (const color of [palette.warning.main, palette.error.main, palette.success.main, palette.info.main]) {
+      expect(getContrastRatio(color, palette.background.paper)).toBeGreaterThanOrEqual(4.5);
+    }
+    expect(palette.warning.main).not.toBe('#ebeb75ff');
+  });
+
   // Factions must not look like a state: no reds (hit points, errors) and no blues (power points, info).
   it.each(modes)('%s faction colors avoid red and blue hues', (mode) => {
     const hue = (hex: string) => {

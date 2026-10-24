@@ -63,6 +63,9 @@ declare module '@mui/material/styles' {
   }
 }
 
+/** Status colors whose filled chips turn tonal in dark mode. */
+const STATUS_COLORS = ['success', 'error', 'warning', 'info'] as const;
+
 const isMode = (value: unknown): value is ThemeMode => value === 'light' || value === 'dark';
 const isPreset = (value: unknown): value is ThemePreset => themePresetNames.includes(value as ThemePreset);
 const isDensity = (value: unknown): value is ThemeDensity => value === 'comfortable' || value === 'compact';
@@ -234,7 +237,29 @@ export const createAppTheme = (config: Partial<ThemeConfig> | ThemeMode = defaul
         },
         MuiIconButton: { ...small, styleOverrides: { root: touchTarget } },
         MuiToggleButton: { ...small, styleOverrides: { root: { textTransform: 'none', ...touchTarget } } },
-        MuiChip: { ...small, styleOverrides: { root: { fontWeight: 500 } } },
+        // Dark mode: filled status chips are tonal (tinted background, colored text and border), so a few chips
+        // do not outweigh the rest of the screen (spec 017). Light mode keeps the solid fill.
+        MuiChip: {
+          ...small,
+          styleOverrides: {
+            root: ({ ownerState }: { ownerState: { color?: string; variant?: string } }) => {
+              const color = ownerState.color as (typeof STATUS_COLORS)[number];
+              if (mode !== 'dark' || ownerState.variant === 'outlined' || !STATUS_COLORS.includes(color)) {
+                return { fontWeight: 500 };
+              }
+              const main = palette[color].main;
+              return {
+                fontWeight: 500,
+                backgroundColor: alpha(main, 0.16),
+                color: main,
+                border: `1px solid ${alpha(main, 0.4)}`,
+                '& .MuiChip-icon': { color: main },
+                '& .MuiChip-deleteIcon': { color: alpha(main, 0.7), '&:hover': { color: main } },
+                '&.MuiChip-clickable:hover, &.Mui-focusVisible': { backgroundColor: alpha(main, 0.26) },
+              };
+            },
+          },
+        },
         MuiTextField: small,
         MuiFormControl: small,
         MuiAutocomplete: small,

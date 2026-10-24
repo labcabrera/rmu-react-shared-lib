@@ -28,7 +28,8 @@ export const baseColors = {
     disabledLight: '#8b999c',
     success: '#a5d6a7',
     error: '#ffab91',
-    warning: '#ebeb75ff',
+    // Muted amber: the former lemon (#ebeb75) outweighed everything else on dark surfaces (spec 017).
+    warning: '#d9ad5b',
     info: '#90caf9',
   },
   light: {
