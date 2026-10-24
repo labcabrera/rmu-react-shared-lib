@@ -6,6 +6,8 @@ export type ProfessionArchetype = 'non-spellcaster' | 'semi-spellcaster' | 'pure
 
 export interface Profession {
   id: string;
+  /** Version of the stored entity; sent back in a PATCH, a concurrent change answers 409 (spec 018). */
+  version?: number;
   archetype: ProfessionArchetype;
   availableRealmTypes: RealmType[];
   fixedRealmTypes: RealmType[];

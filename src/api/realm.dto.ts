@@ -4,6 +4,8 @@ export type MagicPresence = 'unlimited' | 'limited' | 'none';
 
 export type Realm = {
   id: string;
+  /** Version of the stored entity; sent back in a PATCH, a concurrent change answers 409 (spec 018). */
+  version?: number;
   name: string;
   magicPresence: MagicPresence;
   shortDescription: string | undefined;

@@ -2,6 +2,8 @@ export const traitCategories = ['combat', 'discipline', 'magical', 'physical', '
 
 export type Trait = {
   id: string;
+  /** Version of the stored entity; sent back in a PATCH, a concurrent change answers 409 (spec 018). */
+  version?: number;
   name: string;
   category: string;
   isTalent: boolean;

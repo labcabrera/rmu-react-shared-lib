@@ -34,6 +34,8 @@ export interface ManeuverModifierOption {
 
 export interface ManeuverModifier {
   id: string;
+  /** Version of the stored entity; sent back in a PATCH, a concurrent change answers 409 (spec 018). */
+  version?: number;
   key: string;
   scope: ManeuverModifierScope;
   type: ManeuverModifierType;

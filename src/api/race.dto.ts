@@ -5,6 +5,8 @@ export const resistances = ['channeling', 'mentalism', 'essence', 'physical', 'p
 
 export type Race = {
   id: string;
+  /** Version of the stored entity; sent back in a PATCH, a concurrent change answers 409 (spec 018). */
+  version?: number;
   name: string;
   archetype: string | undefined;
   realmId: string;
@@ -81,6 +83,7 @@ export type CreateRaceDto = {
 
 export type UpdateRaceDto = {
   id: string;
+  version?: number;
   name: string | undefined;
   archetype: string | undefined;
   sizeId: string | undefined;

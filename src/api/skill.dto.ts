@@ -3,6 +3,8 @@ import { ManeuverProfile, ManeuverProfileOverrides } from './maneuver-modifier.d
 
 export interface Skill {
   id: string;
+  /** Version of the stored entity; sent back in a PATCH, a concurrent change answers 409 (spec 018). */
+  version?: number;
   categoryId: string;
   bonus: string[];
   realmBonus: number | null;

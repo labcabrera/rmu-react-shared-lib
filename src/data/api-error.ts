@@ -20,6 +20,7 @@ export class ApiError extends Error {
 
   /** i18n key describing the failure for the user. Status 0 means the request never got a response. */
   get messageKey(): string {
+    if (this.code === 'version-conflict') return 'error-version-conflict';
     if (this.status === 0) return 'error-network';
     if (this.status === 400 || this.status === 422) return 'error-bad-request';
     if (this.status === 401) return 'error-unauthorized';
@@ -28,6 +29,16 @@ export class ApiError extends Error {
     if (this.status === 409) return 'error-conflict';
     if (this.status >= 500) return 'error-server';
     return 'unexpected-error';
+  }
+
+  /** The stable `code` of a JSON error body (`not-found`, `version-conflict`...), when the API sends one. */
+  get code(): string | undefined {
+    try {
+      const code = JSON.parse(this.body)?.code;
+      return typeof code === 'string' ? code : undefined;
+    } catch {
+      return undefined;
+    }
   }
 
   /** The `message` field of a JSON error body (NestJS and FastAPI style), when there is one. */
