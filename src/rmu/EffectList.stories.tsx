@@ -26,4 +26,18 @@ export const Dead: Story = { args: { effects: [{ status: 'dead' }], penalties: [
 
 export const OnlyPenalties: Story = { args: { effects: [] } };
 
-export const Nothing: Story = { args: { effects: [{ status: 'penalty', value: 0 }], penalties: [{ source: 'hp', value: 0 }] } };
+export const Nothing: Story = {
+  args: { effects: [{ status: 'penalty', value: 0 }], penalties: [{ source: 'hp', value: 0 }] },
+};
+
+/** Dense places (tables, list cards, the combat board): icon, abbreviation and value; full text on hover or tap. */
+export const Compact: Story = {
+  args: {
+    variant: 'compact',
+    effects: [
+      { status: 'unconscious' },
+      { status: 'bleeding', value: 4 },
+      { status: 'stunned', value: -25, rounds: 2 },
+    ],
+  },
+};
