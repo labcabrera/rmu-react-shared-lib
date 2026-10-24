@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   addCharacterInjury,
   fetchCharacterHealingLog,
+  fetchCharacterTreatmentDifficulty,
   resolveCharacterCondition,
   restCharacter,
   rollCharacterInjuryPermanent,
@@ -51,6 +52,12 @@ describe('character health api', () => {
       /\/characters\/c1\/injuries\/i1\/treatments$/,
     ],
     [
+      'treatment difficulty',
+      () => fetchCharacterTreatmentDifficulty('c1', 'i1', 'cauterize', auth),
+      'GET',
+      /\/characters\/c1\/injuries\/i1\/treatment-difficulty\?procedure=cauterize$/,
+    ],
+    [
       'recovery roll',
       () => rollCharacterInjuryRecovery('c1', 'i1', { roll: 44 }, auth),
       'POST',
@@ -88,6 +95,12 @@ describe('character health api', () => {
     const dto = { procedure: 'pressure' as const, healerCharacterId: 'c2', roll: 70, difficulty: -10 };
     await treatCharacterInjury('c1', 'i1', dto, auth);
     expect(call(fetchMock).body).toEqual(dto);
+  });
+
+  it('sends no difficulty when the game master does not override it', async () => {
+    const fetchMock = mockFetch();
+    await treatCharacterInjury('c1', 'i1', { procedure: 'dress', healerCharacterId: 'c2', roll: 70 }, auth);
+    expect(call(fetchMock).body).not.toHaveProperty('difficulty');
   });
 });
 
