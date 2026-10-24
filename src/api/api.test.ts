@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { AuthContextProps } from 'react-oidc-context';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ApiError } from '../data/api-error';
 import { callApi } from './api';
 
@@ -15,7 +15,8 @@ const authWith = (signinSilent?: () => Promise<unknown>): AuthContextProps =>
 const jsonResponse = (status: number, body: unknown = {}) =>
   new Response(status === 204 ? null : JSON.stringify(body), { status, statusText: `status ${status}` });
 
-const authHeader = (call: unknown[]): string | null => new Headers((call[1] as RequestInit).headers).get('Authorization');
+const authHeader = (call: unknown[]): string | null =>
+  new Headers((call[1] as RequestInit).headers).get('Authorization');
 
 afterEach(() => {
   vi.unstubAllGlobals();

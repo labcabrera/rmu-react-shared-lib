@@ -1,4 +1,5 @@
 import { CharacterCondition, CharacterFate, HpBySource, HpLogEntry, Injury } from './health.dto';
+import { StrategicItemModifier } from './item-modifier.dto';
 
 export type TacticalGameStatus = 'created' | 'in_progress' | 'finished';
 
@@ -38,6 +39,13 @@ export type UpdateTacticalGameDto = Partial<
   Omit<TacticalGame, 'id' | 'strategicGameId' | 'status' | 'round' | 'phase' | 'factions' | 'actors' | 'owner'>
 >;
 
+/** Modifiers an item of the character got in the game (spec 019). */
+export type TacticalGameItemOutcome = {
+  itemId: string;
+  name: string;
+  modifiers: StrategicItemModifier[];
+};
+
 /** Result of a finished tactical game for one character (NPCs are left out). */
 export type TacticalGameCharacterOutcome = {
   actorId: string;
@@ -59,6 +67,8 @@ export type TacticalGameCharacterOutcome = {
   /** Conditions the character brought into the game that ended in it (e.g. it woke up). */
   conditionsResolved?: string[];
   fate?: CharacterFate;
+  /** Lasting breakage the items of the character got in the game (spec 019). */
+  items?: TacticalGameItemOutcome[];
   /** Set once the result has been applied to the strategic character. */
   appliedAt?: string;
   /** Error of the last attempt to apply it. */
