@@ -138,47 +138,64 @@ const HeroHeader: FC<HeroHeaderProps> = ({
             gap: { xs: 1.5, md: 2.5 },
             px: { xs: 1.5, md: 2.5 },
             py: { xs: 1.5, md: 2.5 },
-            flexWrap: { xs: 'wrap', lg: 'nowrap' },
           }}
         >
           {imageButton({ xs: 64, md: 96 }, imageTransitionName)}
-          <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
-            {overline && (
-              <Typography variant="overline" color="text.secondary" component="div" sx={{ lineHeight: 1.6 }}>
-                {overline}
-              </Typography>
-            )}
-            {/* Up to two lines: long names (campaigns, factions) lost most of their text on one line. */}
-            <Typography
-              variant="h4"
-              component="h1"
-              sx={{
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-                overflowWrap: 'anywhere',
-              }}
-            >
-              {title}
-            </Typography>
-            {chips && (
-              <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 0.75, mt: 1 }}>
-                {chips}
+          <Box sx={{ flex: '1 1 0', minWidth: 0 }}>
+            {/* The overline and the title take the whole width over the chips, resources and key numbers, so a long
+                name is not cut by the columns next to it. */}
+            <Stack direction="row" sx={{ alignItems: 'flex-start', gap: 2 }}>
+              <Box sx={{ flex: '1 1 auto', minWidth: 0 }}>
+                {overline && (
+                  <Typography variant="overline" color="text.secondary" component="div" sx={{ lineHeight: 1.6 }}>
+                    {overline}
+                  </Typography>
+                )}
+                {/* Up to two lines: long names (campaigns, factions) lost most of their text on one line. */}
+                <Typography
+                  variant="h4"
+                  component="h1"
+                  sx={{
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    overflowWrap: 'anywhere',
+                  }}
+                >
+                  {title}
+                </Typography>
+              </Box>
+              {actionsRow}
+            </Stack>
+            {(chips || resources || pills) && (
+              <Stack
+                direction="row"
+                sx={{
+                  alignItems: 'center',
+                  gap: { xs: 1.5, md: 2.5 },
+                  mt: 1,
+                  flexWrap: { xs: 'wrap', lg: 'nowrap' },
+                }}
+              >
+                {chips && (
+                  <Stack direction="row" sx={{ flex: '1 1 320px', minWidth: 0, flexWrap: 'wrap', gap: 0.75 }}>
+                    {chips}
+                  </Stack>
+                )}
+                {resources && (
+                  <Stack spacing={1} sx={{ flex: { xs: '1 1 100%', sm: '1 1 180px', lg: '0 0 200px' }, minWidth: 0 }}>
+                    {resources}
+                  </Stack>
+                )}
+                {pills && (
+                  <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap', flex: { xs: '1 1 100%', lg: '0 1 auto' } }}>
+                    {pills}
+                  </Stack>
+                )}
               </Stack>
             )}
           </Box>
-          {resources && (
-            <Stack spacing={1} sx={{ flex: { xs: '1 1 100%', sm: '1 1 240px', lg: '0 0 280px' }, minWidth: 0 }}>
-              {resources}
-            </Stack>
-          )}
-          {pills && (
-            <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap', flex: { xs: '1 1 100%', lg: '0 1 auto' } }}>
-              {pills}
-            </Stack>
-          )}
-          {actionsRow}
         </Stack>
       </Card>
     </>
