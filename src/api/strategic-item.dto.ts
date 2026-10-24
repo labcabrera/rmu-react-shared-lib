@@ -1,3 +1,4 @@
+import { ItemCondition, StrategicItemModifier } from './item-modifier.dto';
 import { ItemArmor, ItemInfo, ItemShield, ItemWeapon } from './item.dto';
 
 export type StrategicItem = {
@@ -14,5 +15,8 @@ export type StrategicItem = {
   shield: ItemShield | null;
   amount: number;
   info: ItemInfo;
+  /** Breakage, quality... (spec 019). Missing in strategic versions before it. */
+  modifiers?: StrategicItemModifier[];
+  condition?: ItemCondition;
   owner: string;
 };
