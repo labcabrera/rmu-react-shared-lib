@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, Link, Stack } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import RollInput from '../../inputs/RollInput';
 import { bleedingCut, permanentOrgan, recoveringBone, sampleInjuries } from '../../test/fixtures/injury';
 import HealerPicker, { HealerCandidate, HealerSelection } from './HealerPicker';
 import HpBreakdown from './HpBreakdown';
@@ -77,15 +76,6 @@ const HealerPickerDemo = () => {
 };
 
 export const Healer: Story = { render: () => <HealerPickerDemo /> };
-
-const RollInputDemo = ({ openEnded }: { openEnded: boolean }) => {
-  const [value, setValue] = useState<number | null>(null);
-  return <RollInput value={value} onChange={setValue} openEnded={openEnded} />;
-};
-
-export const Roll: Story = { render: () => <RollInputDemo openEnded={false} /> };
-
-export const OpenEndedRoll: Story = { render: () => <RollInputDemo openEnded /> };
 
 export const HitsBySource: Story = {
   render: () => (

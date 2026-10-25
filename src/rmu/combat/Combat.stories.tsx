@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Box, Button, Card, CardContent, Stack, Typography } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import ConfirmedRollInput from '../../inputs/ConfirmedRollInput';
-import OpenEndedRollInput from '../../inputs/OpenEndedRollInput';
+import { D100, OPEN_D100 } from '../../rolls/presets';
+import RollField from '../../rolls/RollField';
 import SidePanelLayout from '../../layouts/SidePanelLayout';
 import FlowSteps from '../../ui/FlowSteps';
 import ActionStateMarker from './ActionStateMarker';
@@ -91,8 +91,8 @@ const PanelDemo = () => {
       summary: '87',
       content: (
         <Stack spacing={2}>
-          <OpenEndedRollInput onChange={() => undefined} inputGridSize={5} />
-          <ConfirmedRollInput label="Critical roll" value={null} onConfirm={() => undefined} />
+          <RollField spec={OPEN_D100} value={null} onChange={() => undefined} label="Attack roll" />
+          <RollField spec={D100} value={null} onChange={() => undefined} label="Critical roll" />
         </Stack>
       ),
     },
