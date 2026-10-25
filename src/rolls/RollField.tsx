@@ -1,6 +1,7 @@
 import React, { FC, KeyboardEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import CasinoIcon from '@mui/icons-material/Casino';
+import ClearIcon from '@mui/icons-material/Clear';
 import { Drawer, IconButton, InputAdornment, Popover, TextField, Tooltip, useMediaQuery, useTheme } from '@mui/material';
 import { RollSpec, RollValue } from './roll.types';
 import { formatRoll, fromNumber, randomDie, rollDice } from './roll-logic';
@@ -15,6 +16,10 @@ export interface RollFieldProps {
   value: RollValue | number | null | undefined;
   /** Called only when a roll is confirmed in the keypad or rolled with the dice button. */
   onChange: (value: RollValue) => void;
+  /** Shows a button that empties the roll, for optional rolls (the API rolls them when missing). */
+  onClear?: () => void;
+  /** Text of the empty field, like "rolled by the server". */
+  placeholder?: string;
   /** Label of the field (default `t('roll')`). */
   label?: string;
   disabled?: boolean;
@@ -37,6 +42,8 @@ const RollField: FC<RollFieldProps> = ({
   spec,
   value,
   onChange,
+  onClear,
+  placeholder,
   label,
   disabled = false,
   readOnly = false,
@@ -96,6 +103,7 @@ const RollField: FC<RollFieldProps> = ({
         ref={anchorRef}
         label={fieldLabel}
         value={text}
+        placeholder={placeholder}
         size={compact ? 'small' : 'medium'}
         fullWidth
         variant="outlined"
@@ -109,6 +117,20 @@ const RollField: FC<RollFieldProps> = ({
             readOnly: true,
             endAdornment: editable ? (
               <InputAdornment position="end">
+                {onClear && text && (
+                  <IconButton
+                    aria-label={t('clear')}
+                    edge="end"
+                    size="small"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setLast(undefined);
+                      onClear();
+                    }}
+                  >
+                    <ClearIcon fontSize="small" />
+                  </IconButton>
+                )}
                 <Tooltip title={t('roll-dice')}>
                   <IconButton
                     aria-label={t('roll-dice')}
