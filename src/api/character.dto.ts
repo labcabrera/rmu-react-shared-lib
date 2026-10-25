@@ -10,6 +10,8 @@ export interface Character {
   id: string;
   gameId: string;
   faction: NamedEntity;
+  /** Id of the user that owns the character. */
+  owner?: string;
   name: string;
   info: CharacterInfo;
   roleplay: CharacterRoleplay;
@@ -209,6 +211,8 @@ export interface CharacterTrait {
   source?: CharacterTraitSource;
   /** Development points the trait was paid with, by pool (absent on traits stored before it was tracked). */
   paidWith?: TraitPayment;
+  /** The trait does not exist in this installation (an imported character, spec 024): it has no effect. */
+  missingReference?: boolean;
 }
 
 export interface TraitPayment {
@@ -247,6 +251,8 @@ export interface CharacterSkill {
   traitBonus?: number;
   totalBonus: number;
   professional?: string[];
+  /** The skill does not exist in this installation (an imported character, spec 024). */
+  missingReference?: boolean;
 }
 
 export interface SkillDevPointsSpent {

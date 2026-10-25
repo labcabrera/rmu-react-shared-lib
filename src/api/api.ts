@@ -38,10 +38,11 @@ async function renewToken(auth: AuthContextProps): Promise<string | undefined> {
 }
 
 /**
- * Calls an RMU API with the user's access token. On a 401 it tries one silent sign-in and retries
- * the request once with the new token; if that fails, it throws the usual ApiError.
+ * Sends a request to an RMU API with the user's access token and returns the raw Response, for the
+ * callers that need its headers or body as a Blob. On a 401 it tries one silent sign-in and retries
+ * the request once with the new token; a failed response throws the usual ApiError.
  */
-export async function callApi(auth: AuthContextProps, url: string, init: RequestInit = {}) {
+export async function callApiResponse(auth: AuthContextProps, url: string, init: RequestInit = {}): Promise<Response> {
   if (!auth) throw new Error(`Auth instance is required. Url: ${url}`);
   if (!auth.isAuthenticated) throw new Error('Not authenticated');
   const token = auth.user?.access_token;
@@ -58,6 +59,12 @@ export async function callApi(auth: AuthContextProps, url: string, init: Request
     const text = await res.text().catch(() => '');
     throw new ApiError(res.status, res.statusText, text, url);
   }
+  return res;
+}
+
+/** Calls an RMU API (see callApiResponse) and returns the JSON body, or null for a 204. */
+export async function callApi(auth: AuthContextProps, url: string, init: RequestInit = {}) {
+  const res = await callApiResponse(auth, url, init);
   if (res.status === 204) {
     return null;
   }
