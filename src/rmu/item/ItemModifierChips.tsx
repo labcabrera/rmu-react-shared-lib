@@ -35,7 +35,16 @@ const ItemModifierChips: FC<{
           name: modifier.source.tacticalGameName ?? modifier.source.tacticalGameId ?? '',
           round: modifier.source.round ?? '',
         })
-      : t('item-modifier-source-manual');
+      : t(`item-modifier-source-${modifier.source?.kind ?? 'manual'}`);
+
+  // Modifiers made by an operation (spec 023) carry a key as their description; those of the game master, free text
+  const description = (modifier: StrategicItemModifier): string | undefined =>
+    modifier.description &&
+    modifier.source?.kind &&
+    modifier.source.kind !== 'manual' &&
+    modifier.source.kind !== 'tactical'
+      ? t(`item-modifier-note-${modifier.description}`, { defaultValue: modifier.description })
+      : modifier.description;
 
   const summary = (modifier: StrategicItemModifier): string =>
     `${t(`item-modifier-type-${modifier.type}`)} ${signed(modifier.value)} · ${t(`item-modifier-target-${modifier.appliesTo}`)}`;
@@ -55,7 +64,7 @@ const ItemModifierChips: FC<{
               <span>{`${t('item-modifier-target')}: ${t(`item-modifier-target-${modifier.appliesTo}`)}`}</span>
               <span>{source(modifier)}</span>
               {modifier.broken && <span>{t('item-condition-broken-detail')}</span>}
-              {modifier.description && <span>{modifier.description}</span>}
+              {modifier.description && <span>{description(modifier)}</span>}
             </Stack>
           }
         />

@@ -12,12 +12,17 @@ export const STRATEGIC_ITEM_MODIFIER_TARGETS: StrategicItemModifierTarget[] = [
   'maneuver',
 ];
 
+/** Where a modifier comes from; spec 023 adds the crafting and repair of the item and its catalog type. */
+export type StrategicItemModifierSourceKind = 'tactical' | 'manual' | 'crafting' | 'repair' | 'catalog';
+
 export type StrategicItemModifierSource = {
-  kind: 'tactical' | 'manual';
+  kind: StrategicItemModifierSourceKind;
   tacticalGameId?: string;
   tacticalGameName?: string;
   round?: number;
   actionId?: string;
+  /** Spec 023: the ledger entry of the operation that made it. */
+  ledgerEntryId?: string;
 };
 
 /** A modifier of an item: the same uuid in the tactical game and in the strategic item once applied. */
@@ -40,6 +45,8 @@ export type ItemCondition = {
   /** Sum of the breakage modifiers, 0 or negative. */
   breakagePenalty: number;
   broken: boolean;
+  /** Spec 023: an absolute failure repairing it when broken. */
+  unrepairable?: boolean;
 };
 
 /** Body of `POST /items/:id/modifiers`. */

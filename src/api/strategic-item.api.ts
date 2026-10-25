@@ -29,11 +29,11 @@ export async function createStrategicItem(dto: Partial<StrategicItem>, auth: Aut
 }
 
 export async function updateStrategicItem(
-  gameId: string,
+  itemId: string,
   dto: Partial<StrategicItem>,
   auth: AuthContextProps
 ): Promise<StrategicItem> {
-  const url = `${apiStrategicGameUrl}/items/${gameId}`;
+  const url = `${apiStrategicGameUrl}/items/${itemId}`;
   return await callApi(auth, url, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
@@ -41,8 +41,9 @@ export async function updateStrategicItem(
   });
 }
 
-export async function deleteStrategicItem(gameId: string, auth: AuthContextProps): Promise<void> {
-  const url = `${apiStrategicGameUrl}/items/${gameId}`;
+/** Deletes an item without a ledger entry (game master); players discard it with `discardItem` (spec 023). */
+export async function deleteStrategicItem(itemId: string, auth: AuthContextProps): Promise<void> {
+  const url = `${apiStrategicGameUrl}/items/${itemId}`;
   return await callApi(auth, url, { method: 'DELETE' });
 }
 
