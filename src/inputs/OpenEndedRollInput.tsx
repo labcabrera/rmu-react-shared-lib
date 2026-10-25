@@ -64,6 +64,9 @@ export const computeOpenEndedResult = (rolls: Array<number | null>): number | un
   return first - rest;
 };
 
+/**
+ * @deprecated Use RollField with a RollSpec preset (workspace spec 025).
+ */
 const OpenEndedRollInput: FC<OpenEndedRollProps> = ({
   gridColumns = 12,
   inputGridSize = 2,

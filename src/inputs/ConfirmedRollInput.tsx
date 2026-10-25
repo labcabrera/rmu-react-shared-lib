@@ -8,6 +8,8 @@ import { randomD100 } from './OpenEndedRollInput';
 /**
  * A roll field that reports the roll only when it is confirmed (blur, Enter or the dice button) and differs
  * from the stored one, so the API is not called on every keystroke or on a blur without changes.
+ *
+ * @deprecated Use RollField with a RollSpec preset (workspace spec 025).
  */
 const ConfirmedRollInput: FC<{
   label: string;
