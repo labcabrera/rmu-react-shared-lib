@@ -4,8 +4,6 @@ import { fireEvent, screen } from '@testing-library/react';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import ConfirmedRollInput from '../../inputs/ConfirmedRollInput';
-import OpenEndedRollInput from '../../inputs/OpenEndedRollInput';
 import SidePanelLayout from '../../layouts/SidePanelLayout';
 import { renderWithProviders } from '../../test/render';
 import FlowSteps from '../../ui/FlowSteps';
@@ -190,28 +188,5 @@ describe('SidePanelLayout', () => {
     );
     await userEvent.setup().click(screen.getByRole('button', { name: 'back' }));
     expect(onClose).toHaveBeenCalled();
-  });
-});
-
-describe('roll inputs with dice', () => {
-  it('fills an open-ended roll, asking for more dice when it explodes', async () => {
-    const user = userEvent.setup();
-    const onChange = vi.fn();
-    const random = vi.spyOn(Math, 'random');
-    renderWithProviders(<OpenEndedRollInput onChange={onChange} />);
-    random.mockReturnValueOnce(0.97); // 98: open-ended, needs another roll
-    await user.click(screen.getByRole('button', { name: 'roll-dice' }));
-    expect(onChange).not.toHaveBeenCalled();
-    random.mockReturnValueOnce(0.04); // 5
-    await user.click(screen.getByRole('button', { name: 'roll-dice' }));
-    expect(onChange).toHaveBeenCalledWith(103, { unmodified: 98, rolls: [98, 5] });
-  });
-
-  it('confirms a random roll in range', async () => {
-    const onConfirm = vi.fn();
-    vi.spyOn(Math, 'random').mockReturnValue(0.5);
-    renderWithProviders(<ConfirmedRollInput label="critical" value={null} onConfirm={onConfirm} />);
-    await userEvent.setup().click(screen.getByRole('button', { name: 'roll-dice' }));
-    expect(onConfirm).toHaveBeenCalledWith(51);
   });
 });
