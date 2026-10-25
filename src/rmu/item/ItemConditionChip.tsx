@@ -13,6 +13,17 @@ const ItemConditionChip: FC<{
   size?: 'small' | 'medium';
 }> = ({ condition, showIntact = false, size = 'small' }) => {
   const { t } = useTranslation();
+  if (condition?.unrepairable) {
+    return (
+      <StatusBadge
+        status="item-unrepairable"
+        label={t('item-condition-unrepairable')}
+        detail={t('item-condition-unrepairable-detail')}
+        color="error"
+        size={size}
+      />
+    );
+  }
   if (condition?.broken) {
     return (
       <StatusBadge
