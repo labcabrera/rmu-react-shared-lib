@@ -41,6 +41,15 @@ export class ApiError extends Error {
     }
   }
 
+  /** The `details` of a JSON error body (the issues of an invalid import file...), when there are any. */
+  get details(): unknown {
+    try {
+      return JSON.parse(this.body)?.details;
+    } catch {
+      return undefined;
+    }
+  }
+
   /** The `message` field of a JSON error body (NestJS and FastAPI style), when there is one. */
   get detail(): string | undefined {
     try {
