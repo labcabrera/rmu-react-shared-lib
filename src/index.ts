@@ -59,6 +59,7 @@ export { default as OpenEndedRollInput, randomD100 } from './inputs/OpenEndedRol
 export type { OpenEndedRollDetails, OpenEndedRollProps } from './inputs/OpenEndedRollInput';
 export { default as ConfirmedRollInput } from './inputs/ConfirmedRollInput';
 export { default as RollInput, rollD100 } from './inputs/RollInput';
+export * from './rolls';
 export type { GeneratedRoll } from './inputs/RollInput';
 
 export { default as RmuKeyLabelSelect } from './selectors/RmuKeyLabelSelect';

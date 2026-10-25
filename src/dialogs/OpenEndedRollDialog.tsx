@@ -3,10 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { Button, Stack, Typography } from '@mui/material';
 import OpenEndedRollInput, { OpenEndedRollDetails } from '../inputs/OpenEndedRollInput';
 import Section from '../layouts/Section';
+import { OPEN_D100 } from '../rolls/presets';
+import { rollDice } from '../rolls/roll-logic';
 import RmuDialog from './RmuDialog';
-
-const TOP_LIMIT = 96;
-const BOTTOM_LIMIT = 5;
 
 type RandomRollResult = {
   value: number;
@@ -14,30 +13,8 @@ type RandomRollResult = {
 };
 
 const generateRandomRoll = (): RandomRollResult => {
-  const first = Math.floor(Math.random() * 100) + 1;
-  if (first >= TOP_LIMIT) {
-    let total = first;
-    let next: number;
-    const rolls = [first];
-    do {
-      next = Math.floor(Math.random() * 100) + 1;
-      rolls.push(next);
-      total += next;
-    } while (next >= TOP_LIMIT);
-    return { value: total, rolls };
-  }
-  if (first <= BOTTOM_LIMIT) {
-    let extra = 0;
-    let next: number;
-    const rolls = [first];
-    do {
-      next = Math.floor(Math.random() * 100) + 1;
-      rolls.push(next);
-      extra += next;
-    } while (next >= TOP_LIMIT);
-    return { value: first - extra, rolls };
-  }
-  return { value: first, rolls: [first] };
+  const { total, rolls } = rollDice(OPEN_D100);
+  return { value: total, rolls };
 };
 
 export type OpenEndedRollDialogProps = {

@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import CasinoIcon from '@mui/icons-material/Casino';
 import { IconButton, Stack, Tooltip, Typography } from '@mui/material';
 import NumericInput from './NumericInput';
+import { D100, OPEN_D100 } from '../rolls/presets';
+import { rollDice } from '../rolls/roll-logic';
 import { randomD100 } from './OpenEndedRollInput';
 
 /** A generated roll: the total and every die rolled (the first one is the unmodified roll). */
@@ -13,17 +15,7 @@ export type GeneratedRoll = { total: number; rolls: number[] };
  * (and keeps subtracting while the new die is 96-100). `random` is the die, for tests.
  */
 export const rollD100 = (openEnded = false, random: () => number = randomD100): GeneratedRoll => {
-  const first = random();
-  const rolls = [first];
-  if (!openEnded || (first > 5 && first < 96)) return { total: first, rolls };
-  const sign = first >= 96 ? 1 : -1;
-  let total = first;
-  let next: number;
-  do {
-    next = random();
-    rolls.push(next);
-    total += sign * next;
-  } while (next >= 96);
+  const { total, rolls } = rollDice(openEnded ? OPEN_D100 : D100, () => random());
   return { total, rolls };
 };
 
