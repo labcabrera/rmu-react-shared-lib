@@ -26,6 +26,9 @@ export type OpenEndedRollDialogProps = {
   onConfirm: (value: number, details?: OpenEndedRollDetails) => void;
 };
 
+/**
+ * @deprecated Use RollField with a RollSpec preset (workspace spec 025).
+ */
 const OpenEndedRollDialog: FC<OpenEndedRollDialogProps> = ({
   open,
   title = 'Open-Ended Roll',

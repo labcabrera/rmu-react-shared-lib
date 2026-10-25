@@ -22,6 +22,8 @@ export const rollD100 = (openEnded = false, random: () => number = randomD100): 
 /**
  * A roll typed by the user, with a button that generates it (decision 9 of spec 013). Without `openEnded` the roll is
  * a plain d100 (1-100); with it, the total can go over 100 or below 1.
+ *
+ * @deprecated Use RollField with a RollSpec preset (workspace spec 025).
  */
 const RollInput: FC<{
   value: number | null | undefined;
