@@ -118,4 +118,14 @@ describe('RollField', () => {
     await press(pad, '4', '5', 'confirm');
     expect(onChange).toHaveBeenCalledWith({ total: 45, rolls: [45], unmodified: 45 });
   });
+
+  it('empties an optional roll with the clear button', async () => {
+    const onClear = vi.fn();
+    renderWithProviders(
+      <RollField spec={D100} value={45} onChange={vi.fn()} onClear={onClear} label="attack-roll" placeholder="by-server" />
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'clear' }));
+    expect(onClear).toHaveBeenCalled();
+    expect(screen.queryByTestId('roll-pad')).not.toBeInTheDocument();
+  });
 });

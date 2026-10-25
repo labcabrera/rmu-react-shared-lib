@@ -77,6 +77,12 @@ describe('readDie', () => {
     expect(readDie('10', 10)).toBeUndefined();
   });
 
+  it('reads no zero on other dice', () => {
+    expect(readDie('0', 6)).toBeUndefined();
+    expect(readDie('6', 6)).toBe(6);
+    expect(readDie('7', 6)).toBeUndefined();
+  });
+
   it('reads a d100 with 00 as 100 and a leading zero', () => {
     expect(dieDigits(100)).toBe(2);
     expect(readDie('00', 100)).toBe(100);
@@ -99,6 +105,14 @@ describe('formatRoll', () => {
 
   it('shows only the total of one die', () => {
     expect(formatRoll(toRollValue(OPEN_D100, [45])!, OPEN_D100)).toBe('45');
+  });
+});
+
+describe('dice with a modifier', () => {
+  it('rolls a d3 - 1 from 0 to 2', () => {
+    const spec = { dice: 1, sides: 3, openEnded: 'none' as const, modifier: -1 };
+    expect(rollDice(spec, dice(1))).toEqual({ total: 0, rolls: [1], unmodified: 1 });
+    expect(fromNumber(spec, 2)).toEqual({ total: 2, rolls: [3], unmodified: 3 });
   });
 });
 

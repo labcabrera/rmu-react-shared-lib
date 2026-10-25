@@ -63,12 +63,13 @@ export const dieDigits = (sides: number): number => String(sides - 1).length;
 
 /**
  * The value of a die typed as at the table: "0" is 10 on a d10 and "00" is 100 on a d100; "05" is 5. Undefined when
- * the text is not a die of `sides` sides.
+ * the text is not a die of `sides` sides (a zero on a d6, a 7 on a d6...).
  */
 export function readDie(text: string, sides: number): number | undefined {
   if (!/^\d+$/.test(text) || text.length > dieDigits(sides)) return undefined;
   const value = Number(text);
-  if (value === 0) return text.length === dieDigits(sides) ? sides : undefined;
+  // Only percentile and ten-sided dice read a zero as their highest face.
+  if (value === 0) return text.length === dieDigits(sides) && (sides === 10 || sides === 100) ? sides : undefined;
   return value <= sides ? value : undefined;
 }
 
