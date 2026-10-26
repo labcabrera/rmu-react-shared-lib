@@ -45,6 +45,8 @@ export interface ManeuverModifier {
   min?: number;
   max?: number;
   description?: string;
+  /** Reference only (OB/DB modifiers of a combat skill, spec 037): listed, never added to a maneuver roll. */
+  reference?: boolean;
   accessType: AccessType;
   owner: string;
 }
