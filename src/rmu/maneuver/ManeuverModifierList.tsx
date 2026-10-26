@@ -79,6 +79,7 @@ const ManeuverModifierList: FC<{
                 {label(modifier.key)}
               </Typography>
               {modifier.origin && <ManeuverOriginChip origin={modifier.origin} />}
+              {modifier.reference && <Chip size="small" variant="outlined" label={t('maneuver-modifier-reference')} />}
             </Stack>
             {modifier.description && (
               <Typography variant="caption" color="text.secondary" component="div">
