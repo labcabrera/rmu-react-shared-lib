@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
+import DialogTitle, { dialogTitleClasses } from '@mui/material/DialogTitle';
 import { TransitionProps } from '@mui/material/transitions';
 import GenericAvatar from '../avatars/GenericAvatar';
 
@@ -119,6 +119,8 @@ const RmuDialog: FC<{
         sx={{
           px: 3,
           py: 2.5,
+          // MUI drops the top padding of a content that follows a title, with a more specific rule than sx.
+          [`.${dialogTitleClasses.root} + &`]: { pt: 2.5 },
           backgroundColor: 'background.paper',
           backgroundImage: (theme) =>
             theme.palette.mode === 'dark'
