@@ -28,11 +28,16 @@ const skill = (
   statBonus: Math.round(totalBonus / 3),
   racialBonus: 0,
   professionalBonus: extra.professional?.includes('professional') ? 5 : 0,
-  developmentBonus: ranks * 5,
+  developmentBonus: rankBonus(ranks),
   customBonus: 0,
   totalBonus,
   ...extra,
 });
+
+
+// Rank bonus of Core Law table 3-0b, as rmu-api-strategic computes it (spec 029)
+const rankBonus = (ranks: number): number =>
+  ranks <= 0 ? -25 : Math.min(ranks, 10) * 5 + Math.min(Math.max(ranks - 10, 0), 10) * 3 + Math.min(Math.max(ranks - 20, 0), 10) * 2 + Math.max(ranks - 30, 0);
 
 export const sampleCharacter: Character = {
   id: 'sample-character',
@@ -45,6 +50,7 @@ export const sampleCharacter: Character = {
     race: { id: 'human', name: 'Human' },
     professionId: 'fighter',
     sizeId: 'medium',
+    realmTypes: ['channeling'],
     realmType: 'channeling',
     height: 72,
     weight: 190,

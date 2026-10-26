@@ -385,7 +385,9 @@ const CharacterSheet = ({ character }: { character: Character }) => {
         image: c.imageUrl,
         chips: [
           <Chip key="race" label={c.info.race.name} />,
-          <Chip key="realm" label={t(c.info.realmType)} variant="outlined" />,
+          ...(c.info.realmTypes ?? [c.info.realmType]).map((realm) => (
+            <Chip key={`realm-${realm}`} label={t(realm)} variant="outlined" />
+          )),
           <Chip key="faction" label={c.faction.name} variant="outlined" />,
         ],
         resources: [

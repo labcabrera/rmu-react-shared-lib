@@ -1,3 +1,4 @@
+import type { Spell } from './spell.dto';
 import { NamedEntity } from './common.dto';
 import { CharacterCondition, Injury } from './health.dto';
 
@@ -100,7 +101,10 @@ export interface CultureAssignmentDto {
 export interface CreateCharacterInfoDto {
   raceId: string;
   professionId: string;
-  realmType: string;
+  /** One realm, or the two of a hybrid profession (spec 029). */
+  realmTypes?: string[];
+  /** @deprecated Use realmTypes. */
+  realmType?: string;
   height: number;
   weight: number;
 }
@@ -156,6 +160,9 @@ export interface CharacterInfo {
   race: NamedEntity;
   professionId: string;
   sizeId: string;
+  /** Realms of the character: two for a hybrid (spec 029). */
+  realmTypes: string[];
+  /** @deprecated The first realm: use realmTypes. */
   realmType: string;
   height: number;
   weight: number;
@@ -195,7 +202,10 @@ export interface RaceInfo {
   raceId: string;
   raceName?: string;
   professionId: string;
-  realmType: string;
+  /** One realm, or the two of a hybrid profession (spec 029). */
+  realmTypes?: string[];
+  /** @deprecated Use realmTypes. */
+  realmType?: string;
   height: number;
   weight: number;
 }
@@ -388,4 +398,26 @@ export interface StatCreationDto {
   potential: number;
   temporary: number;
   racial: number | undefined;
+}
+
+/** A spell the character knows (spec 029): the spell as rmu-api-spells returns it and its power point cost. */
+export interface KnownSpell {
+  spell: Spell;
+  powerPoints: number;
+}
+
+/** A spell list of the character with the spells known up to its ranks (GET /characters/:id/spells). */
+export interface KnownSpellList {
+  /** base-spell-list, open-spell-list, closed-spell-list or restricted-spell-list */
+  skillId: string;
+  code: string;
+  /** Null when rmu-api-spells has no list with that code. */
+  spellListId: string | null;
+  name: string | null;
+  type: string | null;
+  realms: string[];
+  ranks: number;
+  /** List type modifier of the Spellcasting Roll: +5 own Base, 0 Open, -5 Closed, -10 any other. */
+  listTypeModifier: number;
+  spells: KnownSpell[];
 }
