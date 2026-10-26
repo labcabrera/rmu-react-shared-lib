@@ -60,7 +60,7 @@ export { default as RmuKeyLabelSelect } from './selectors/RmuKeyLabelSelect';
 export { default as RmuSelect } from './selectors/RmuSelect';
 export { default as SelectDifficulty } from './selectors/SelectDifficulty';
 export { default as SelectRealm } from './selectors/SelectRealm';
-export { default as SkillSelector } from './selectors/SkillSelector';
+export { default as SkillSelector, SPELL_LIST_SPECIALIZATION } from './selectors/SkillSelector';
 export { default as TraitSelector } from './selectors/TraitSelector';
 
 export * from './api/constants';

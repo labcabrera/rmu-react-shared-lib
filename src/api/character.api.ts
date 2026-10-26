@@ -1,7 +1,7 @@
 import { AuthContextProps } from 'react-oidc-context';
 import { apiStrategicGameUrl } from './../config/config.service';
 import callApi, { Page } from './api';
-import { AddTraitDto, Character, UpdateTemporaryStatDto } from './character.dto';
+import { AddTraitDto, Character, KnownSpellList, UpdateTemporaryStatDto } from './character.dto';
 import { AddSkill, DeleteTraitDto } from './character.dto';
 
 // error handling is done inside callApi
@@ -160,6 +160,36 @@ export async function levelUpCharacter(
 ): Promise<Character> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/level-up?force=${force}`;
   return await callApi(auth, url, { method: 'POST' });
+}
+
+/** Spell lists of the character and the spells it knows up to its ranks (spec 029). */
+export async function fetchCharacterSpells(characterId: string, auth: AuthContextProps): Promise<KnownSpellList[]> {
+  const url = `${apiStrategicGameUrl}/characters/${characterId}/spells`;
+  return await callApi(auth, url, { method: 'GET' });
+}
+
+/** Spends power points: not enough points is a 400 err-insufficient-power. */
+export async function spendCharacterPower(characterId: string, amount: number, auth: AuthContextProps): Promise<Character> {
+  return changeCharacterPower(characterId, 'spend', amount, auth);
+}
+
+/** Gives back power points, up to the maximum. */
+export async function restoreCharacterPower(characterId: string, amount: number, auth: AuthContextProps): Promise<Character> {
+  return changeCharacterPower(characterId, 'restore', amount, auth);
+}
+
+async function changeCharacterPower(
+  characterId: string,
+  change: 'spend' | 'restore',
+  amount: number,
+  auth: AuthContextProps
+): Promise<Character> {
+  const url = `${apiStrategicGameUrl}/characters/${characterId}/power/${change}`;
+  return await callApi(auth, url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ amount }),
+  });
 }
 
 export async function addCharacterXP(characterId: string, xp: number, auth: AuthContextProps): Promise<Character> {

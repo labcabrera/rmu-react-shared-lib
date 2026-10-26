@@ -8,21 +8,39 @@ import { fetchEnumerations } from '../api/enumerations.api';
 import { fetchSkillCategories } from '../api/skill-category.api';
 import { SkillCategory } from '../api/skill-category.dto';
 import { fetchSkills } from '../api/skill.api';
+import { fetchSpellLists } from '../api/spell-list.api';
 import { Skill } from '../api/skill.dto';
 import CategorySeparator from '../display/CategorySeparator';
 
+/** Specialization of the skills whose value is a spell list of rmu-api-spells (spec 029): the list code. */
+export const SPELL_LIST_SPECIALIZATION = 'spell-list';
+
+/** Spell lists of the given realms (all of them without realms), as code and name, ordered by name. */
+async function fetchSpellListOptions(realms: string[] | undefined, auth: Parameters<typeof fetchSpellLists>[3]) {
+  // One query per realm: a hybrid gets the lists of both, and each realm stays under the page size
+  const queries = realms && realms.length > 0 ? realms.map((realm) => `realms==${realm}`) : [''];
+  const pages = await Promise.all(queries.map((query) => fetchSpellLists(query, 0, 100, auth)));
+  const byCode = new Map<string, string>();
+  pages.flatMap((page) => page.content).forEach((list) => list.code && byCode.set(list.code, list.name));
+  return [...byCode.entries()].sort((a, b) => a[1].localeCompare(b[1]));
+}
+
 const SkillSelector: FC<{
   realmId?: string;
+  /** Realms of the character: the spell lists offered are those of these realms. */
+  realms?: string[];
   onSkillChange: (skillId: string | null) => void;
   onSpecializationChange: (specialization: string | null) => void;
   onError: (message: string) => void;
-}> = ({ realmId, onSkillChange, onSpecializationChange, onError }) => {
+}> = ({ realmId, realms, onSkillChange, onSpecializationChange, onError }) => {
   const auth = useAuth();
   const { t } = useTranslation();
   const [availableCategories, setAvailableCategories] = useState<SkillCategory[]>([]);
   const [allSkills, setAllSkills] = useState<Skill[]>([]);
   const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
   const [availableSpecializations, setAvailableSpecializations] = useState<string[]>();
+  // Names of the spell lists by code, to show the name of a list specialization
+  const [spellListNames, setSpellListNames] = useState<Record<string, string>>({});
 
   const [selectedCategory, setSelectedCategory] = useState<SkillCategory>();
   const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
@@ -56,6 +74,13 @@ const SkillSelector: FC<{
     if (selectedSkill) {
       if (!selectedSkill.specialization) {
         setAvailableSpecializations(undefined);
+      } else if (selectedSkill.specialization === SPELL_LIST_SPECIALIZATION) {
+        fetchSpellListOptions(realms, auth)
+          .then((options) => {
+            setSpellListNames(Object.fromEntries(options));
+            setAvailableSpecializations(options.map(([code]) => code));
+          })
+          .catch((err) => onError(err.message));
       } else {
         const realmQuery = realmId ? `;(realmId==${realmId},realmId==null)` : ``;
         fetchEnumerations(`category==${selectedSkill.specialization}${realmQuery}`, 0, 100, auth)
@@ -118,7 +143,7 @@ const SkillSelector: FC<{
               options={availableSpecializations}
               onChange={(value) => setSelectedSpecialization(value)}
               getKey={(value) => value}
-              formatter={(value) => t(value)}
+              formatter={(value) => spellListNames[value] ?? t(value)}
             />
           </>
         )}
