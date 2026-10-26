@@ -70,6 +70,7 @@ export * from './api/api';
 export * from './api/common.dto';
 
 export * from './api/attack-table.api';
+export * from './api/attack-table.dto';
 export * from './api/character.api';
 export * from './api/character.dto';
 export * from './api/character-export.api';
