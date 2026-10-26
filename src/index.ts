@@ -191,6 +191,16 @@ export type { RollModifier, RollModifierGroup } from './rmu/RollBreakdown';
 export { default as EffectList, effectColor, effectIcon, normalizeEffectStatus } from './rmu/EffectList';
 export { default as StatusBadge } from './rmu/StatusBadge';
 export type { StatusBadgeColor, StatusBadgeProps } from './rmu/StatusBadge';
+export { default as SpellEffectList, spellEffectColor, spellEffectSummary } from './rmu/SpellEffectList';
+export type { SpellEffectColor } from './rmu/SpellEffectList';
+export {
+  spellAreaText,
+  spellDurationText,
+  spellPerLevelSuffix,
+  spellRangeText,
+  spellTargetTypesText,
+} from './rmu/spell/spell-format';
+export type { SpellTranslate } from './rmu/spell/spell-format';
 export type { ActorEffect, ActorPenalty } from './rmu/EffectList';
 export { default as ActionTypeChip } from './rmu/combat/ActionTypeChip';
 export { default as ActionStateMarker } from './rmu/combat/ActionStateMarker';
