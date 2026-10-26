@@ -83,6 +83,8 @@ export * from './api/effect-type.dto';
 export * from './api/enumerations.api';
 export * from './api/enumerations.dto';
 export * from './api/faction.api';
+export * from './api/fighting-style.api';
+export * from './api/fighting-style.dto';
 export * from './api/faction.dto';
 export * from './api/image.api';
 export * from './api/image.dto';
