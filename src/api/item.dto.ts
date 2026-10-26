@@ -24,6 +24,8 @@ export type ItemWeapon = {
   skillId: string;
   fumble: number;
   modes: WeaponMode[];
+  /** What the type and the skill can't tell, for the fighting styles (spec 032): fencing, axe, whip... */
+  tags?: string[];
 };
 
 export type ItemArmor = {

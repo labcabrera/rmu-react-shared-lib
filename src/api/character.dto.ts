@@ -1,6 +1,6 @@
-import type { Spell } from './spell.dto';
 import { NamedEntity } from './common.dto';
 import { CharacterCondition, Injury } from './health.dto';
+import type { Spell } from './spell.dto';
 
 export type StatKey = 'ag' | 'co' | 'em' | 'in' | 'me' | 'pr' | 'qu' | 're' | 'sd' | 'st';
 export type Pace = 'creep' | 'walk' | 'jog' | 'run' | 'sprint' | 'dash';
@@ -263,6 +263,18 @@ export interface CharacterSkill {
   professional?: string[];
   /** The skill does not exist in this installation (an imported character, spec 024). */
   missingReference?: boolean;
+  /** Fighting style skills only (spec 032): abilities the ranks were allocated to. */
+  styleAbilities?: StyleAbilitySelection[];
+  /** Fighting style skills only: ranks not allocated to abilities, and their OB (+2 each, at most +10). */
+  styleFreeRanks?: number;
+  styleFreeRanksBonus?: number;
+}
+
+export interface StyleAbilitySelection {
+  abilityId: string;
+  times: number;
+  /** Ranks paid, as the style costed it when selected. */
+  cost: number;
 }
 
 export interface SkillDevPointsSpent {
@@ -376,6 +388,8 @@ export interface CharacterAttack {
   /** Skill used by the attack (null for attacks without a skill). */
   skillId?: string | null;
   boModifiers: Record<string, number>;
+  /** Tags of the weapon (spec 032). */
+  weaponTags?: string[];
 }
 
 export interface AddSkill {
