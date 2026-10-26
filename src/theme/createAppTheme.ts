@@ -229,6 +229,8 @@ export const createAppTheme = (config: Partial<ThemeConfig> | ThemeMode = defaul
         MuiDialog: {
           styleOverrides: { paper: { borderRadius: radius.lg }, paperFullScreen: { borderRadius: 0 } },
         },
+        // MUI leaves no top padding under a title, so the label of an outlined field at the top touches the header.
+        MuiDialogContent: { styleOverrides: { root: { '.MuiDialogTitle-root + &': { paddingTop: 16 } } } },
         MuiButton: {
           defaultProps: { disableElevation: true, ...(compact && { size: 'small' as const }) },
           styleOverrides: {
