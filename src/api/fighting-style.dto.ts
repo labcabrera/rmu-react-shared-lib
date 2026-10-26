@@ -21,6 +21,8 @@ export interface StyleAbility {
   requiresTraits: string[];
   /** Alternatives (any of them), each with every condition; empty is none. */
   equipment: StyleCondition[][];
+  /** Rule text (Markdown) imported with the catalog. */
+  description?: string | null;
 }
 
 export interface FightingStyleAbility {
