@@ -137,11 +137,18 @@ const SkillSelector: FC<{
         )}
         {selectedSkill && availableSpecializations && (
           <>
-            <CategorySeparator text={t('specialization')} />
+            <CategorySeparator
+              text={selectedSkill.specializationOptional ? t('specialization-optional') : t('specialization')}
+            />
             <SelectionList
               value={selectedSpecialization}
               options={availableSpecializations}
-              onChange={(value) => setSelectedSpecialization(value)}
+              // An optional specialization can be cleared by choosing it again (spec 037).
+              onChange={(value) =>
+                setSelectedSpecialization(
+                  selectedSkill.specializationOptional && value === selectedSpecialization ? null : value
+                )
+              }
               getKey={(value) => value}
               formatter={(value) => spellListNames[value] ?? t(value)}
             />

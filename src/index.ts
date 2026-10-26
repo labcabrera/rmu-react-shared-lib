@@ -58,6 +58,7 @@ export * from './rolls';
 
 export { default as RmuKeyLabelSelect } from './selectors/RmuKeyLabelSelect';
 export { default as RmuSelect } from './selectors/RmuSelect';
+export { default as DifficultyPicker } from './selectors/DifficultyPicker';
 export { default as SelectDifficulty } from './selectors/SelectDifficulty';
 export { default as SelectRealm } from './selectors/SelectRealm';
 export { default as SkillSelector, SPELL_LIST_SPECIALIZATION } from './selectors/SkillSelector';
@@ -71,6 +72,8 @@ export * from './api/common.dto';
 
 export * from './api/attack-table.api';
 export * from './api/attack-table.dto';
+export * from './api/skill-difficulty.api';
+export * from './api/skill-difficulty.dto';
 export * from './api/character.api';
 export * from './api/character.dto';
 export * from './api/character-export.api';

@@ -9,6 +9,8 @@ export interface Skill {
   bonus: string[];
   realmBonus: number | null;
   specialization: string | null;
+  /** The specialization is suggested, not required (spec 037). */
+  specializationOptional?: boolean;
   owner: string;
   accessType: AccessType;
   /** Effective maneuver profile (category profile with the skill's overrides applied). */
