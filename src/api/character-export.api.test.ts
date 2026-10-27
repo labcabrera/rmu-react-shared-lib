@@ -14,7 +14,7 @@ describe('fileNameFromDisposition', () => {
       'character-aragorn-20261025.rmu.json'
     );
     expect(fileNameFromDisposition('attachment; filename=faction.rmu.json', 'x')).toBe('faction.rmu.json');
-    expect(fileNameFromDisposition("attachment; filename=\"a.json\"; filename*=UTF-8''%C3%B1and%C3%BA.json", 'x')).toBe(
+    expect(fileNameFromDisposition('attachment; filename="a.json"; filename*=UTF-8\'\'%C3%B1and%C3%BA.json', 'x')).toBe(
       'ñandú.json'
     );
   });

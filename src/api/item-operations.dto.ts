@@ -61,6 +61,8 @@ export type ItemLedgerEntry = {
   gameId: string;
   kind: ItemLedgerKind;
   itemId: string | null;
+  /** Spec 041: every item of the operation; filter the history of an item with `itemIds==<id>`. */
+  itemIds?: string[];
   itemTypeId: string | null;
   itemName: string | null;
   amount: number | null;
@@ -80,7 +82,12 @@ export type ItemLedgerEntry = {
 };
 
 /** What an operation answers: the item as it is now (null when it is gone) and its ledger entry. */
-export type ItemOperationResult = { item: StrategicItem | null; entry: ItemLedgerEntry };
+export type ItemOperationResult = {
+  item: StrategicItem | null;
+  /** Spec 041: the N items of a purchase of a type that does not stack. */
+  items?: StrategicItem[];
+  entry: ItemLedgerEntry;
+};
 
 export type PurchaseItemDto = {
   buyer: ItemHolder;

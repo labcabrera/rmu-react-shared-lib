@@ -250,6 +250,8 @@ export type { ManeuverOrigin } from './rmu/maneuver/ManeuverOriginChip';
 export { default as InjuryTypeChip } from './rmu/health/InjuryTypeChip';
 export { default as ItemConditionChip } from './rmu/item/ItemConditionChip';
 export { default as ItemModifierChips } from './rmu/item/ItemModifierChips';
+export { default as ItemFeatureChips, itemFeatureLines } from './rmu/item/ItemFeatureChips';
+export type { ItemFeatureLine, ItemFeatureSource } from './rmu/item/ItemFeatureChips';
 export { default as ItemThumb, itemImageUrl } from './rmu/item/ItemThumb';
 export { default as MoneyDisplay } from './rmu/item/MoneyDisplay';
 export { default as PriceBreakdownView } from './rmu/item/PriceBreakdownView';

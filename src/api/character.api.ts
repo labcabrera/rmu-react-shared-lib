@@ -169,12 +169,20 @@ export async function fetchCharacterSpells(characterId: string, auth: AuthContex
 }
 
 /** Spends power points: not enough points is a 400 err-insufficient-power. */
-export async function spendCharacterPower(characterId: string, amount: number, auth: AuthContextProps): Promise<Character> {
+export async function spendCharacterPower(
+  characterId: string,
+  amount: number,
+  auth: AuthContextProps
+): Promise<Character> {
   return changeCharacterPower(characterId, 'spend', amount, auth);
 }
 
 /** Gives back power points, up to the maximum. */
-export async function restoreCharacterPower(characterId: string, amount: number, auth: AuthContextProps): Promise<Character> {
+export async function restoreCharacterPower(
+  characterId: string,
+  amount: number,
+  auth: AuthContextProps
+): Promise<Character> {
   return changeCharacterPower(characterId, 'restore', amount, auth);
 }
 
