@@ -9,6 +9,8 @@ type ItemImageSource = {
   id?: string;
   imageUrl?: string | null;
   catalog?: { imageUrl: string | null } | null;
+  /** Spec 041: the image of its category when it has none of its own. */
+  category?: string;
 };
 
 /** The image of an item: its own, the one of its catalog type, or `images/items/<type>.png` (spec 023). */
@@ -24,14 +26,20 @@ const ItemThumb: FC<{ item: ItemImageSource; size?: number; disabled?: boolean; 
   disabled = false,
   alt = '',
 }) => {
-  const [failed, setFailed] = useState(false);
-  const src = failed ? `${imageBaseUrl}images/items/no-item.png` : itemImageUrl(item);
+  // 0: its image, 1: the image of its category (spec 041), 2: an empty slot
+  const [fallback, setFallback] = useState(0);
+  const src =
+    fallback === 0
+      ? itemImageUrl(item)
+      : fallback === 1 && item.category
+        ? `${imageBaseUrl}images/items/category-${item.category}.png`
+        : `${imageBaseUrl}images/items/no-item.png`;
   return (
     <Box
       component="img"
       src={src}
       alt={alt}
-      onError={() => setFailed(true)}
+      onError={() => setFallback((step) => (step === 0 && item.category ? 1 : 2))}
       sx={{
         width: size,
         height: size,

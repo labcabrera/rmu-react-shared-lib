@@ -1,5 +1,5 @@
 import { ItemCondition, StrategicItemModifier } from './item-modifier.dto';
-import { ItemArmor, ItemCost, ItemInfo, ItemShield, ItemWeapon } from './item.dto';
+import { ItemArmor, ItemCost, ItemFeatures, ItemInfo, ItemShield, ItemWeapon } from './item.dto';
 
 /** Who holds an item (spec 023): a character or a faction (its armory) of the same game. */
 export type ItemHolderKind = 'character' | 'faction';
@@ -15,6 +15,9 @@ export type StrategicItemCatalog = {
   rarity: string | null;
   productionHours: number | null;
   imageUrl: string | null;
+  /** Spec 041. */
+  lotSize?: number | null;
+  features?: ItemFeatures | null;
 };
 
 export type StrategicItem = {

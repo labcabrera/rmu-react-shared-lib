@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { itemCondition, StrategicItemModifier } from '../../api/item-modifier.dto';
 import { renderWithProviders } from '../../test/render';
 import ItemConditionChip from './ItemConditionChip';
+import ItemFeatureChips, { itemFeatureLines } from './ItemFeatureChips';
 import ItemModifierChips from './ItemModifierChips';
 
 // Without an i18n instance, t() returns the key: labels below are translation keys.
@@ -76,5 +77,53 @@ describe('ItemModifierChips', () => {
   it('shows nothing without modifiers', () => {
     const { container } = renderWithProviders(<ItemModifierChips modifiers={[]} />);
     expect(container).toBeEmptyDOMElement();
+  });
+});
+
+describe('ItemFeatureChips (spec 041)', () => {
+  // Invented values; without an i18n instance the labels are the keys
+  const t = (key: string, options?: object) => (options ? `${key} ${JSON.stringify(options)}` : key);
+
+  it('lists the lot, the blocks, the full suit, the class and the improvised OB', () => {
+    const lines = itemFeatureLines(
+      {
+        lotSize: 5,
+        features: {
+          container: { weight: 10, volume: null, liquid: 2, units: null },
+          light: { radius: 8, durationHours: null },
+          transport: { capacity: 100, speed: 15 },
+          ammunition: { launchers: ['sling'], sizeAdjustment: 1 },
+        },
+        armor: { coverage: ['body', 'head'], class: 'heavy' },
+        weapon: { modes: [{}, { obModifier: -20 }] },
+      },
+      t
+    );
+    expect(lines.map((line) => line.key)).toEqual([
+      'lot',
+      'weight',
+      'liquid',
+      'radius',
+      'capacity',
+      'speed',
+      'launchers',
+      'size',
+      'coverage',
+      'class',
+      'improvised',
+    ]);
+    expect(lines.find((line) => line.key === 'size')!.label).toContain('"+1"');
+    expect(lines.find((line) => line.key === 'improvised')!.label).toContain('"-20"');
+  });
+
+  it('shows nothing for an item without general equipment data or with a lot of one', () => {
+    const { container } = renderWithProviders(<ItemFeatureChips item={{ lotSize: 1, features: null }} />);
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('shows a badge per line', () => {
+    renderWithProviders(<ItemFeatureChips item={{ features: { light: { radius: 8, durationHours: 3 } } }} />);
+    expect(screen.getByText('item-feature-light-radius')).toBeInTheDocument();
+    expect(screen.getByText('item-feature-light-duration')).toBeInTheDocument();
   });
 });
