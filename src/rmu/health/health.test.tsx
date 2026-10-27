@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { bleedingCut, healedSkin, permanentOrgan, recoveringBone, sampleInjuries } from '../../test/fixtures/injury';
+import {
+  bleedingCut,
+  healedSkin,
+  permanentOrgan,
+  poisonedNerve,
+  recoveringBone,
+  sampleInjuries,
+} from '../../test/fixtures/injury';
 import { renderWithProviders } from '../../test/render';
 import HealerPicker, { HealerCandidate, HealerSelection, resolveHealer } from './HealerPicker';
 import HpBreakdown, { formatHpAmount } from './HpBreakdown';
@@ -10,6 +17,8 @@ import InjuryCard, { recoveryProgress } from './InjuryCard';
 import InjuryList, { sortInjuries } from './InjuryList';
 import InjurySourceLine from './InjurySourceLine';
 import InjuryTypeChip from './InjuryTypeChip';
+import PoisonDataFields, { isPoisonDataValid } from './PoisonDataFields';
+import PoisonStageTimeline, { poisonStageState, poisonTimeLabel } from './PoisonStageTimeline';
 
 // Without an i18n instance, t() returns the key: labels below are translation keys.
 
@@ -87,6 +96,92 @@ describe('InjuryCard', () => {
     expect(screen.getByRole('button', { name: 'treat' })).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'edit' }));
     expect(onEdit).toHaveBeenCalledWith(bleedingCut);
+  });
+});
+
+describe('PoisonStageTimeline', () => {
+  const t = (key: string, options?: Record<string, unknown>) => `${key}:${options?.count}`;
+
+  it('gives a time in its largest unit, rounded', () => {
+    expect(poisonTimeLabel(4, t)).toBe('poison-time-rounds:4');
+    expect(poisonTimeLabel(12, t)).toBe('poison-time-minutes:2');
+    expect(poisonTimeLabel(720, t)).toBe('poison-time-hours:2');
+    expect(poisonTimeLabel(8640, t)).toBe('poison-time-days:1');
+    expect(poisonTimeLabel(2917, t)).toBe('poison-time-hours:8');
+    expect(poisonTimeLabel(37, t)).toBe('poison-time-minutes:6');
+  });
+
+  it('shows the poison, each stage with its state and the antidotes', () => {
+    renderWithProviders(<PoisonStageTimeline poison={poisonedNerve.poison!} />);
+    expect(screen.getByText('Test venom')).toBeInTheDocument();
+    expect(screen.getByTestId('poison-stage-mild')).toHaveAttribute('data-state', 'ended');
+    expect(screen.getByTestId('poison-stage-moderate')).toHaveAttribute('data-state', 'active');
+    expect(screen.getByTestId('poison-stage-severe')).toHaveAttribute('data-state', 'pending');
+    expect(screen.getByText('poison-rr-summary')).toBeInTheDocument();
+    expect(screen.getByText('poison-antidotes')).toBeInTheDocument();
+    expect(poisonStageState(poisonedNerve.poison!.stages[1])).toBe('active');
+  });
+
+  it('ends every stage of a neutralized poisoning', () => {
+    renderWithProviders(
+      <PoisonStageTimeline poison={{ ...poisonedNerve.poison!, neutralized: true, finished: true }} />
+    );
+    expect(screen.getByText('poison-neutralized')).toBeInTheDocument();
+    expect(screen.getByTestId('poison-stage-severe')).toHaveAttribute('data-state', 'ended');
+  });
+
+  it('is in the injury card, which then leaves out a description equal to the poison name', () => {
+    renderWithProviders(<InjuryCard injury={poisonedNerve} />);
+    expect(screen.getAllByText('Test venom')).toHaveLength(1);
+    expect(screen.getByTestId('poison-stage-moderate')).toBeInTheDocument();
+  });
+});
+
+describe('PoisonDataFields', () => {
+  const catalog = [
+    {
+      id: 'test-venom',
+      name: 'Test venom',
+      features: {
+        poison: {
+          category: 'nerve' as const,
+          level: 3,
+          form: 'paste' as const,
+          maxSeverity: null,
+          immediateHits: null,
+          onsetRounds: null,
+        },
+      },
+    },
+    { id: 'rope', name: 'Rope', features: null },
+  ];
+
+  it('picks a catalog poison and copies its block', async () => {
+    const onChange = vi.fn();
+    renderWithProviders(<PoisonDataFields catalog={catalog} value={undefined} onChange={onChange} />);
+    await userEvent.click(screen.getByRole('combobox'));
+    expect(screen.queryByText('Rope')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByText('Test venom'));
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({ itemTypeId: 'test-venom', category: 'nerve', level: 3 })
+    );
+  });
+
+  it('describes a poison by hand', async () => {
+    const Harness = () => {
+      const [value, setValue] = useState<Parameters<typeof isPoisonDataValid>[0]>();
+      return (
+        <>
+          <PoisonDataFields catalog={catalog} value={value} onChange={setValue} />
+          <span>{isPoisonDataValid(value) ? 'valid' : 'invalid'}</span>
+        </>
+      );
+    };
+    renderWithProviders(<Harness />);
+    await userEvent.click(screen.getByRole('switch', { name: 'poison-manual' }));
+    expect(screen.getByText('invalid')).toBeInTheDocument();
+    await userEvent.type(screen.getByRole('textbox', { name: 'name' }), 'Swamp venom');
+    expect(screen.getByText('valid')).toBeInTheDocument();
   });
 });
 

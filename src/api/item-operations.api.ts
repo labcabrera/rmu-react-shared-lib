@@ -14,6 +14,7 @@ import {
   SellItemDto,
   TransferItemDto,
 } from './item-operations.dto';
+import { StrategicItem } from './strategic-item.dto';
 
 // Operations on the items and gold of characters and factions (rmu-api-strategic, workspace spec 023). Each one
 // answers the item as it is now and its entry of the item ledger.
@@ -66,4 +67,13 @@ export async function fetchItemLedger(
 
 export async function fetchEconomyRules(auth: AuthContextProps): Promise<EconomyRules> {
   return await callApi(auth, `${apiStrategicGameUrl}/economy-rules`, { method: 'GET' });
+}
+
+/** Coats a weapon with one dose of a liquid or paste poison of the same holder (spec 042). */
+export const coatItem = (itemId: string, poisonItemId: string, auth: AuthContextProps): Promise<ItemOperationResult> =>
+  post(auth, `/items/${itemId}/coating`, { poisonItemId });
+
+/** Removes the poison of a weapon, when it dried or was wiped (spec 042). */
+export async function removeItemCoating(itemId: string, auth: AuthContextProps): Promise<StrategicItem> {
+  return await callApi(auth, `${apiStrategicGameUrl}/items/${itemId}/coating`, { method: 'DELETE' });
 }

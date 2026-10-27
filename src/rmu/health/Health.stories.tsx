@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Box, Button, Link, Stack } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { bleedingCut, permanentOrgan, recoveringBone, sampleInjuries } from '../../test/fixtures/injury';
+import { PoisonData } from '../../api/poison.dto';
+import { bleedingCut, permanentOrgan, poisonedNerve, recoveringBone, sampleInjuries } from '../../test/fixtures/injury';
 import HealerPicker, { HealerCandidate, HealerSelection } from './HealerPicker';
 import HpBreakdown from './HpBreakdown';
 import InjuryCard from './InjuryCard';
 import InjuryList from './InjuryList';
 import InjurySourceLine from './InjurySourceLine';
 import InjuryTypeChip from './InjuryTypeChip';
+import PoisonDataFields from './PoisonDataFields';
 
 // Injuries and healing (spec 013 §7). Sample data only.
 
@@ -34,6 +36,8 @@ export const Bleeding: Story = {
 export const Recovering: Story = { args: { injury: recoveringBone } };
 
 export const Permanent: Story = { args: { injury: permanentOrgan } };
+
+export const Poisoned: Story = { args: { injury: poisonedNerve } };
 
 export const Dense: Story = { args: { dense: true } };
 
@@ -90,3 +94,31 @@ export const HitsBySource: Story = {
     />
   ),
 };
+
+const PoisonPickerDemo = () => {
+  const [value, setValue] = useState<PoisonData>();
+  const catalog = [
+    {
+      id: 'test-venom',
+      name: 'Test venom',
+      features: {
+        poison: {
+          category: 'nerve' as const,
+          level: 3,
+          form: 'paste' as const,
+          maxSeverity: null,
+          immediateHits: null,
+          onsetRounds: null,
+        },
+      },
+    },
+  ];
+  return (
+    <Stack spacing={1}>
+      <PoisonDataFields catalog={catalog} value={value} onChange={setValue} />
+      <pre>{JSON.stringify(value, null, 2)}</pre>
+    </Stack>
+  );
+};
+
+export const PoisonPicker: Story = { render: () => <PoisonPickerDemo /> };

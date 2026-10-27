@@ -116,6 +116,28 @@ describe('ItemFeatureChips (spec 041)', () => {
     expect(lines.find((line) => line.key === 'improvised')!.label).toContain('"-20"');
   });
 
+  it('lists the poison and the antidote blocks (spec 042)', () => {
+    const lines = itemFeatureLines(
+      {
+        features: {
+          poison: {
+            category: 'muscle',
+            level: 4,
+            form: 'paste',
+            maxSeverity: 'severe',
+            immediateHits: null,
+            onsetRounds: null,
+          },
+          antidote: { categories: ['any'], level: 6, withinHours: 2 },
+        },
+      },
+      t
+    );
+    expect(lines.map((line) => line.key)).toEqual(['poison', 'max-severity', 'antidote', 'within']);
+    expect(lines[0].label).toContain('poison-category-muscle');
+    expect(lines[2].label).toContain('poison-category-any');
+  });
+
   it('shows nothing for an item without general equipment data or with a lot of one', () => {
     const { container } = renderWithProviders(<ItemFeatureChips item={{ lotSize: 1, features: null }} />);
     expect(container).toBeEmptyDOMElement();

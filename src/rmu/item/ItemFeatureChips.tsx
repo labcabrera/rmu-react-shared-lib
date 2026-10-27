@@ -24,11 +24,11 @@ const signed = (value: number): string => (value > 0 ? `+${value}` : `${value}`)
 
 /**
  * The lines of the general equipment data of an item (spec 041): lot, container capacity, light, transport,
- * ammunition, the coverage of a full suit, the class of a piece and the OB modifier of an improvised weapon.
+ * ammunition, poison and antidote (spec 042), the coverage of a full suit, the class of a piece and the OB modifier of an improvised weapon.
  */
 export const itemFeatureLines = (item: ItemFeatureSource, t: ItemFeatureTranslate): ItemFeatureLine[] => {
   const lines: ItemFeatureLine[] = [];
-  const { container, light, transport, ammunition } = item.features ?? {};
+  const { container, light, transport, ammunition, poison, antidote } = item.features ?? {};
   if (item.lotSize && item.lotSize > 1)
     lines.push({ key: 'lot', label: t('item-feature-lot', { size: item.lotSize }) });
   if (container) {
@@ -54,6 +54,27 @@ export const itemFeatureLines = (item: ItemFeatureSource, t: ItemFeatureTranslat
   }
   if (ammunition?.sizeAdjustment) {
     lines.push({ key: 'size', label: t('item-feature-ammunition-size', { value: signed(ammunition.sizeAdjustment) }) });
+  }
+  if (poison) {
+    lines.push({
+      key: 'poison',
+      label: t('item-feature-poison', {
+        category: t(`poison-category-${poison.category}`),
+        level: poison.level,
+        form: t(`poison-form-${poison.form}`),
+      }),
+    });
+    if (poison.maxSeverity)
+      lines.push({
+        key: 'max-severity',
+        label: t('item-feature-poison-max', { severity: t(`poison-severity-${poison.maxSeverity}`) }),
+      });
+  }
+  if (antidote) {
+    const categories = antidote.categories.map((category) => t(`poison-category-${category}`)).join(', ');
+    lines.push({ key: 'antidote', label: t('item-feature-antidote', { categories, level: antidote.level }) });
+    if (antidote.withinHours)
+      lines.push({ key: 'within', label: t('item-feature-antidote-within', { count: antidote.withinHours }) });
   }
   if (item.armor?.coverage && item.armor.coverage.length > 1)
     lines.push({ key: 'coverage', label: t('item-feature-full-suit') });
