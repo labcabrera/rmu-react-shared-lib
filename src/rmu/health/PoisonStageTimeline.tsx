@@ -16,19 +16,16 @@ const SEVERITY_COLORS: Record<PoisonSeverity, 'default' | 'warning' | 'error'> =
 };
 
 /**
- * A time of a poisoning in its largest whole unit: rounds, minutes, hours or days. The keys take a count, so the
- * locales give the plural forms.
+ * A time of a poisoning in its largest unit: rounds below a minute, then minutes, hours or days rounded to the
+ * nearest whole one. The keys take a count, so the locales give the plural forms.
  */
 export const poisonTimeLabel = (
   rounds: number,
   t: (key: string, options?: Record<string, unknown>) => string
 ): string => {
-  if (rounds >= ROUNDS_PER_DAY && rounds % ROUNDS_PER_DAY === 0)
-    return t('poison-time-days', { count: rounds / ROUNDS_PER_DAY });
-  if (rounds >= ROUNDS_PER_HOUR && rounds % ROUNDS_PER_HOUR === 0)
-    return t('poison-time-hours', { count: rounds / ROUNDS_PER_HOUR });
-  if (rounds >= ROUNDS_PER_MINUTE && rounds % ROUNDS_PER_MINUTE === 0)
-    return t('poison-time-minutes', { count: rounds / ROUNDS_PER_MINUTE });
+  if (rounds >= ROUNDS_PER_DAY) return t('poison-time-days', { count: Math.round(rounds / ROUNDS_PER_DAY) });
+  if (rounds >= ROUNDS_PER_HOUR) return t('poison-time-hours', { count: Math.round(rounds / ROUNDS_PER_HOUR) });
+  if (rounds >= ROUNDS_PER_MINUTE) return t('poison-time-minutes', { count: Math.round(rounds / ROUNDS_PER_MINUTE) });
   return t('poison-time-rounds', { count: rounds });
 };
 
@@ -98,7 +95,7 @@ const PoisonStageTimeline: FC<{ poison: InjuryPoison; dense?: boolean }> = ({ po
       <Stack direction="row" useFlexGap sx={{ flexWrap: 'wrap', alignItems: 'center', gap: 0.75 }}>
         <ScienceIcon fontSize="small" color="secondary" />
         <Typography variant="body2" sx={{ fontWeight: 600 }}>
-          {poison.name}
+          {t(poison.name, poison.name)}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {t('poison-summary', {

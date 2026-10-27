@@ -102,12 +102,13 @@ describe('InjuryCard', () => {
 describe('PoisonStageTimeline', () => {
   const t = (key: string, options?: Record<string, unknown>) => `${key}:${options?.count}`;
 
-  it('gives a time in its largest whole unit', () => {
+  it('gives a time in its largest unit, rounded', () => {
     expect(poisonTimeLabel(4, t)).toBe('poison-time-rounds:4');
     expect(poisonTimeLabel(12, t)).toBe('poison-time-minutes:2');
     expect(poisonTimeLabel(720, t)).toBe('poison-time-hours:2');
     expect(poisonTimeLabel(8640, t)).toBe('poison-time-days:1');
-    expect(poisonTimeLabel(370, t)).toBe('poison-time-rounds:370');
+    expect(poisonTimeLabel(2917, t)).toBe('poison-time-hours:8');
+    expect(poisonTimeLabel(37, t)).toBe('poison-time-minutes:6');
   });
 
   it('shows the poison, each stage with its state and the antidotes', () => {
