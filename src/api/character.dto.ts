@@ -390,6 +390,8 @@ export interface CharacterAttack {
   boModifiers: Record<string, number>;
   /** Tags of the weapon (spec 032). */
   weaponTags?: string[];
+  /** Times St enters the skill bonus of the attack (spec 040). */
+  strengthWeight?: number;
 }
 
 export interface AddSkill {
