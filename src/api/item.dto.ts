@@ -1,3 +1,5 @@
+import { ItemAntidote, ItemPoison } from './poison.dto';
+
 export type WeaponModeType = 'one-hand' | 'two-hands';
 export type WeaponAttackType = 'melee' | 'ranged' | 'thrown';
 export type ItemArmorSlot = 'head' | 'body' | 'arms' | 'legs';
@@ -22,6 +24,8 @@ export const ITEM_CATEGORIES = [
   'vehicle',
   'service',
   'instrument',
+  'poison',
+  'herb',
   'other',
 ] as const;
 export type ItemCategory = (typeof ITEM_CATEGORIES)[number];
@@ -36,6 +40,9 @@ export type ItemFeatures = {
   transport?: { capacity: number | null; speed: number | null } | null;
   /** Item types that shoot it and its attack size adjustment. */
   ammunition?: { launchers: string[]; sizeAdjustment: number } | null;
+  /** Spec 042. */
+  poison?: ItemPoison | null;
+  antidote?: ItemAntidote | null;
 };
 
 export type Item = {

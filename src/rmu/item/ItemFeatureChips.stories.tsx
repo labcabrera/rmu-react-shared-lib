@@ -20,6 +20,25 @@ export const Ammunition: Story = {
 };
 export const FullSuit: Story = { args: { item: { armor: { coverage: ['body', 'head', 'arms', 'legs'] } } } };
 export const ImprovisedWeapon: Story = { args: { item: { weapon: { modes: [{ obModifier: -25 }] } } } };
+export const Poison: Story = {
+  args: {
+    item: {
+      features: {
+        poison: {
+          category: 'muscle',
+          level: 4,
+          form: 'paste',
+          maxSeverity: 'severe',
+          immediateHits: null,
+          onsetRounds: null,
+        },
+      },
+    },
+  },
+};
+export const Antidote: Story = {
+  args: { item: { features: { antidote: { categories: ['muscle', 'nerve'], level: 6, withinHours: 2 } } } },
+};
 export const AsText: Story = {
   args: { item: { lotSize: 6, features: { light: { radius: 5, durationHours: 1 } } }, variant: 'text' },
 };

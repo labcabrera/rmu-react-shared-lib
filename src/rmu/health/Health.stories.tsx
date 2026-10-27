@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, Link, Stack } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { bleedingCut, permanentOrgan, recoveringBone, sampleInjuries } from '../../test/fixtures/injury';
+import { bleedingCut, permanentOrgan, poisonedNerve, recoveringBone, sampleInjuries } from '../../test/fixtures/injury';
 import HealerPicker, { HealerCandidate, HealerSelection } from './HealerPicker';
 import HpBreakdown from './HpBreakdown';
 import InjuryCard from './InjuryCard';
@@ -34,6 +34,8 @@ export const Bleeding: Story = {
 export const Recovering: Story = { args: { injury: recoveringBone } };
 
 export const Permanent: Story = { args: { injury: permanentOrgan } };
+
+export const Poisoned: Story = { args: { injury: poisonedNerve } };
 
 export const Dense: Story = { args: { dense: true } };
 

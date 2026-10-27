@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { bleedingCut, healedSkin, permanentOrgan, recoveringBone, sampleInjuries } from '../../test/fixtures/injury';
+import {
+  bleedingCut,
+  healedSkin,
+  permanentOrgan,
+  poisonedNerve,
+  recoveringBone,
+  sampleInjuries,
+} from '../../test/fixtures/injury';
 import { renderWithProviders } from '../../test/render';
 import HealerPicker, { HealerCandidate, HealerSelection, resolveHealer } from './HealerPicker';
 import HpBreakdown, { formatHpAmount } from './HpBreakdown';
@@ -10,6 +17,7 @@ import InjuryCard, { recoveryProgress } from './InjuryCard';
 import InjuryList, { sortInjuries } from './InjuryList';
 import InjurySourceLine from './InjurySourceLine';
 import InjuryTypeChip from './InjuryTypeChip';
+import PoisonStageTimeline, { poisonStageState, poisonTimeLabel } from './PoisonStageTimeline';
 
 // Without an i18n instance, t() returns the key: labels below are translation keys.
 
@@ -87,6 +95,43 @@ describe('InjuryCard', () => {
     expect(screen.getByRole('button', { name: 'treat' })).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'edit' }));
     expect(onEdit).toHaveBeenCalledWith(bleedingCut);
+  });
+});
+
+describe('PoisonStageTimeline', () => {
+  const t = (key: string, options?: Record<string, unknown>) => `${key}:${options?.count}`;
+
+  it('gives a time in its largest whole unit', () => {
+    expect(poisonTimeLabel(4, t)).toBe('poison-time-rounds:4');
+    expect(poisonTimeLabel(12, t)).toBe('poison-time-minutes:2');
+    expect(poisonTimeLabel(720, t)).toBe('poison-time-hours:2');
+    expect(poisonTimeLabel(8640, t)).toBe('poison-time-days:1');
+    expect(poisonTimeLabel(370, t)).toBe('poison-time-rounds:370');
+  });
+
+  it('shows the poison, each stage with its state and the antidotes', () => {
+    renderWithProviders(<PoisonStageTimeline poison={poisonedNerve.poison!} />);
+    expect(screen.getByText('Test venom')).toBeInTheDocument();
+    expect(screen.getByTestId('poison-stage-mild')).toHaveAttribute('data-state', 'ended');
+    expect(screen.getByTestId('poison-stage-moderate')).toHaveAttribute('data-state', 'active');
+    expect(screen.getByTestId('poison-stage-severe')).toHaveAttribute('data-state', 'pending');
+    expect(screen.getByText('poison-rr-summary')).toBeInTheDocument();
+    expect(screen.getByText('poison-antidotes')).toBeInTheDocument();
+    expect(poisonStageState(poisonedNerve.poison!.stages[1])).toBe('active');
+  });
+
+  it('ends every stage of a neutralized poisoning', () => {
+    renderWithProviders(
+      <PoisonStageTimeline poison={{ ...poisonedNerve.poison!, neutralized: true, finished: true }} />
+    );
+    expect(screen.getByText('poison-neutralized')).toBeInTheDocument();
+    expect(screen.getByTestId('poison-stage-severe')).toHaveAttribute('data-state', 'ended');
+  });
+
+  it('is in the injury card, which then leaves out a description equal to the poison name', () => {
+    renderWithProviders(<InjuryCard injury={poisonedNerve} />);
+    expect(screen.getAllByText('Test venom')).toHaveLength(1);
+    expect(screen.getByTestId('poison-stage-moderate')).toBeInTheDocument();
   });
 });
 

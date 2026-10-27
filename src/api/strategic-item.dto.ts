@@ -1,5 +1,6 @@
 import { ItemCondition, StrategicItemModifier } from './item-modifier.dto';
 import { ItemArmor, ItemCost, ItemFeatures, ItemInfo, ItemShield, ItemWeapon } from './item.dto';
+import { ItemCoating } from './poison.dto';
 
 /** Who holds an item (spec 023): a character or a faction (its armory) of the same game. */
 export type ItemHolderKind = 'character' | 'faction';
@@ -45,6 +46,8 @@ export type StrategicItem = {
   /** Gold paid for one unit when it was bought or crafted. */
   acquiredPrice?: number | null;
   description?: string | null;
+  /** Poison on a weapon (spec 042). */
+  coating?: ItemCoating | null;
   owner: string;
 };
 

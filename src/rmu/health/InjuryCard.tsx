@@ -7,6 +7,7 @@ import EditButton from '../../buttons/EditButton';
 import { bonusColor } from '../character/StatPill';
 import InjurySourceLine from './InjurySourceLine';
 import InjuryTypeChip from './InjuryTypeChip';
+import PoisonStageTimeline from './PoisonStageTimeline';
 
 const SEVERITY_COLORS: Record<InjurySeverity, 'default' | 'warning' | 'error'> = {
   light: 'default',
@@ -31,7 +32,7 @@ export const recoveryProgress = (injury: Injury): number | undefined => {
 
 /**
  * One injury: type, severity, status, location and side, current and initial penalty, bleeding, remaining days of
- * the recovery, permanent penalty, description and origin. `dense` leaves out the description and the origin.
+ * the recovery, permanent penalty, poisoning (spec 042), description and origin. `dense` leaves out the description and the origin.
  */
 const InjuryCard: FC<{
   injury: Injury;
@@ -143,7 +144,9 @@ const InjuryCard: FC<{
         </Box>
       )}
 
-      {!dense && injury.description && (
+      {injury.poison && <PoisonStageTimeline poison={injury.poison} dense={dense} />}
+
+      {!dense && injury.description && injury.description !== injury.poison?.name && (
         <Typography variant="body2" sx={{ mt: 1, whiteSpace: 'pre-line' }}>
           {injury.description}
         </Typography>

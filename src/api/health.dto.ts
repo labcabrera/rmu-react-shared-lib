@@ -1,5 +1,6 @@
 // Health model shared by the strategic and the tactical modules (spec 013 §1): injuries with a stable UUID and
 // their origin, treatments, recovery, conditions and the healing log of a character.
+import { InjuryPoison } from './poison.dto';
 
 export type InjuryType = 'bone' | 'cut-burn' | 'muscle-tendon' | 'organ' | 'poison-disease' | 'skin-tissue' | 'unknown';
 
@@ -15,7 +16,7 @@ export type InjuryFlag = 'permanent-risk' | 'limb-loss' | 'blinding' | 'paralysi
 
 export type BleedingControl = 'pressure' | 'stitches' | 'tourniquet' | 'cauterized' | 'magic';
 
-export type InjurySourceKind = 'critical' | 'fumble' | 'fatigue' | 'manual';
+export type InjurySourceKind = 'critical' | 'fumble' | 'fatigue' | 'manual' | 'poison';
 
 /** Where an injury, an effect or a condition comes from. */
 export interface InjurySource {
@@ -28,6 +29,8 @@ export interface InjurySource {
   attackerName?: string;
   /** `${table}-${severity}-${roll}`, e.g. "S-C-91". */
   criticalKey?: string;
+  /** The poisoning a condition or an effect comes from (spec 042). */
+  injuryId?: string;
 }
 
 export type TreatmentProcedure =
@@ -128,6 +131,8 @@ export interface Injury {
   createdAt: string;
   updatedAt?: string;
   healedAt?: string;
+  /** A poisoning (spec 042): its stages, RR and antidotes. */
+  poison?: InjuryPoison;
 }
 
 export type CharacterConditionStatus = 'unconscious' | 'permanent-unconscious' | 'dead';
@@ -258,7 +263,7 @@ export interface RestDto {
 }
 
 /** Where a change of hits of a tactical game comes from (spec 013, §1.1). */
-export type HpLogKind = 'attack' | 'critical' | 'fumble' | 'bleeding' | 'endurance' | 'treatment' | 'manual';
+export type HpLogKind = 'attack' | 'critical' | 'fumble' | 'bleeding' | 'endurance' | 'treatment' | 'manual' | 'poison';
 
 export const HP_LOG_KINDS: HpLogKind[] = [
   'attack',
@@ -268,6 +273,7 @@ export const HP_LOG_KINDS: HpLogKind[] = [
   'endurance',
   'treatment',
   'manual',
+  'poison',
 ];
 
 /** A change of the hits of an actor round: negative is damage, positive healing. */
