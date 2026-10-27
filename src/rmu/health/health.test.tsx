@@ -169,7 +169,8 @@ describe('HealerPicker', () => {
     renderWithProviders(<Harness initial={{ mode: 'self' }} onValue={onValue} />);
     await userEvent.click(screen.getByRole('button', { name: 'character' }));
     expect(onValue).toHaveBeenLastCalledWith({ mode: 'character', characterId: 'friend' });
-    expect(screen.getByText('Elrond (medicine +90)')).toBeInTheDocument();
+    expect(screen.getByText('Elrond')).toBeInTheDocument();
+    expect(screen.getByText('medicine +90')).toBeInTheDocument();
   });
 
   it('takes an external healer typed by hand', async () => {
