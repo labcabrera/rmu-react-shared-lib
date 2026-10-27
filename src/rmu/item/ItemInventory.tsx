@@ -1,6 +1,7 @@
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import ScienceIcon from '@mui/icons-material/Science';
 import {
   Box,
   Chip,
@@ -77,6 +78,15 @@ const ItemRow: FC<{
           {item.info?.stackable && <Chip size="small" label={`× ${itemUnits(item)}`} />}
           {equipped && <Chip size="small" color="primary" label={t('equipped')} />}
           <ItemConditionChip condition={item.condition} />
+          {item.coating && (
+            <Chip
+              size="small"
+              color="secondary"
+              variant="outlined"
+              icon={<ScienceIcon />}
+              label={t('item-coated', { name: t(item.coating.name, item.coating.name) })}
+            />
+          )}
         </Stack>
         {modifiers.length > 0 && (
           <Box sx={{ mt: 0.25 }}>
