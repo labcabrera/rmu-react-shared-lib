@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Chip, Stack, Typography } from '@mui/material';
-import type { TFunction } from 'i18next';
 import { ItemArmor, ItemFeatures, WeaponMode } from '../../api/item.dto';
 
 /** What ItemFeatureChips reads: a catalog item or the catalog copy of a strategic item. */
@@ -14,13 +13,20 @@ export type ItemFeatureSource = {
 
 export type ItemFeatureLine = { key: string; label: string };
 
+/**
+ * The `t` of react-i18next. Loose on purpose: each MFE has its own copy of i18next, and their TFunction types do not
+ * match the one of the lib.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ItemFeatureTranslate = (key: string, options?: any) => string;
+
 const signed = (value: number): string => (value > 0 ? `+${value}` : `${value}`);
 
 /**
  * The lines of the general equipment data of an item (spec 041): lot, container capacity, light, transport,
  * ammunition, the coverage of a full suit, the class of a piece and the OB modifier of an improvised weapon.
  */
-export const itemFeatureLines = (item: ItemFeatureSource, t: TFunction): ItemFeatureLine[] => {
+export const itemFeatureLines = (item: ItemFeatureSource, t: ItemFeatureTranslate): ItemFeatureLine[] => {
   const lines: ItemFeatureLine[] = [];
   const { container, light, transport, ammunition } = item.features ?? {};
   if (item.lotSize && item.lotSize > 1)

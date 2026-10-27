@@ -1,6 +1,5 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-import type { TFunction } from 'i18next';
 import { describe, expect, it } from 'vitest';
 import { itemCondition, StrategicItemModifier } from '../../api/item-modifier.dto';
 import { renderWithProviders } from '../../test/render';
@@ -83,8 +82,7 @@ describe('ItemModifierChips', () => {
 
 describe('ItemFeatureChips (spec 041)', () => {
   // Invented values; without an i18n instance the labels are the keys
-  const t = ((key: string, options?: object) =>
-    options ? `${key} ${JSON.stringify(options)}` : key) as unknown as TFunction;
+  const t = (key: string, options?: object) => (options ? `${key} ${JSON.stringify(options)}` : key);
 
   it('lists the lot, the blocks, the full suit, the class and the improvised OB', () => {
     const lines = itemFeatureLines(
