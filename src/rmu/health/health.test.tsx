@@ -17,6 +17,7 @@ import InjuryCard, { recoveryProgress } from './InjuryCard';
 import InjuryList, { sortInjuries } from './InjuryList';
 import InjurySourceLine from './InjurySourceLine';
 import InjuryTypeChip from './InjuryTypeChip';
+import PoisonDataFields, { isPoisonDataValid } from './PoisonDataFields';
 import PoisonStageTimeline, { poisonStageState, poisonTimeLabel } from './PoisonStageTimeline';
 
 // Without an i18n instance, t() returns the key: labels below are translation keys.
@@ -132,6 +133,54 @@ describe('PoisonStageTimeline', () => {
     renderWithProviders(<InjuryCard injury={poisonedNerve} />);
     expect(screen.getAllByText('Test venom')).toHaveLength(1);
     expect(screen.getByTestId('poison-stage-moderate')).toBeInTheDocument();
+  });
+});
+
+describe('PoisonDataFields', () => {
+  const catalog = [
+    {
+      id: 'test-venom',
+      name: 'Test venom',
+      features: {
+        poison: {
+          category: 'nerve' as const,
+          level: 3,
+          form: 'paste' as const,
+          maxSeverity: null,
+          immediateHits: null,
+          onsetRounds: null,
+        },
+      },
+    },
+    { id: 'rope', name: 'Rope', features: null },
+  ];
+
+  it('picks a catalog poison and copies its block', async () => {
+    const onChange = vi.fn();
+    renderWithProviders(<PoisonDataFields catalog={catalog} value={undefined} onChange={onChange} />);
+    await userEvent.click(screen.getByRole('combobox'));
+    expect(screen.queryByText('Rope')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByText('Test venom'));
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({ itemTypeId: 'test-venom', category: 'nerve', level: 3 })
+    );
+  });
+
+  it('describes a poison by hand', async () => {
+    const Harness = () => {
+      const [value, setValue] = useState<Parameters<typeof isPoisonDataValid>[0]>();
+      return (
+        <>
+          <PoisonDataFields catalog={catalog} value={value} onChange={setValue} />
+          <span>{isPoisonDataValid(value) ? 'valid' : 'invalid'}</span>
+        </>
+      );
+    };
+    renderWithProviders(<Harness />);
+    await userEvent.click(screen.getByRole('switch', { name: 'poison-manual' }));
+    expect(screen.getByText('invalid')).toBeInTheDocument();
+    await userEvent.type(screen.getByRole('textbox', { name: 'name' }), 'Swamp venom');
+    expect(screen.getByText('valid')).toBeInTheDocument();
   });
 });
 

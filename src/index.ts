@@ -264,6 +264,8 @@ export { default as InjurySourceLine } from './rmu/health/InjurySourceLine';
 export { default as InjuryCard, recoveryProgress } from './rmu/health/InjuryCard';
 export { default as PoisonStageTimeline, poisonStageState, poisonTimeLabel } from './rmu/health/PoisonStageTimeline';
 export type { PoisonStageState } from './rmu/health/PoisonStageTimeline';
+export { default as PoisonDataFields, isPoisonDataValid } from './rmu/health/PoisonDataFields';
+export type { PoisonCatalogItem } from './rmu/health/PoisonDataFields';
 export { default as InjuryList, sortInjuries } from './rmu/health/InjuryList';
 export { default as HealerPicker, resolveHealer } from './rmu/health/HealerPicker';
 export { default as HpBreakdown, formatHpAmount, hpAmountColor } from './rmu/health/HpBreakdown';
