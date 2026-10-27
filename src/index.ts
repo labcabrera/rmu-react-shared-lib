@@ -59,6 +59,21 @@ export * from './rolls';
 export { default as RmuKeyLabelSelect } from './selectors/RmuKeyLabelSelect';
 export { default as RmuSelect } from './selectors/RmuSelect';
 export { default as DifficultyPicker } from './selectors/DifficultyPicker';
+export {
+  default as CharacterPicker,
+  CharacterAvatar,
+  CharacterCard,
+  characterOption,
+  filterByRelation,
+  CHARACTER_PICKER_COMPACT_FROM,
+  CHARACTER_PICKER_SEARCH_FROM,
+} from './selectors/CharacterPicker';
+export type {
+  CharacterOption,
+  CharacterPickerProps,
+  CharacterPickerVariant,
+  CharacterRelation,
+} from './selectors/CharacterPicker';
 export { default as SelectDifficulty } from './selectors/SelectDifficulty';
 export { default as SelectRealm } from './selectors/SelectRealm';
 export { default as SkillSelector, SPELL_LIST_SPECIALIZATION } from './selectors/SkillSelector';

@@ -1,11 +1,20 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MenuItem, Stack, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Stack, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import NumericInput from '../../inputs/NumericInput';
+import CharacterPicker from '../../selectors/CharacterPicker';
 import { formatBonus } from '../character/StatPill';
 
-/** A character who can heal: its Medicine and Herbalism total bonuses. */
-export type HealerCandidate = { id: string; name: string; medicine?: number; herbalism?: number };
+/** A character who can heal: its Medicine and Herbalism total bonuses, and its avatar and faction for the picker. */
+export type HealerCandidate = {
+  id: string;
+  name: string;
+  medicine?: number;
+  herbalism?: number;
+  imageUrl?: string | null;
+  factionId?: string;
+  factionName?: string;
+};
 
 export type HealerMode = 'self' | 'character' | 'external';
 
@@ -98,20 +107,20 @@ const HealerPicker: FC<{
       )}
 
       {value.mode === 'character' && (
-        <TextField
-          select
+        <CharacterPicker
           label={t('healer')}
-          value={value.characterId ?? ''}
-          onChange={(event) => onChange({ mode: 'character', characterId: event.target.value })}
+          options={others.map((character) => ({
+            id: character.id,
+            name: character.name,
+            imageUrl: character.imageUrl,
+            factionId: character.factionId,
+            factionName: character.factionName,
+            secondary: bonusText(character, medicineLabel, herbalismLabel),
+          }))}
+          value={value.characterId}
+          onChange={(characterId) => characterId && onChange({ mode: 'character', characterId })}
           disabled={disabled}
-          fullWidth
-        >
-          {others.map((character) => (
-            <MenuItem key={character.id} value={character.id}>
-              {`${character.name} (${bonusText(character, medicineLabel, herbalismLabel)})`}
-            </MenuItem>
-          ))}
-        </TextField>
+        />
       )}
 
       {value.mode === 'external' && (
