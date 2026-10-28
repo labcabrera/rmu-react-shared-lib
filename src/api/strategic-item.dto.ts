@@ -1,3 +1,4 @@
+import { ItemMaterial } from './crafting.dto';
 import { ItemCondition, StrategicItemModifier } from './item-modifier.dto';
 import { ItemArmor, ItemCost, ItemFeatures, ItemInfo, ItemShield, ItemWeapon } from './item.dto';
 import { ItemCoating } from './poison.dto';
@@ -48,6 +49,8 @@ export type StrategicItem = {
   description?: string | null;
   /** Poison on a weapon (spec 042). */
   coating?: ItemCoating | null;
+  /** Superior material it was crafted of (spec 043). */
+  material?: ItemMaterial | null;
   owner: string;
 };
 

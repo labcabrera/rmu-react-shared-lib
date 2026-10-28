@@ -137,6 +137,8 @@ export * from './api/strategic-item.dto';
 export * from './api/item-modifier.dto';
 export * from './api/item-operations.api';
 export * from './api/item-operations.dto';
+export * from './api/crafting.api';
+export * from './api/crafting.dto';
 export * from './api/strategic-game.api';
 export * from './api/strategic-game.dto';
 export * from './api/tactical-game.api';

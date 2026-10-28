@@ -1,3 +1,4 @@
+import { CraftingQualityDto } from './crafting.dto';
 import { ItemHolder, StrategicItem } from './strategic-item.dto';
 
 /** Operations of the item ledger (spec 023). */
@@ -136,6 +137,8 @@ export type CraftItemDto = {
   name?: string;
   description?: string;
   wielderSize?: string;
+  /** Spec 043: material, masterwork, armor weight and workshop. */
+  quality?: CraftingQualityDto;
 };
 
 export type RepairItemDto = { maneuver: ItemManeuverDto; cost?: number; payer?: ItemHolder };
