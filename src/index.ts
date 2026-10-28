@@ -1,5 +1,7 @@
 export { default as EditableAvatar } from './avatars/EditableAvatar';
 export { default as GenericAvatar } from './avatars/GenericAvatar';
+export { default as EntityAvatar, initialsOf } from './avatars/EntityAvatar';
+export type { EntityAvatarProps } from './avatars/EntityAvatar';
 
 export { default as RmuBreadcrumbs } from './breadcrumbs/RmuBreadcrumbs';
 
@@ -18,6 +20,8 @@ export { default as SaveButton } from './buttons/SaveButton';
 
 export * from './config/config.service';
 export * from './config/asset-url';
+export { defaultImages, entityImage, itemCategoryImage, ITEM_CATEGORIES_WITH_IMAGE } from './config/default-images';
+export type { EntityKind } from './config/default-images';
 
 export { default as RmuCard } from './cards/RmuCard';
 export { default as RmuTextCard } from './cards/RmuTextCard';

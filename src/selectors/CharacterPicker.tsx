@@ -5,7 +5,6 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import {
   alpha,
   Autocomplete,
-  Avatar,
   Box,
   Button,
   ButtonBase,
@@ -20,7 +19,7 @@ import {
   Typography,
 } from '@mui/material';
 import type { Character } from '../api/character.dto';
-import { resolveAssetUrl } from '../config/asset-url';
+import EntityAvatar from '../avatars/EntityAvatar';
 
 /** A character (or an actor of a tactical game) as the picker shows it, independent of the API it comes from. */
 export interface CharacterOption {
@@ -73,14 +72,6 @@ export const characterOption = (character: Character, extra: Partial<CharacterOp
   ...extra,
 });
 
-const initials = (name: string) =>
-  name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0].toUpperCase())
-    .join('');
-
 /** Image of a character, or its initials when it has none. Decorative: the name is always next to it. */
 export const CharacterAvatar: FC<{
   option: Pick<CharacterOption, 'name' | 'imageUrl' | 'icon'>;
@@ -88,27 +79,14 @@ export const CharacterAvatar: FC<{
   variant?: 'circular' | 'rounded' | 'square';
   faded?: boolean;
 }> = ({ option, size = 40, variant = 'rounded', faded = false }) => (
-  <Avatar
-    src={option.imageUrl ? resolveAssetUrl(option.imageUrl) : undefined}
+  <EntityAvatar
+    name={option.name}
+    imageUrl={option.imageUrl}
+    icon={option.icon}
+    size={size}
     variant={variant}
-    alt=""
-    aria-hidden
-    sx={{
-      width: size,
-      height: size,
-      flexShrink: 0,
-      fontSize: size * 0.4,
-      fontWeight: 700,
-      bgcolor: 'background.light',
-      color: 'text.primary',
-      border: 1,
-      borderColor: 'divider',
-      filter: faded ? 'grayscale(1)' : undefined,
-      opacity: faded ? 0.6 : 1,
-    }}
-  >
-    {option.icon ?? initials(option.name)}
-  </Avatar>
+    faded={faded}
+  />
 );
 
 type CommonProps = {
