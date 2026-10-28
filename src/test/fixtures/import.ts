@@ -10,7 +10,12 @@ export const characterPreview: ImportPreview = {
   appVersion: '0.6.0',
   currentAppVersion: '0.6.0',
   steps: [],
-  source: { gameName: 'Old campaign', factionName: 'Wanderers', realmName: 'Realm A', exportedAt: '2026-10-20T10:00:00Z' },
+  source: {
+    gameName: 'Old campaign',
+    factionName: 'Wanderers',
+    realmName: 'Realm A',
+    exportedAt: '2026-10-20T10:00:00Z',
+  },
   summary: { characters: 1, items: 4, gold: 12.5, xp: 4000 },
   characters: [{ ref: 'c1', name: 'Kaelith', level: 3, raceName: 'Human' }],
   characterRef: 'c1',

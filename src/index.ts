@@ -200,6 +200,7 @@ export { gridSizeCard, gridSizeMain, gridSizeResume, itemFilter, itemFilterDisab
 
 // Templates and generic components
 export { default as ListPage } from './templates/ListPage';
+export { FilterPanelToggle, ListResultsBar, useFilterPanelOpen } from './templates/ListPage';
 export type { ListPageFilterState, ListPageProps } from './templates/ListPage';
 export { default as FilterPanel, FilterSection } from './templates/FilterPanel';
 export { default as DetailPage } from './templates/DetailPage';
@@ -276,6 +277,42 @@ export { default as ItemModifierChips } from './rmu/item/ItemModifierChips';
 export { default as ItemFeatureChips, itemFeatureLines } from './rmu/item/ItemFeatureChips';
 export type { ItemFeatureLine, ItemFeatureSource, ItemFeatureTranslate } from './rmu/item/ItemFeatureChips';
 export { default as ItemThumb, itemImageUrl } from './rmu/item/ItemThumb';
+export {
+  default as ItemCard,
+  itemCardImages,
+  itemCatalogColumns,
+  itemCategoryLabel,
+  itemMetrics,
+  itemName,
+  RARITY_COLORS,
+} from './rmu/item/ItemCard';
+export {
+  default as ItemCatalogBrowser,
+  gridSizeItemCard,
+  ITEM_CATALOG_MAX,
+  ItemCatalogFilterSections,
+  ItemSortControl,
+  useItemCatalog,
+  useItemCatalogQuery,
+} from './rmu/item/ItemCatalogBrowser';
+export type { ItemCatalogBrowserProps } from './rmu/item/ItemCatalogBrowser';
+export {
+  ARMOR_CLASSES,
+  ARMOR_SLOT_FILTERS,
+  ARMOR_TYPES,
+  ITEM_FEATURE_FILTERS,
+  ITEM_PAGE_SIZES,
+  ITEM_SORTS,
+  itemCatalogFilters,
+  normalizeText,
+  sortItems,
+  WEAPON_ATTACKS,
+  WEAPON_HANDS,
+  WEAPON_SKILLS,
+  weaponSkillImage,
+  weaponSkillLabel,
+} from './rmu/item/item-catalog';
+export type { ItemCatalogFilterOptions, ItemSort } from './rmu/item/item-catalog';
 export { default as MoneyDisplay } from './rmu/item/MoneyDisplay';
 export { default as PriceBreakdownView } from './rmu/item/PriceBreakdownView';
 export { default as ItemInventory, itemTotalValue, itemTotalWeight } from './rmu/item/ItemInventory';

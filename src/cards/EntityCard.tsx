@@ -1,6 +1,16 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useState } from 'react';
 import LockIcon from '@mui/icons-material/Lock';
-import { Box, Card, CardActionArea, CardContent, CardMedia, Stack, Tooltip, Typography } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Stack,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { resolveAssetUrl } from '../config/asset-url';
 import { hoverLiftSx } from '../motion/motion';
 
@@ -21,6 +31,8 @@ const EntityCard: FC<{
   title: string;
   subtitle?: ReactNode;
   image?: string | null;
+  /** Images tried in order when `image` fails to load (for example an item's category image, then a generic one). */
+  fallbackImages?: string[];
   /**
    * Image shape: `wide` (16:9, default), `portrait` (3:4, for people and creatures), `square`, or `none` for a
    * compact card without media (for example skills).
@@ -39,6 +51,10 @@ const EntityCard: FC<{
   /** `view-transition-name` of the image, to morph into the detail page header. */
   imageTransitionName?: string;
   onClick?: () => void;
+  /** Buttons below the card, outside its clickable area (buy, craft…). */
+  actions?: ReactNode;
+  /** Highlighted border (the chosen one of a list). */
+  selected?: boolean;
 }> = ({
   title,
   subtitle,
@@ -53,7 +69,13 @@ const EntityCard: FC<{
   lockedLabel,
   imageTransitionName,
   onClick,
+  fallbackImages = [],
+  actions,
+  selected = false,
 }) => {
+  const [failed, setFailed] = useState(0);
+  const sources = [image || defaultImage, ...fallbackImages];
+  const source = sources[Math.min(failed, sources.length - 1)];
   const lockBadge = locked && (
     <Tooltip title={lockedLabel ?? ''}>
       <LockIcon
@@ -73,8 +95,9 @@ const EntityCard: FC<{
         <Box sx={{ position: 'relative' }}>
           <CardMedia
             component="img"
-            image={resolveAssetUrl(image || defaultImage)}
+            image={resolveAssetUrl(source)}
             alt=""
+            onError={() => failed < sources.length - 1 && setFailed(failed + 1)}
             sx={{
               aspectRatio: ratios[imageRatio],
               objectFit: 'cover',
@@ -142,7 +165,13 @@ const EntityCard: FC<{
   );
 
   return (
-    <Card sx={[{ height: '100%', display: 'flex', flexDirection: 'column' }, Boolean(onClick) && hoverLiftSx]}>
+    <Card
+      sx={[
+        { height: '100%', display: 'flex', flexDirection: 'column' },
+        selected && { outline: 2, outlineColor: 'primary.main', outlineOffset: -2 },
+        Boolean(onClick) && hoverLiftSx,
+      ]}
+    >
       {onClick ? (
         <CardActionArea
           onClick={onClick}
@@ -159,6 +188,7 @@ const EntityCard: FC<{
       ) : (
         content
       )}
+      {actions && <CardActions sx={{ pt: 0, flexWrap: 'wrap', gap: 0.5 }}>{actions}</CardActions>}
     </Card>
   );
 };

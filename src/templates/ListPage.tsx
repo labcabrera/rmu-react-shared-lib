@@ -59,8 +59,8 @@ export interface ListPageProps<T> {
 
 const panelKeyOf = (key: string) => `rmu.filters.${key}`;
 
-/** Whether the side panel of a list is shown, remembered in localStorage. */
-const usePanelOpen = (storageKey: string) => {
+/** Whether the side filter panel of a list is shown, remembered per list in localStorage. */
+export const useFilterPanelOpen = (storageKey: string) => {
   const [open, setOpenState] = useState(() => {
     try {
       return localStorage.getItem(panelKeyOf(storageKey)) !== 'hidden';
@@ -79,8 +79,24 @@ const usePanelOpen = (storageKey: string) => {
   return [open, setOpen] as const;
 };
 
+/** Button that hides or shows the side filter panel. */
+export const FilterPanelToggle = ({ open, onChange }: { open: boolean; onChange: (open: boolean) => void }) => {
+  const { t } = useTranslation();
+  return (
+    <Button
+      size="small"
+      variant="text"
+      startIcon={open ? <FilterListOffIcon /> : <FilterListIcon />}
+      onClick={() => onChange(!open)}
+      aria-expanded={open}
+    >
+      {open ? t('hide-filters') : t('show-filters')}
+    </Button>
+  );
+};
+
 /** Count of results, chips of the active filters with "clear", and the sort (spec 046, decision 6). */
-const ResultsBar = ({
+export const ListResultsBar = ({
   count,
   filterState,
   actions,
@@ -154,7 +170,7 @@ export default function ListPage<T>({
   const { items, error } = query;
   const modes = collection?.modes ?? ['cards'];
   const [mode, setMode] = useCollectionMode(collection?.storageKey ?? 'default', modes);
-  const [panelOpen, setPanelOpen] = usePanelOpen(filtersStorageKey ?? collection?.storageKey ?? 'default');
+  const [panelOpen, setPanelOpen] = useFilterPanelOpen(filtersStorageKey ?? collection?.storageKey ?? 'default');
   const side = filtersLayout === 'side' && !!filters;
   const headerActions = [
     ...(modes.length > 1 ? [<CollectionModeSwitch key="mode" modes={modes} value={mode} onChange={setMode} />] : []),
@@ -176,19 +192,9 @@ export default function ListPage<T>({
   else
     content = <CollectionView items={items} getKey={getKey} renderItem={renderItem} mode={mode} config={collection} />;
 
-  const panelToggle = side && isWide && (
-    <Button
-      size="small"
-      variant="text"
-      startIcon={panelOpen ? <FilterListOffIcon /> : <FilterListIcon />}
-      onClick={() => setPanelOpen(!panelOpen)}
-      aria-expanded={panelOpen}
-    >
-      {panelOpen ? t('hide-filters') : t('show-filters')}
-    </Button>
-  );
+  const panelToggle = side && isWide && <FilterPanelToggle open={panelOpen} onChange={setPanelOpen} />;
   const resultsBar = (filterState || resultsActions || panelToggle) && (
-    <ResultsBar
+    <ListResultsBar
       count={items ? query.totalElements : undefined}
       filterState={filterState}
       actions={resultsActions}
