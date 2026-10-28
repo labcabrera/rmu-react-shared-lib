@@ -1,5 +1,7 @@
 export { default as EditableAvatar } from './avatars/EditableAvatar';
 export { default as GenericAvatar } from './avatars/GenericAvatar';
+export { default as EntityAvatar, initialsOf } from './avatars/EntityAvatar';
+export type { EntityAvatarProps } from './avatars/EntityAvatar';
 
 export { default as RmuBreadcrumbs } from './breadcrumbs/RmuBreadcrumbs';
 
@@ -18,6 +20,8 @@ export { default as SaveButton } from './buttons/SaveButton';
 
 export * from './config/config.service';
 export * from './config/asset-url';
+export { defaultImages, entityImage, itemCategoryImage, ITEM_CATEGORIES_WITH_IMAGE } from './config/default-images';
+export type { EntityKind } from './config/default-images';
 
 export { default as RmuCard } from './cards/RmuCard';
 export { default as RmuTextCard } from './cards/RmuTextCard';
@@ -56,8 +60,6 @@ export { default as NumericInput } from './inputs/NumericInput';
 export { default as NumericReadonlyInput } from './inputs/NumericReadonlyInput';
 export * from './rolls';
 
-export { default as RmuKeyLabelSelect } from './selectors/RmuKeyLabelSelect';
-export { default as RmuSelect } from './selectors/RmuSelect';
 export { default as DifficultyPicker } from './selectors/DifficultyPicker';
 export {
   default as CharacterPicker,
@@ -74,8 +76,9 @@ export type {
   CharacterPickerVariant,
   CharacterRelation,
 } from './selectors/CharacterPicker';
-export { default as SelectDifficulty } from './selectors/SelectDifficulty';
-export { default as SelectRealm } from './selectors/SelectRealm';
+export { default as EntityPicker, ENTITY_PICKER_TILES_UP_TO } from './selectors/EntityPicker';
+export type { EntityOption, EntityPickerProps, EntityPickerVariant } from './selectors/EntityPicker';
+export * from './selectors/pickers';
 export { default as SkillSelector, SPELL_LIST_SPECIALIZATION } from './selectors/SkillSelector';
 export { default as TraitSelector } from './selectors/TraitSelector';
 
@@ -170,6 +173,18 @@ export type { PagedFetcher, PagedQuery, PagedQueryOptions } from './data/usePage
 export { useEntity } from './data/useEntity';
 export type { EntityOptions, EntityState } from './data/useEntity';
 export { useDebounce } from './data/useDebounce';
+export { useListFilters } from './data/useListFilters';
+export type {
+  FilterChip,
+  FilterDef,
+  FilterKind,
+  FilterSchema,
+  FilterValue,
+  FilterValues,
+  ListFilters,
+} from './data/useListFilters';
+export { useLocalPagedQuery } from './data/useLocalPagedQuery';
+export type { LocalPagedQueryOptions } from './data/useLocalPagedQuery';
 
 // States
 export { default as LoadingState } from './ui/states/LoadingState';
@@ -181,7 +196,9 @@ export { gridSizeCard, gridSizeMain, gridSizeResume, itemFilter, itemFilterDisab
 
 // Templates and generic components
 export { default as ListPage } from './templates/ListPage';
-export type { ListPageProps } from './templates/ListPage';
+export { FilterPanelToggle, ListResultsBar, useFilterPanelOpen } from './templates/ListPage';
+export type { ListPageFilterState, ListPageProps } from './templates/ListPage';
+export { default as FilterPanel, FilterSection } from './templates/FilterPanel';
 export { default as DetailPage } from './templates/DetailPage';
 export type { DetailPageProps } from './templates/DetailPage';
 export { default as FormPage } from './templates/FormPage';
@@ -199,8 +216,6 @@ export { default as SearchField } from './templates/SearchField';
 export type { Breadcrumb } from './templates/types';
 export { bottomOffset, usePhone } from './templates/responsive';
 export { default as ConfirmDialog } from './ui/ConfirmDialog';
-export { default as EntitySelect } from './ui/EntitySelect';
-export type { EntitySelectProps } from './ui/EntitySelect';
 export { default as DataTable } from './ui/DataTable';
 export type { DataTableColumn } from './ui/DataTable';
 export { default as PreviewDrawer } from './ui/PreviewDrawer';
@@ -209,7 +224,6 @@ export type { FlowStep } from './ui/FlowSteps';
 export { rsqlAnd } from './data/rsql';
 
 // Rolemaster-specific selects shared by several MFEs
-export { SelectAttackTable, SelectFumbleTable } from './rmu/SelectAttackTable';
 export { default as RollBreakdown, useModifierLabel } from './rmu/RollBreakdown';
 export type { RollModifier, RollModifierGroup } from './rmu/RollBreakdown';
 export { default as EffectList, effectColor, effectIcon, normalizeEffectStatus } from './rmu/EffectList';
@@ -256,6 +270,42 @@ export { default as ItemModifierChips } from './rmu/item/ItemModifierChips';
 export { default as ItemFeatureChips, itemFeatureLines } from './rmu/item/ItemFeatureChips';
 export type { ItemFeatureLine, ItemFeatureSource, ItemFeatureTranslate } from './rmu/item/ItemFeatureChips';
 export { default as ItemThumb, itemImageUrl } from './rmu/item/ItemThumb';
+export {
+  default as ItemCard,
+  itemCardImages,
+  itemCatalogColumns,
+  itemCategoryLabel,
+  itemMetrics,
+  itemName,
+  RARITY_COLORS,
+} from './rmu/item/ItemCard';
+export {
+  default as ItemCatalogBrowser,
+  gridSizeItemCard,
+  ITEM_CATALOG_MAX,
+  ItemCatalogFilterSections,
+  ItemSortControl,
+  useItemCatalog,
+  useItemCatalogQuery,
+} from './rmu/item/ItemCatalogBrowser';
+export type { ItemCatalogBrowserProps } from './rmu/item/ItemCatalogBrowser';
+export {
+  ARMOR_CLASSES,
+  ARMOR_SLOT_FILTERS,
+  ARMOR_TYPES,
+  ITEM_FEATURE_FILTERS,
+  ITEM_PAGE_SIZES,
+  ITEM_SORTS,
+  itemCatalogFilters,
+  normalizeText,
+  sortItems,
+  WEAPON_ATTACKS,
+  WEAPON_HANDS,
+  WEAPON_SKILLS,
+  weaponSkillImage,
+  weaponSkillLabel,
+} from './rmu/item/item-catalog';
+export type { ItemCatalogFilterOptions, ItemSort } from './rmu/item/item-catalog';
 export { default as MoneyDisplay } from './rmu/item/MoneyDisplay';
 export { default as PriceBreakdownView } from './rmu/item/PriceBreakdownView';
 export { default as ItemInventory, itemTotalValue, itemTotalWeight } from './rmu/item/ItemInventory';

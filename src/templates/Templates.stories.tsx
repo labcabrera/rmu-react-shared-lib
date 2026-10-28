@@ -10,9 +10,9 @@ import { useEntity } from '../data/useEntity';
 import { usePagedQuery } from '../data/usePagedQuery';
 import StatRow from '../display/StatRow';
 import Section from '../layouts/Section';
+import { RealmPicker } from '../selectors/pickers';
 import ConfirmDialog from '../ui/ConfirmDialog';
 import DataTable from '../ui/DataTable';
-import EntitySelect from '../ui/EntitySelect';
 import DetailPage from './DetailPage';
 import FilterBar from './FilterBar';
 import FormPage from './FormPage';
@@ -127,13 +127,14 @@ const FormExample = () => {
           <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} fullWidth required />
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
-          <EntitySelect
+          <RealmPicker
             label="Realm"
             value={realm}
             onChange={setRealm}
-            options={[
-              { id: 'middle-earth', name: 'Middle-earth' },
-              { id: 'kulthea', name: 'Kulthea' },
+            variant="select"
+            realms={[
+              { id: 'middle-earth', name: 'Middle-earth' } as never,
+              { id: 'kulthea', name: 'Kulthea' } as never,
             ]}
           />
         </Grid>

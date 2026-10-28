@@ -8,15 +8,24 @@ import { usePhone } from './responsive';
  * Row of list filters with a consistent layout. Each child is one filter; the first is the main one
  * (usually a SearchField). Tablets and desktops show them in a row (two to four per line). Phones show
  * the first one plus a "Filters" button that opens the others in a bottom sheet; `activeCount` is shown
- * on that button.
+ * on that button. The controls take their size from the theme density, and the button matches them.
+ *
+ * `variant="drawer"` always uses the sheet, with every child in it: the filters of a ListPage with a side panel
+ * below `lg` (spec 046).
  */
-const FilterBar: FC<{ children: ReactNode; activeCount?: number }> = ({ children, activeCount = 0 }) => {
+const FilterBar: FC<{ children: ReactNode; activeCount?: number; variant?: 'auto' | 'drawer' }> = ({
+  children,
+  activeCount = 0,
+  variant = 'auto',
+}) => {
   const { t } = useTranslation();
   const isPhone = usePhone();
   const [open, setOpen] = useState(false);
-  const [main, ...others] = Children.toArray(children);
+  const drawerOnly = variant === 'drawer';
+  const all = Children.toArray(children);
+  const [main, ...others] = drawerOnly ? [null, ...all] : all;
 
-  if (!isPhone || others.length === 0) {
+  if (!drawerOnly && (!isPhone || others.length === 0)) {
     return (
       <Grid container spacing={1} sx={{ mb: 1, alignItems: 'center' }}>
         {Children.toArray(children).map((child, index) => (
@@ -30,10 +39,15 @@ const FilterBar: FC<{ children: ReactNode; activeCount?: number }> = ({ children
 
   return (
     <>
-      <Stack direction="row" spacing={1} sx={{ mb: 1, alignItems: 'center' }}>
-        <Box sx={{ flex: 1, minWidth: 0 }}>{main}</Box>
-        <Badge badgeContent={activeCount} color="primary">
-          <Button variant="outlined" startIcon={<TuneIcon />} onClick={() => setOpen(true)} sx={{ minHeight: 56 }}>
+      <Stack direction="row" spacing={1} sx={{ mb: 1, alignItems: 'stretch' }}>
+        {main && <Box sx={{ flex: 1, minWidth: 0 }}>{main}</Box>}
+        <Badge badgeContent={activeCount} color="primary" sx={{ display: 'flex' }}>
+          <Button
+            variant="outlined"
+            startIcon={<TuneIcon />}
+            onClick={() => setOpen(true)}
+            sx={{ minHeight: 44, height: main ? '100%' : undefined }}
+          >
             {t('filters')}
           </Button>
         </Badge>
@@ -43,7 +57,9 @@ const FilterBar: FC<{ children: ReactNode; activeCount?: number }> = ({ children
         open={open}
         onClose={() => setOpen(false)}
         keepMounted
-        slotProps={{ paper: { sx: { borderTopLeftRadius: 12, borderTopRightRadius: 12, p: 2, pb: 3 } } }}
+        slotProps={{
+          paper: { sx: { borderTopLeftRadius: 12, borderTopRightRadius: 12, p: 2, pb: 3, maxHeight: '85vh' } },
+        }}
       >
         <Typography variant="h6" sx={{ mb: 2 }}>
           {t('filters')}

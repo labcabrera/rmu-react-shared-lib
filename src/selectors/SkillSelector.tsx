@@ -8,8 +8,8 @@ import { fetchEnumerations } from '../api/enumerations.api';
 import { fetchSkillCategories } from '../api/skill-category.api';
 import { SkillCategory } from '../api/skill-category.dto';
 import { fetchSkills } from '../api/skill.api';
-import { fetchSpellLists } from '../api/spell-list.api';
 import { Skill } from '../api/skill.dto';
+import { fetchSpellLists } from '../api/spell-list.api';
 import CategorySeparator from '../display/CategorySeparator';
 
 /** Specialization of the skills whose value is a spell list of rmu-api-spells (spec 029): the list code. */

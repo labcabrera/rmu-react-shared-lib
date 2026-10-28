@@ -8,6 +8,7 @@ export default function LayoutBase({
   actions,
   leftPanel,
   plain = false,
+  allowSticky = false,
   children,
 }: {
   breadcrumbs?: {
@@ -18,6 +19,8 @@ export default function LayoutBase({
   leftPanel?: ReactNode | null;
   /** Content without the surrounding card, for pages that lay out their own cards (dashboards). */
   plain?: boolean;
+  /** The content card does not clip, so sticky elements inside it (a side filter panel) stick to the page. */
+  allowSticky?: boolean;
   children: ReactNode;
 }) {
   const theme = useTheme();
@@ -68,7 +71,7 @@ export default function LayoutBase({
     <Container maxWidth="xl">
       <Box sx={[{ p: 1 }, enterSx()]}>
         {headerSection}
-        <Card variant="elevation" elevation={0} sx={{ mt: 1 }}>
+        <Card variant="elevation" elevation={0} sx={{ mt: 1, overflow: allowSticky ? 'visible' : undefined }}>
           <CardContent>
             <Grid container spacing={1}>
               {leftPanel && <Grid size={{ xs: 12, md: 3, lg: 2 }}>{leftPanel}</Grid>}

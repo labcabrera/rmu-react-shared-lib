@@ -34,10 +34,14 @@ const skill = (
   ...extra,
 });
 
-
 // Rank bonus of Core Law table 3-0b, as rmu-api-strategic computes it (spec 029)
 const rankBonus = (ranks: number): number =>
-  ranks <= 0 ? -25 : Math.min(ranks, 10) * 5 + Math.min(Math.max(ranks - 10, 0), 10) * 3 + Math.min(Math.max(ranks - 20, 0), 10) * 2 + Math.max(ranks - 30, 0);
+  ranks <= 0
+    ? -25
+    : Math.min(ranks, 10) * 5 +
+      Math.min(Math.max(ranks - 10, 0), 10) * 3 +
+      Math.min(Math.max(ranks - 20, 0), 10) * 2 +
+      Math.max(ranks - 30, 0);
 
 export const sampleCharacter: Character = {
   id: 'sample-character',
