@@ -174,6 +174,18 @@ export type { PagedFetcher, PagedQuery, PagedQueryOptions } from './data/usePage
 export { useEntity } from './data/useEntity';
 export type { EntityOptions, EntityState } from './data/useEntity';
 export { useDebounce } from './data/useDebounce';
+export { useListFilters } from './data/useListFilters';
+export type {
+  FilterChip,
+  FilterDef,
+  FilterKind,
+  FilterSchema,
+  FilterValue,
+  FilterValues,
+  ListFilters,
+} from './data/useListFilters';
+export { useLocalPagedQuery } from './data/useLocalPagedQuery';
+export type { LocalPagedQueryOptions } from './data/useLocalPagedQuery';
 
 // States
 export { default as LoadingState } from './ui/states/LoadingState';
@@ -185,7 +197,8 @@ export { gridSizeCard, gridSizeMain, gridSizeResume, itemFilter, itemFilterDisab
 
 // Templates and generic components
 export { default as ListPage } from './templates/ListPage';
-export type { ListPageProps } from './templates/ListPage';
+export type { ListPageFilterState, ListPageProps } from './templates/ListPage';
+export { default as FilterPanel, FilterSection } from './templates/FilterPanel';
 export { default as DetailPage } from './templates/DetailPage';
 export type { DetailPageProps } from './templates/DetailPage';
 export { default as FormPage } from './templates/FormPage';
