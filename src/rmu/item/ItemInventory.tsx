@@ -55,6 +55,7 @@ const ItemRow: FC<{
   const { t } = useTranslation();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const modifiers = (item.modifiers ?? []).filter((modifier) => modifier.type !== 'breakage');
+  const name = t(item.name, { defaultValue: item.name });
   return (
     <Stack
       direction="row"
@@ -68,13 +69,13 @@ const ItemRow: FC<{
         '&:hover': { bgcolor: 'action.hover' },
       }}
       onClick={() => onSelect?.(item)}
-      aria-label={item.name}
+      aria-label={name}
     >
       <ItemThumb item={item} size={44} disabled={!!item.condition?.broken} />
       <Box sx={{ flex: 1, minWidth: 0 }}>
         <Stack direction="row" spacing={0.75} sx={{ alignItems: 'center', flexWrap: 'wrap' }} useFlexGap>
           <Typography variant="body1" sx={{ fontWeight: 600 }} noWrap>
-            {item.name}
+            {name}
           </Typography>
           {item.info?.stackable && <Chip size="small" label={`× ${itemUnits(item)}`} />}
           {equipped && <Chip size="small" color="primary" label={t('equipped')} />}
@@ -181,11 +182,12 @@ const ItemInventory: FC<{
 
   const visible = useMemo(() => {
     const text = search.trim().toLowerCase();
+    const name = (item: StrategicItem) => t(item.name, { defaultValue: item.name });
     return items
       .filter((item) => !hideItemTypeIds.includes(item.itemTypeId))
-      .filter((item) => !text || item.name.toLowerCase().includes(text) || item.itemTypeId.includes(text))
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [items, search, hideItemTypeIds]);
+      .filter((item) => !text || name(item).toLowerCase().includes(text) || item.itemTypeId.includes(text))
+      .sort((a, b) => name(a).localeCompare(name(b)));
+  }, [items, search, hideItemTypeIds, t]);
 
   const groups = useMemo(() => {
     const keyOf = (item: StrategicItem) =>
