@@ -78,6 +78,9 @@ export type {
   CharacterPickerVariant,
   CharacterRelation,
 } from './selectors/CharacterPicker';
+export { default as EntityPicker, ENTITY_PICKER_TILES_UP_TO } from './selectors/EntityPicker';
+export type { EntityOption, EntityPickerProps, EntityPickerVariant } from './selectors/EntityPicker';
+export * from './selectors/pickers';
 export { default as SelectDifficulty } from './selectors/SelectDifficulty';
 export { default as SelectRealm } from './selectors/SelectRealm';
 export { default as SkillSelector, SPELL_LIST_SPECIALIZATION } from './selectors/SkillSelector';

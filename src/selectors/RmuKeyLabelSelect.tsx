@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { MenuItem, TextField } from '@mui/material';
 import { KeyLabel } from '../api/common.dto';
 
+/** @deprecated Use EnumPicker or EntityPicker (spec 046); removed in the next major. */
 export default function RmuKeyLabelSelect({
   value,
   label,

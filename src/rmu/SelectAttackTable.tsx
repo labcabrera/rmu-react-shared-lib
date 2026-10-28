@@ -49,13 +49,21 @@ const TableSelect: FC<TableSelectProps & { tables: string[] | undefined; default
   );
 };
 
-/** Attack table select (items, NPC attacks). Requires a NotificationProvider (MfeRoot). */
+/**
+ * Attack table select (items, NPC attacks). Requires a NotificationProvider (MfeRoot).
+ *
+ * @deprecated Use AttackTablePicker (spec 046); removed in the next major.
+ */
 export const SelectAttackTable: FC<TableSelectProps> = (props) => {
   const tables = useTables(fetchAttackTables);
   return <TableSelect {...props} tables={tables} defaultLabel="attack-table" />;
 };
 
-/** Fumble table select (items, NPC attacks). Requires a NotificationProvider (MfeRoot). */
+/**
+ * Fumble table select (items, NPC attacks). Requires a NotificationProvider (MfeRoot).
+ *
+ * @deprecated Use FumbleTablePicker (spec 046); removed in the next major.
+ */
 export const SelectFumbleTable: FC<TableSelectProps> = (props) => {
   const tables = useTables(fetchFumbleTables);
   return <TableSelect {...props} tables={tables} defaultLabel="fumble-table" />;

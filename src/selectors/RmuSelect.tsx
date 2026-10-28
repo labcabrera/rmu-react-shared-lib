@@ -2,6 +2,7 @@ import React, { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MenuItem, TextField } from '@mui/material';
 
+/** @deprecated Use EnumPicker (spec 046); removed in the next major. */
 export default function RmuSelect({
   value,
   label,

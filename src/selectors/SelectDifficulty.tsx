@@ -4,6 +4,7 @@ import { MenuItem, TextField } from '@mui/material';
 import { KeyValue } from '../api/common.dto';
 import { MANEUVER_DIFFICULTIES } from '../api/constants';
 
+/** @deprecated Use DifficultyPicker (spec 046, decision 9); removed in the next major. */
 const SelectDifficulty: FC<{
   value: string;
   label: string;

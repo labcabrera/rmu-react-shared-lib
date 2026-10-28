@@ -21,6 +21,8 @@ export interface EntitySelectProps<T> {
 /**
  * Searchable select over a list of entities (realms, skills, professions…). Domain selects such as
  * SelectRealm are presets of this one, so all of them look and behave the same.
+ *
+ * @deprecated Use EntityPicker or one of its presets (spec 046); removed in the next major.
  */
 export default function EntitySelect<T>({
   options,

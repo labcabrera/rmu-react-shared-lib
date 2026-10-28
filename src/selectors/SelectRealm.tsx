@@ -3,7 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Realm } from '../api/realm.dto';
 import EntitySelect from '../ui/EntitySelect';
 
-/** Searchable realm select (an EntitySelect preset). It can be cleared, which reports null. */
+/**
+ * Searchable realm select (an EntitySelect preset). It can be cleared, which reports null.
+ *
+ * @deprecated Use RealmPicker (spec 046); removed in the next major.
+ */
 const SelectRealm: FC<{
   realms: Realm[];
   value: string | null | undefined;
