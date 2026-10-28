@@ -60,8 +60,6 @@ export { default as NumericInput } from './inputs/NumericInput';
 export { default as NumericReadonlyInput } from './inputs/NumericReadonlyInput';
 export * from './rolls';
 
-export { default as RmuKeyLabelSelect } from './selectors/RmuKeyLabelSelect';
-export { default as RmuSelect } from './selectors/RmuSelect';
 export { default as DifficultyPicker } from './selectors/DifficultyPicker';
 export {
   default as CharacterPicker,
@@ -81,8 +79,6 @@ export type {
 export { default as EntityPicker, ENTITY_PICKER_TILES_UP_TO } from './selectors/EntityPicker';
 export type { EntityOption, EntityPickerProps, EntityPickerVariant } from './selectors/EntityPicker';
 export * from './selectors/pickers';
-export { default as SelectDifficulty } from './selectors/SelectDifficulty';
-export { default as SelectRealm } from './selectors/SelectRealm';
 export { default as SkillSelector, SPELL_LIST_SPECIALIZATION } from './selectors/SkillSelector';
 export { default as TraitSelector } from './selectors/TraitSelector';
 
@@ -220,8 +216,6 @@ export { default as SearchField } from './templates/SearchField';
 export type { Breadcrumb } from './templates/types';
 export { bottomOffset, usePhone } from './templates/responsive';
 export { default as ConfirmDialog } from './ui/ConfirmDialog';
-export { default as EntitySelect } from './ui/EntitySelect';
-export type { EntitySelectProps } from './ui/EntitySelect';
 export { default as DataTable } from './ui/DataTable';
 export type { DataTableColumn } from './ui/DataTable';
 export { default as PreviewDrawer } from './ui/PreviewDrawer';
@@ -230,7 +224,6 @@ export type { FlowStep } from './ui/FlowSteps';
 export { rsqlAnd } from './data/rsql';
 
 // Rolemaster-specific selects shared by several MFEs
-export { SelectAttackTable, SelectFumbleTable } from './rmu/SelectAttackTable';
 export { default as RollBreakdown, useModifierLabel } from './rmu/RollBreakdown';
 export type { RollModifier, RollModifierGroup } from './rmu/RollBreakdown';
 export { default as EffectList, effectColor, effectIcon, normalizeEffectStatus } from './rmu/EffectList';

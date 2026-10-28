@@ -3,7 +3,6 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ApiError } from '../data/api-error';
-import SelectRealm from '../selectors/SelectRealm';
 import { renderWithProviders } from '../test/render';
 import DetailPage from './DetailPage';
 import FormPage from './FormPage';
@@ -59,19 +58,5 @@ describe('DetailPage delete message', () => {
     );
     await userEvent.click(screen.getByRole('button', { name: 'delete' }));
     expect(within(screen.getByRole('dialog')).getByText('Delete Arming sword?')).toBeInTheDocument();
-  });
-});
-
-describe('SelectRealm', () => {
-  it('shows the selected realm and reports clearing as null', async () => {
-    const onChange = vi.fn();
-    renderWithProviders(
-      <SelectRealm realms={[{ id: 'kulthea', name: 'Kulthea' } as never]} value="kulthea" onChange={onChange} />
-    );
-    const input = screen.getByRole('combobox', { name: 'realm' });
-    expect(input).toHaveValue('Kulthea');
-    await userEvent.click(input);
-    await userEvent.click(screen.getByTitle(/clear/i));
-    expect(onChange).toHaveBeenCalledWith(null, null);
   });
 });

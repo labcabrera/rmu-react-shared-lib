@@ -8,7 +8,6 @@ import { EntityState } from '../data/useEntity';
 import { PagedQuery } from '../data/usePagedQuery';
 import { renderWithProviders } from '../test/render';
 import DataTable from '../ui/DataTable';
-import EntitySelect from '../ui/EntitySelect';
 import DetailPage from './DetailPage';
 import FormPage from './FormPage';
 import ListPage from './ListPage';
@@ -137,19 +136,6 @@ describe('generic components', () => {
       ])
     ).toBe('name=re=sword;info.rarity==common');
     expect(rsqlAnd([['name=re=', null]])).toBe('');
-  });
-
-  it('EntitySelect shows the selected option and reports the id and the entity', async () => {
-    const onChange = vi.fn();
-    const realms = [
-      { id: 'middle-earth', name: 'Middle-earth' },
-      { id: 'kulthea', name: 'Kulthea' },
-    ];
-    renderWithProviders(<EntitySelect options={realms} value="kulthea" onChange={onChange} label="Realm" />);
-    expect(screen.getByRole('combobox', { name: 'Realm' })).toHaveValue('Kulthea');
-    await userEvent.click(screen.getByRole('combobox', { name: 'Realm' }));
-    await userEvent.click(screen.getByRole('option', { name: 'Middle-earth' }));
-    expect(onChange).toHaveBeenCalledWith('middle-earth', realms[0]);
   });
 
   it('DataTable renders a table with the columns', () => {
