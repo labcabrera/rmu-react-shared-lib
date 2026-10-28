@@ -65,7 +65,7 @@ describe('item catalog filters', () => {
     const ids = (sort: string, dir = 'asc') => sortItems(sampleCatalog, sort, dir, t).map((item) => item.id);
     expect(ids('name').slice(0, 3)).toEqual(['backpack', 'dagger', 'battle-axe']);
     expect(ids('cost', 'desc')[0]).toBe('plate-full');
-    expect(ids('cost').at(-1)).toBe('backpack');
+    expect(ids('cost').slice(-1)).toEqual(['backpack']);
     expect(ids('weight', 'desc').slice(0, 2)).toEqual(['plate-full', 'battle-axe']);
     expect(ids('at')[0]).toBe('leather-helmet');
   });
