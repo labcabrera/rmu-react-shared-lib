@@ -78,6 +78,8 @@ export type ItemLedgerEntry = {
   /** Outcome key of a craft or repair. */
   outcome: string | null;
   note: string | null;
+  /** Data of the operation: the file of an import (spec 024), the crafting plan of a craft (spec 043). */
+  details?: Record<string, unknown> | null;
   userId: string;
   createdAt: string;
 };
