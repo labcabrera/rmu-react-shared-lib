@@ -1,3 +1,4 @@
+import { CraftingQualityDto } from './crafting.dto';
 import { ItemHolder, StrategicItem } from './strategic-item.dto';
 
 /** Operations of the item ledger (spec 023). */
@@ -77,6 +78,8 @@ export type ItemLedgerEntry = {
   /** Outcome key of a craft or repair. */
   outcome: string | null;
   note: string | null;
+  /** Data of the operation: the file of an import (spec 024), the crafting plan of a craft (spec 043). */
+  details?: Record<string, unknown> | null;
   userId: string;
   createdAt: string;
 };
@@ -136,6 +139,8 @@ export type CraftItemDto = {
   name?: string;
   description?: string;
   wielderSize?: string;
+  /** Spec 043: material, masterwork, armor weight and workshop. */
+  quality?: CraftingQualityDto;
 };
 
 export type RepairItemDto = { maneuver: ItemManeuverDto; cost?: number; payer?: ItemHolder };

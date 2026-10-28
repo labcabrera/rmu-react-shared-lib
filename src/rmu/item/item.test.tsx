@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { itemCondition, StrategicItemModifier } from '../../api/item-modifier.dto';
 import { renderWithProviders } from '../../test/render';
@@ -72,6 +72,18 @@ describe('ItemModifierChips', () => {
     );
     expect(screen.getAllByLabelText('item-modifier-type-breakage -10')).toHaveLength(1);
     expect(screen.getByLabelText('item-modifiers-more')).toBeInTheDocument();
+  });
+
+  it('shows the circumstance of a conditional modifier (spec 043)', async () => {
+    renderWithProviders(
+      <ItemModifierChips
+        modifiers={[
+          { id: 'c', type: 'quality', value: 5, appliesTo: 'attack', condition: 'vs. trolls', createdAt: '' },
+        ]}
+      />
+    );
+    fireEvent.click(screen.getByLabelText('item-modifier-type-quality +5'));
+    expect(await screen.findByText('item-modifier-condition')).toBeInTheDocument();
   });
 
   it('shows nothing without modifiers', () => {

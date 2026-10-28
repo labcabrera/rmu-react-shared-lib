@@ -37,6 +37,8 @@ export type StrategicItemModifier = {
   temporary?: boolean;
   source?: StrategicItemModifierSource;
   description?: string;
+  /** Spec 043: the circumstance it only applies in; never added to the bonuses of the sheet. */
+  condition?: string;
   createdAt: string;
 };
 

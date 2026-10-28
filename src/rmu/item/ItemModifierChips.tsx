@@ -8,6 +8,8 @@ const signed = (value: number): string => (value > 0 ? `+${value}` : `${value}`)
 
 const modifierColor = (modifier: StrategicItemModifier): StatusBadgeColor => {
   if (modifier.type === 'breakage') return modifier.broken ? 'error' : 'warning';
+  // Spec 043: a bonus of a circumstance only, applied by the game master
+  if (modifier.condition) return 'info';
   if (modifier.value > 0) return 'success';
   if (modifier.value < 0) return 'warning';
   return 'default';
@@ -47,7 +49,9 @@ const ItemModifierChips: FC<{
       : modifier.description;
 
   const summary = (modifier: StrategicItemModifier): string =>
-    `${t(`item-modifier-type-${modifier.type}`)} ${signed(modifier.value)} · ${t(`item-modifier-target-${modifier.appliesTo}`)}`;
+    `${t(`item-modifier-type-${modifier.type}`)} ${signed(modifier.value)} · ${
+      modifier.condition ? t(modifier.condition, modifier.condition) : t(`item-modifier-target-${modifier.appliesTo}`)
+    }`;
 
   return (
     <Stack direction="row" spacing={0.5} useFlexGap sx={{ flexWrap: 'wrap', alignItems: 'center' }}>
@@ -63,6 +67,9 @@ const ItemModifierChips: FC<{
             <Stack spacing={0.25}>
               <span>{`${t('item-modifier-target')}: ${t(`item-modifier-target-${modifier.appliesTo}`)}`}</span>
               <span>{source(modifier)}</span>
+              {modifier.condition && (
+                <span>{t('item-modifier-condition', { condition: t(modifier.condition, modifier.condition) })}</span>
+              )}
               {modifier.broken && <span>{t('item-condition-broken-detail')}</span>}
               {modifier.description && <span>{description(modifier)}</span>}
             </Stack>

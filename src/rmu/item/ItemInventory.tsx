@@ -1,5 +1,6 @@
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import DiamondIcon from '@mui/icons-material/Diamond';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ScienceIcon from '@mui/icons-material/Science';
 import {
@@ -78,6 +79,16 @@ const ItemRow: FC<{
           {item.info?.stackable && <Chip size="small" label={`× ${itemUnits(item)}`} />}
           {equipped && <Chip size="small" color="primary" label={t('equipped')} />}
           <ItemConditionChip condition={item.condition} />
+          {item.material && (
+            <Chip
+              size="small"
+              variant="outlined"
+              color={item.material.magical ? 'secondary' : 'default'}
+              icon={<DiamondIcon />}
+              data-testid="item-material"
+              label={t(`material-${item.material.id}`, item.material.id)}
+            />
+          )}
           {item.coating && (
             <Chip
               size="small"
