@@ -45,8 +45,8 @@ export const weaponSkillLabel = (skillId: string, t: ItemFeatureTranslate): stri
   t(skillId.includes('@') ? skillId.split('@')[1] : skillId);
 
 export const ARMOR_TYPES = ['2', '3', '4', '5', '6', '7', '8', '9', '10'] as const;
-/** Armor slots of the filter; `full` is a full suit (an armor with `coverage`). */
-export const ARMOR_SLOT_FILTERS = ['head', 'body', 'arms', 'legs', 'full'] as const;
+/** Armor slots of the filter. The catalog has no full suits (spec 041 follow-up): a custom one is a body armor. */
+export const ARMOR_SLOT_FILTERS = ['head', 'body', 'arms', 'legs'] as const;
 export const ARMOR_CLASSES: readonly ItemArmorClass[] = ['light', 'medium', 'heavy'];
 export const WEAPON_HANDS: readonly WeaponModeType[] = ['one-hand', 'two-hands'];
 export const WEAPON_ATTACKS: readonly WeaponAttackType[] = ['melee', 'ranged', 'thrown'];
@@ -59,7 +59,6 @@ export const ITEM_PAGE_SIZES = [24, 48, 96];
 /** Lower case and without accents, so «hacha» finds «Hacha» and «canción» finds «cancion». */
 export const normalizeText = (text: string): string => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
-const isFullSuit = (item: Item) => (item.armor?.coverage?.length ?? 0) > 0;
 const list = (value: string | string[]) => (Array.isArray(value) ? value : [value]);
 
 export interface ItemCatalogFilterOptions {
@@ -135,8 +134,7 @@ export const itemCatalogFilters = (
       options: ARMOR_SLOT_FILTERS,
       format: (value) => t(value),
       when: isArmor,
-      match: (item, value) =>
-        !!item.armor && (value === 'full' ? isFullSuit(item) : !isFullSuit(item) && item.armor.slot === value),
+      match: (item, value) => item.armor?.slot === value,
     },
     class: {
       kind: 'single',

@@ -29,7 +29,7 @@ describe('item catalog filters', () => {
     expect(normalizeText('Canción')).toBe('cancion');
   });
 
-  it('filters armor by AT (4 pieces and the full suit), slot and class', () => {
+  it('filters armor by AT, slot (a custom full suit is a body armor) and class', () => {
     expect(filtered('?category=armor&at=8')).toEqual([
       'plate-head',
       'plate-body',
@@ -37,7 +37,7 @@ describe('item catalog filters', () => {
       'plate-legs',
       'plate-full',
     ]);
-    expect(filtered('?category=armor&slot=full')).toEqual(['plate-full']);
+    expect(filtered('?category=armor&slot=body')).toEqual(['plate-body', 'plate-full']);
     expect(filtered('?category=armor&slot=head')).toEqual(['plate-head', 'leather-helmet']);
     expect(filtered('?category=armor&class=light')).toEqual(['leather-helmet']);
   });
