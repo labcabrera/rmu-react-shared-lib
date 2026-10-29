@@ -39,7 +39,7 @@ export interface ImportPreview {
   upgradedFrom?: number;
   steps: ImportStep[];
   source: { gameName: string; factionName: string; realmName: string | null; exportedAt: string };
-  summary: { characters: number; items: number; gold: number; xp: number };
+  summary: { characters: number; items: number; gold: number };
   characters: ImportFileCharacter[];
   characterRef?: string;
   warnings: ImportIssue[];

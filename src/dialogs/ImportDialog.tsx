@@ -140,7 +140,6 @@ const PreviewView: FC<{
         <Chip label={`${t('import-preview-characters')}: ${preview.summary.characters}`} />
         <Chip label={`${t('import-preview-items')}: ${preview.summary.items}`} />
         <Chip label={`${t('import-preview-gold')}: ${preview.summary.gold}`} />
-        <Chip label={`${t('import-preview-xp')}: ${preview.summary.xp}`} />
       </Stack>
       <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap' }}>
         <Chip
