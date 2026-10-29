@@ -42,6 +42,15 @@ export async function loadEnumerationNames(auth: AuthContextProps): Promise<void
   return loading;
 }
 
+/** The key core derives from a name (spec 050): `Black Speech` → `black-speech`, `Adûnaic` → `adunaic`. */
+export const toKey = (text: string): string =>
+  text
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
 /** The stored name of a key, if the catalog has it. */
 export const enumerationName = (key: string): string | undefined => names.get(key);
 

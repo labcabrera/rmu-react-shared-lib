@@ -259,6 +259,7 @@ export {
   loadEnumerationNames,
   resetEnumerationNames,
   specializationLabel,
+  toKey,
   useSpecializationLabel,
 } from './rmu/enumerations/enumeration-names';
 export { default as StatBlock, statKeys } from './rmu/character/StatBlock';
