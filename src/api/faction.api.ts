@@ -45,16 +45,6 @@ export async function deleteFaction(factionId: string, auth: AuthContextProps): 
   return await callApi(auth, url, { method: 'DELETE' });
 }
 
-export async function addFactionXP(factionId: string, amount: number, auth: AuthContextProps): Promise<Faction> {
-  const url = `${apiStrategicGameUrl}/factions/${factionId}/add-xp`;
-  const body = { xp: amount };
-  return await callApi(auth, url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-}
-
 export async function addFactionGold(factionId: string, amount: number, auth: AuthContextProps): Promise<Faction> {
   const url = `${apiStrategicGameUrl}/factions/${factionId}/add-gold`;
   const body = { gold: amount };

@@ -11,7 +11,6 @@ export interface Faction {
 
 export interface FactionManagement {
   availableGold: number;
-  availableXP: number;
 }
 
 export type CreateFactionDto = Omit<Faction, 'id'>;

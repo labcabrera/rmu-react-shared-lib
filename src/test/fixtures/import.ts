@@ -16,7 +16,7 @@ export const characterPreview: ImportPreview = {
     realmName: 'Realm A',
     exportedAt: '2026-10-20T10:00:00Z',
   },
-  summary: { characters: 1, items: 4, gold: 12.5, xp: 4000 },
+  summary: { characters: 1, items: 4, gold: 12.5 },
   characters: [{ ref: 'c1', name: 'Kaelith', level: 3, raceName: 'Human' }],
   characterRef: 'c1',
   warnings: [],
@@ -53,7 +53,7 @@ export const factionFilePreview: ImportPreview = {
   kind: 'faction',
   target: 'character',
   name: 'Wanderers',
-  summary: { characters: 2, items: 9, gold: 120, xp: 9000 },
+  summary: { characters: 2, items: 9, gold: 120 },
   characters: [
     { ref: 'c1', name: 'Kaelith', level: 3, raceName: 'Human' },
     { ref: 'c2', name: 'Doran', level: 5, raceName: 'Dwarf' },
