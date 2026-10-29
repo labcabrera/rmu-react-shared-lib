@@ -55,15 +55,14 @@ export const itemFeatureLines = (item: ItemFeatureSource, t: ItemFeatureTranslat
   if (ammunition?.sizeAdjustment) {
     lines.push({ key: 'size', label: t('item-feature-ammunition-size', { value: signed(ammunition.sizeAdjustment) }) });
   }
+  // Poison and antidote data go in short chips (category, level, form...): a single sentence did not fit in a card
   if (poison) {
     lines.push({
       key: 'poison',
-      label: t('item-feature-poison', {
-        category: t(`poison-category-${poison.category}`),
-        level: poison.level,
-        form: t(`poison-form-${poison.form}`),
-      }),
+      label: t('item-feature-poison-category', { category: t(`poison-category-${poison.category}`) }),
     });
+    lines.push({ key: 'poison-level', label: t('item-feature-poison-level', { level: poison.level }) });
+    if (poison.form) lines.push({ key: 'poison-form', label: t(`poison-form-${poison.form}`) });
     if (poison.maxSeverity)
       lines.push({
         key: 'max-severity',
@@ -72,7 +71,8 @@ export const itemFeatureLines = (item: ItemFeatureSource, t: ItemFeatureTranslat
   }
   if (antidote) {
     const categories = antidote.categories.map((category) => t(`poison-category-${category}`)).join(', ');
-    lines.push({ key: 'antidote', label: t('item-feature-antidote', { categories, level: antidote.level }) });
+    lines.push({ key: 'antidote', label: t('item-feature-antidote-categories', { categories }) });
+    lines.push({ key: 'antidote-level', label: t('item-feature-antidote-level', { level: antidote.level }) });
     if (antidote.withinHours)
       lines.push({ key: 'within', label: t('item-feature-antidote-within', { count: antidote.withinHours }) });
   }

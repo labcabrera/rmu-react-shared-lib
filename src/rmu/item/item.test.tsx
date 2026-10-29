@@ -145,9 +145,18 @@ describe('ItemFeatureChips (spec 041)', () => {
       },
       t
     );
-    expect(lines.map((line) => line.key)).toEqual(['poison', 'max-severity', 'antidote', 'within']);
+    expect(lines.map((line) => line.key)).toEqual([
+      'poison',
+      'poison-level',
+      'poison-form',
+      'max-severity',
+      'antidote',
+      'antidote-level',
+      'within',
+    ]);
     expect(lines[0].label).toContain('poison-category-muscle');
-    expect(lines[2].label).toContain('poison-category-any');
+    expect(lines[2].label).toBe('poison-form-paste');
+    expect(lines[4].label).toContain('poison-category-any');
   });
 
   it('shows nothing for an item without general equipment data or with a lot of one', () => {
