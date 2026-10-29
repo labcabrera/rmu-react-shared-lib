@@ -266,6 +266,15 @@ export interface ItemCatalogBrowserProps {
   /** Replaces ItemCard. */
   renderItem?: (item: Item) => ReactNode;
   cardSize?: GridSize;
+  /** Cards of at least this width, as many per row as fit (CardGrid `minWidth`); replaces `cardSize`. */
+  cardMinWidth?: number;
+  /**
+   * Shown at the top of the side panel, above the filters, and kept when the filters are hidden (the cart of the
+   * market). Only in the side layout: below `lg` the caller places it.
+   */
+  panelHeader?: ReactNode;
+  /** Width of the side panel in px. */
+  panelWidth?: number;
   /** The catalog reached the API limit: a warning says some items may be missing. */
   truncated?: boolean;
   error?: unknown;
@@ -291,6 +300,9 @@ const ItemCatalogBrowser: FC<ItemCatalogBrowserProps> = ({
   price,
   renderItem,
   cardSize = gridSizeItemCard,
+  cardMinWidth,
+  panelHeader,
+  panelWidth = 280,
   truncated = false,
   error,
   refresh,
@@ -318,6 +330,7 @@ const ItemCatalogBrowser: FC<ItemCatalogBrowserProps> = ({
         items={query.items}
         getKey={(item) => item.id}
         size={cardSize}
+        minWidth={cardMinWidth}
         renderItem={(item) =>
           renderItem?.(item) ?? (
             <ItemCard
@@ -369,22 +382,24 @@ const ItemCatalogBrowser: FC<ItemCatalogBrowserProps> = ({
       </Box>
     );
   }
+  const column = panelOpen || !!panelHeader;
   return (
     <Box
       sx={{
         display: 'grid',
-        gridTemplateColumns: panelOpen ? '280px minmax(0, 1fr)' : 'minmax(0, 1fr)',
+        gridTemplateColumns: column ? `${panelWidth}px minmax(0, 1fr)` : 'minmax(0, 1fr)',
         gap: 2,
         alignItems: 'start',
       }}
     >
-      {panelOpen && (
+      {column && (
         <Box
           component="aside"
           aria-label={t('filters')}
           sx={{ position: 'sticky', top: 16, maxHeight: 'calc(100vh - 32px)', overflowY: 'auto', pr: 1 }}
         >
-          <FilterPanel>{sections}</FilterPanel>
+          {panelHeader && <Box sx={{ mb: panelOpen ? 2 : 0 }}>{panelHeader}</Box>}
+          {panelOpen && <FilterPanel>{sections}</FilterPanel>}
         </Box>
       )}
       {results}
