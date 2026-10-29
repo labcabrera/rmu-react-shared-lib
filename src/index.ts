@@ -141,6 +141,8 @@ export * from './api/strategic-item.dto';
 export * from './api/item-modifier.dto';
 export * from './api/item-operations.api';
 export * from './api/item-operations.dto';
+export * from './api/trading-tables.api';
+export * from './api/trading-tables.dto';
 export * from './api/crafting.api';
 export * from './api/crafting.dto';
 export * from './api/strategic-game.api';
@@ -263,6 +265,13 @@ export { default as TraitTypeChip, traitTypeColor } from './rmu/trait/TraitTypeC
 export { default as ManeuverProfilePanel } from './rmu/maneuver/ManeuverProfilePanel';
 export { default as ManeuverModifierList } from './rmu/maneuver/ManeuverModifierList';
 export type { ManeuverModifierWithOrigin } from './rmu/maneuver/ManeuverModifierList';
+export {
+  default as ModifierSelections,
+  selectedPriceFactors,
+  selectedRollModifiers,
+  selectionValue,
+} from './rmu/maneuver/ModifierSelections';
+export type { ModifierSelectionValues, SelectableModifier } from './rmu/maneuver/ModifierSelections';
 export { default as ManeuverOriginChip } from './rmu/maneuver/ManeuverOriginChip';
 export type { ManeuverOrigin } from './rmu/maneuver/ManeuverOriginChip';
 export { default as InjuryTypeChip } from './rmu/health/InjuryTypeChip';
@@ -308,7 +317,7 @@ export {
 } from './rmu/item/item-catalog';
 export type { ItemCatalogFilterOptions, ItemSort } from './rmu/item/item-catalog';
 export { default as MoneyDisplay } from './rmu/item/MoneyDisplay';
-export { default as PriceBreakdownView } from './rmu/item/PriceBreakdownView';
+export { default as PriceBreakdownView, formatPriceFactorValue } from './rmu/item/PriceBreakdownView';
 export { default as ItemInventory, itemTotalValue, itemTotalWeight } from './rmu/item/ItemInventory';
 export type { ItemAction } from './rmu/item/ItemInventory';
 export { COINS, formatMoney, roundGold, toCoins } from './rmu/item/money';

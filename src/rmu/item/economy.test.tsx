@@ -71,6 +71,35 @@ describe('PriceBreakdownView', () => {
     expect(screen.getAllByText('50%')).toHaveLength(2);
     expect(screen.getByLabelText('9 coin-gp 5 coin-sp')).toBeInTheDocument();
   });
+
+  it('shows the market conditions, the expected price and a negotiation without a deal (spec 048)', () => {
+    renderWithProviders(
+      <PriceBreakdownView
+        price={{
+          kind: 'purchase',
+          unitBase: 10,
+          amount: 1,
+          factor: {
+            value: 2.1,
+            items: [
+              { key: 'demand', option: 'high', mode: 'multiplier', value: 2 },
+              { key: 'days', units: 2, mode: 'percent', value: 10 },
+            ],
+          },
+          expectedUnitPrice: 21,
+          trading: { total: -5, pricePercent: null, table: 'treasure-law', outcome: 'no-agreement' },
+          unitPrice: 21,
+          total: 21,
+        }}
+      />
+    );
+    expect(screen.getByText('price-factor-demand: price-factor-demand.high')).toBeInTheDocument();
+    expect(screen.getByText('×2')).toBeInTheDocument();
+    expect(screen.getByText('price-factor-days (2)')).toBeInTheDocument();
+    expect(screen.getByText('+10%')).toBeInTheDocument();
+    expect(screen.getByText('price-expected')).toBeInTheDocument();
+    expect(screen.getByText('trading-outcome-no-agreement')).toBeInTheDocument();
+  });
 });
 
 describe('ItemInventory', () => {
