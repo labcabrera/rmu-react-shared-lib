@@ -106,7 +106,7 @@ const ModifierSelections: FC<{
           </Box>
         ) : (
           <Stack key={modifier.key} direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Box sx={{ width: 140, flex: 'none' }}>
+            <Box sx={{ width: 260, flex: 'none' }}>
               <NumericInput
                 label={labelOf(modifier.key)}
                 value={typeof value[modifier.key] === 'number' ? (value[modifier.key] as number) : null}
