@@ -25,6 +25,8 @@ export type ManeuverModifierType = 'flag' | 'choice' | 'number';
 export interface ManeuverModifierScope {
   skillIds?: string[];
   categoryIds?: string[];
+  /** Spec 048: a Trading modifier limited to buying or to selling; every context when missing. */
+  contexts?: ('purchase' | 'sale')[];
 }
 
 export interface ManeuverModifierOption {

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Divider, Stack, Typography } from '@mui/material';
-import { PriceBreakdown } from '../../api/item-operations.dto';
+import { PriceBreakdown, PriceFactorItem } from '../../api/item-operations.dto';
 import MoneyDisplay from './MoneyDisplay';
 import { roundGold } from './money';
 
@@ -24,8 +24,12 @@ const Percent: FC<{ value: number }> = ({ value }) => (
   </Typography>
 );
 
+/** Value of a market condition: a multiplier (×1.5) or percent points (+5%). */
+export const formatPriceFactorValue = (mode: PriceFactorItem['mode'], value: number): string =>
+  mode === 'multiplier' ? `×${value}` : `${value >= 0 ? '+' : ''}${value}%`;
+
 /**
- * How a price is worked out (spec 023, decision 12): unit base, the percents of a sale and of Trading, the unit price
+ * How a price is worked out (spec 023, decision 12; spec 048: market conditions, expected price and negotiation): unit base, the percents of a sale and of Trading, the unit price
  * and the total. With `funds`, the gold of the payer before and after.
  */
 const PriceBreakdownView: FC<{ price: PriceBreakdown; funds?: { label: string; gold: number } }> = ({
@@ -49,9 +53,36 @@ const PriceBreakdownView: FC<{ price: PriceBreakdown; funds?: { label: string; g
           <Percent value={price.conditionPercent} />
         </Row>
       )}
+      {price.factor?.items.map((item) => (
+        <Row
+          key={item.key}
+          label={
+            item.option
+              ? `${t(`price-factor-${item.key}`)}: ${t(`price-factor-${item.key}.${item.option}`)}`
+              : item.units !== undefined
+                ? `${t(`price-factor-${item.key}`)} (${item.units})`
+                : t(`price-factor-${item.key}`)
+          }
+        >
+          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+            {formatPriceFactorValue(item.mode, item.value)}
+          </Typography>
+        </Row>
+      ))}
+      {price.expectedUnitPrice !== undefined && (
+        <Row label={t('price-expected', { factor: price.factor?.value ?? 1 })}>
+          <MoneyDisplay gold={price.expectedUnitPrice} />
+        </Row>
+      )}
       {price.trading && (
         <Row label={t('price-trading', { total: price.trading.total })}>
-          <Percent value={price.trading.pricePercent} />
+          {price.trading.pricePercent === null ? (
+            <Typography variant="body2" color="error" sx={{ fontWeight: 600 }}>
+              {t(`trading-outcome-${price.trading.outcome ?? 'no-agreement'}`)}
+            </Typography>
+          ) : (
+            <Percent value={price.trading.pricePercent} />
+          )}
         </Row>
       )}
       <Row label={t('price-unit')}>

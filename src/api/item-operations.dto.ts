@@ -15,11 +15,30 @@ export type TradingRequest = {
   unmodifiedRoll?: number;
   /** By default the Trading bonus of the character sheet. */
   bonus?: number;
-  /** The Trading of the merchant (negative), market conditions... */
+  /** The merchant (100 less its total), reputation, language... */
   modifiers?: RollModifier[];
 };
 
-export type TradingResult = { total: number; maneuverPercent: number; pricePercent: number };
+/**
+ * Result of a Trading maneuver (spec 048). `treasure-law`: the negotiation table gives the percent of the expected
+ * price; a null `pricePercent` means there is no deal. `core-law`: 200% less the percent maneuver result.
+ */
+export type TradingResult = {
+  total: number;
+  maneuverPercent?: number;
+  pricePercent: number | null;
+  table?: 'treasure-law' | 'core-law';
+  outcome?: 'no-agreement' | 'absolute-failure' | 'special-offer';
+};
+
+/** A market condition of the expected price chosen in a purchase or a sale (spec 048). */
+export type PriceFactorSelection = { key: string; option?: string; units?: number };
+
+/** A market condition as applied: a multiplier, or percent points added to the factor. */
+export type PriceFactorItem = PriceFactorSelection & { mode: 'multiplier' | 'percent'; value: number };
+
+/** The factor of the expected price and the conditions that make it. */
+export type PriceFactors = { value: number; items: PriceFactorItem[] };
 
 /** How a price was worked out. */
 export type PriceBreakdown = {
@@ -29,6 +48,10 @@ export type PriceBreakdown = {
   salePercent?: number;
   conditionPercent?: number;
   condition?: 'intact' | 'damaged' | 'broken';
+  /** Market conditions (spec 048) */
+  factor?: PriceFactors;
+  /** Base times the factor, before the negotiation */
+  expectedUnitPrice?: number;
   trading?: TradingResult;
   unitPrice: number;
   total: number;
@@ -106,7 +129,37 @@ export type PurchaseItemDto = {
   carried?: boolean;
 };
 
-export type SellItemDto = { amount?: number; unitPrice?: number; salePercent?: number; trading?: TradingRequest };
+export type SellItemDto = {
+  amount?: number;
+  unitPrice?: number;
+  salePercent?: number;
+  factors?: PriceFactorSelection[];
+  trading?: TradingRequest;
+};
+
+export type PurchaseOrderLine = { itemTypeId: string; amount: number };
+
+/** Several item types bought at once with the same market conditions and Trading (spec 048). */
+export type PurchaseOrderDto = {
+  buyer: ItemHolder;
+  gameId?: string;
+  payer?: PayerMode;
+  lines: PurchaseOrderLine[];
+  factors?: PriceFactorSelection[];
+  trading?: TradingRequest;
+};
+
+export type QuotePurchaseOrderDto = Omit<PurchaseOrderDto, 'buyer' | 'gameId' | 'payer'> & { buyer?: ItemHolder };
+
+export type PurchaseOrderQuote = {
+  lines: { itemTypeId: string; amount: number; price: PriceBreakdown }[];
+  factor?: PriceFactors;
+  /** A null `pricePercent` means there is no deal: buying fails. */
+  trading?: TradingResult;
+  total: number;
+};
+
+export type PurchaseOrderResult = { items: StrategicItem[]; entries: ItemLedgerEntry[] };
 
 export type TransferItemDto = { to: ItemHolder; amount?: number };
 
@@ -153,5 +206,6 @@ export type QuotePriceDto = {
   amount?: number;
   unitPrice?: number;
   salePercent?: number;
+  factors?: PriceFactorSelection[];
   trading?: TradingRequest;
 };

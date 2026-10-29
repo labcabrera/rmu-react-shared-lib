@@ -9,6 +9,10 @@ import {
   ItemOperationResult,
   PriceQuote,
   PurchaseItemDto,
+  PurchaseOrderDto,
+  PurchaseOrderQuote,
+  PurchaseOrderResult,
+  QuotePurchaseOrderDto,
   QuotePriceDto,
   RepairItemDto,
   SellItemDto,
@@ -28,6 +32,14 @@ const post = <T>(auth: AuthContextProps, path: string, body: object): Promise<T>
 
 export const purchaseItem = (dto: PurchaseItemDto, auth: AuthContextProps): Promise<ItemOperationResult> =>
   post(auth, '/items/purchases', dto);
+
+/** Buys several item types at once: one negotiation for every line, one ledger entry per line (spec 048). */
+export const placePurchaseOrder = (dto: PurchaseOrderDto, auth: AuthContextProps): Promise<PurchaseOrderResult> =>
+  post(auth, '/items/purchase-orders', dto);
+
+/** Prices of a purchase order without making it. */
+export const quotePurchaseOrder = (dto: QuotePurchaseOrderDto, auth: AuthContextProps): Promise<PurchaseOrderQuote> =>
+  post(auth, '/items/purchase-orders/quote', dto);
 
 export const sellItem = (itemId: string, dto: SellItemDto, auth: AuthContextProps): Promise<ItemOperationResult> =>
   post(auth, `/items/${itemId}/sale`, dto);
