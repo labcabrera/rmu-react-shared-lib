@@ -254,6 +254,14 @@ export { default as ResistanceList } from './rmu/character/ResistanceList';
 export { default as ResourceBar } from './rmu/character/ResourceBar';
 export type { ResourceKind } from './rmu/character/ResourceBar';
 export { default as SkillGroupList, skillCategoryOf, sortSkillsByName } from './rmu/character/SkillGroupList';
+export {
+  enumerationName,
+  loadEnumerationNames,
+  resetEnumerationNames,
+  specializationLabel,
+  toKey,
+  useSpecializationLabel,
+} from './rmu/enumerations/enumeration-names';
 export { default as StatBlock, statKeys } from './rmu/character/StatBlock';
 export { default as StatPill, bonusColor, formatBonus } from './rmu/character/StatPill';
 export { default as StatBonusGrid } from './rmu/character/StatBonusGrid';
