@@ -159,14 +159,16 @@ export const EnumPicker: FC<
     kind?: EntityKind;
     /** Group of a value in the select variant. */
     groupOf?: (value: string) => string | undefined;
+    /** Label of a value instead of `t(labelPrefix + value)`: enumeration keys shown by their name (spec 050). */
+    formatLabel?: (value: string) => string;
     label: string;
   }
-> = ({ values, labelPrefix = '', images, kind, groupOf, ...props }) => {
+> = ({ values, labelPrefix = '', images, kind, groupOf, formatLabel, ...props }) => {
   const { t } = useTranslation();
   const imageOf = (value: string) => (typeof images === 'function' ? images(value) : images?.[value]);
   const options: EntityOption<string>[] = values.map((value) => ({
     id: value,
-    label: t(`${labelPrefix}${value}`),
+    label: formatLabel ? formatLabel(value) : t(`${labelPrefix}${value}`),
     imageUrl: imageOf(value),
     group: groupOf?.(value),
     entity: value,
