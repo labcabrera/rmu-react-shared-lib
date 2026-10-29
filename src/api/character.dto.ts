@@ -242,6 +242,9 @@ export interface CharacterSkill {
   skillId: string;
   specialization?: string;
   development: number[];
+  /** Skill category of the core catalog, as strategic sends it (workspace spec 039). */
+  categoryId?: string;
+  /** @deprecated older payloads; use `skillCategoryOf`. */
   category?: string;
   statistics: string[];
   /** Total ranks, culture ranks included. */

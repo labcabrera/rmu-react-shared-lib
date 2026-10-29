@@ -253,7 +253,7 @@ export { default as AttackCard } from './rmu/character/AttackCard';
 export { default as ResistanceList } from './rmu/character/ResistanceList';
 export { default as ResourceBar } from './rmu/character/ResourceBar';
 export type { ResourceKind } from './rmu/character/ResourceBar';
-export { default as SkillGroupList, sortSkillsByName } from './rmu/character/SkillGroupList';
+export { default as SkillGroupList, skillCategoryOf, sortSkillsByName } from './rmu/character/SkillGroupList';
 export { default as StatBlock, statKeys } from './rmu/character/StatBlock';
 export { default as StatPill, bonusColor, formatBonus } from './rmu/character/StatPill';
 export { default as StatBonusGrid } from './rmu/character/StatBonusGrid';
