@@ -317,7 +317,7 @@ export {
 } from './rmu/item/item-catalog';
 export type { ItemCatalogFilterOptions, ItemSort } from './rmu/item/item-catalog';
 export { default as MoneyDisplay } from './rmu/item/MoneyDisplay';
-export { default as PriceBreakdownView } from './rmu/item/PriceBreakdownView';
+export { default as PriceBreakdownView, formatPriceFactorValue } from './rmu/item/PriceBreakdownView';
 export { default as ItemInventory, itemTotalValue, itemTotalWeight } from './rmu/item/ItemInventory';
 export type { ItemAction } from './rmu/item/ItemInventory';
 export { COINS, formatMoney, roundGold, toCoins } from './rmu/item/money';
