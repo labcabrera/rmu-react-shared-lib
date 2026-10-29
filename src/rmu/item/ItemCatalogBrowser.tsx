@@ -142,7 +142,6 @@ const slotImages: Record<string, string> = {
   body: 'images/items/category-body.png',
   arms: 'images/items/category-arms.png',
   legs: 'images/items/category-legs.png',
-  full: 'images/items/category-armor.png',
 };
 
 /**
