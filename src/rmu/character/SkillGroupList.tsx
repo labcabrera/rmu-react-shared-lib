@@ -24,6 +24,23 @@ type Group = { category: string; skills: CharacterSkill[]; best: number };
 const skillLabel = (skill: CharacterSkill, t: (key: string) => string) =>
   skill.specialization ? `${t(skill.skillId)} (${skill.specialization})` : t(skill.skillId);
 
+/**
+ * The skills by their translated name, then by specialization, compared in `language`: the API sorts them by id, which
+ * is the English name, so the order has to be computed again when the translations load or the language changes.
+ */
+export const sortSkillsByName = <S extends Pick<CharacterSkill, 'skillId' | 'specialization'>>(
+  skills: S[],
+  t: (key: string) => string,
+  language?: string
+): S[] => {
+  const collator = new Intl.Collator(language, { sensitivity: 'base', numeric: true });
+  return [...skills].sort(
+    (a, b) =>
+      collator.compare(t(a.skillId), t(b.skillId)) ||
+      collator.compare(a.specialization ? t(a.specialization) : '', b.specialization ? t(b.specialization) : '')
+  );
+};
+
 /** Shared column layout of the header-less rows: name, stats, ranks, total, actions. */
 const rowColumns = { xs: 'minmax(0, 1fr) auto auto', sm: 'minmax(0, 1fr) 72px 56px 56px auto' };
 
@@ -102,7 +119,7 @@ const SkillGroupList: FC<{
   /** Hides the search box, for pages that already filter the skills. */
   searchable?: boolean;
 }> = ({ skills, onSelect, renderActions, developedOnly: initialDevelopedOnly = false, toolbar, searchable = true }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [search, setSearch] = useState('');
   const [developedOnly, setDevelopedOnly] = useState(initialDevelopedOnly);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
@@ -120,11 +137,11 @@ const SkillGroupList: FC<{
     return [...byCategory.entries()]
       .map(([category, list]) => ({
         category,
-        skills: [...list].sort((a, b) => skillLabel(a, t).localeCompare(skillLabel(b, t))),
+        skills: sortSkillsByName(list, t, i18n.language),
         best: Math.max(...list.map((skill) => skill.totalBonus)),
       }))
-      .sort((a, b) => t(a.category).localeCompare(t(b.category)));
-  }, [skills, search, developedOnly, t]);
+      .sort((a, b) => t(a.category).localeCompare(t(b.category), i18n.language));
+  }, [skills, search, developedOnly, t, i18n.language]);
 
   return (
     <Stack spacing={1.5}>
