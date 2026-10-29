@@ -2,6 +2,8 @@ import React, { FC, ReactNode, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SearchIcon from '@mui/icons-material/Search';
+import StarIcon from '@mui/icons-material/Star';
+import TurnedInIcon from '@mui/icons-material/TurnedIn';
 import {
   Box,
   ButtonBase,
@@ -12,6 +14,7 @@ import {
   Stack,
   Switch,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { CharacterSkill } from '../../api/character.dto';
@@ -22,7 +25,11 @@ const OTHER_CATEGORY = 'other';
 type Group = { category: string; skills: CharacterSkill[]; best: number };
 
 const skillLabel = (skill: CharacterSkill, t: (key: string) => string) =>
-  skill.specialization ? `${t(skill.skillId)} (${skill.specialization})` : t(skill.skillId);
+  skill.specialization ? `${t(skill.skillId)} (${t(skill.specialization)})` : t(skill.skillId);
+
+/** Category of a skill: `categoryId` from strategic, `category` from older payloads. */
+export const skillCategoryOf = (skill: Pick<CharacterSkill, 'categoryId' | 'category'>): string | undefined =>
+  skill.categoryId ?? skill.category;
 
 /**
  * The skills by their translated name, then by specialization, compared in `language`: the API sorts them by id, which
@@ -65,11 +72,25 @@ const SkillRow: FC<{
       }}
     >
       <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', minWidth: 0 }}>
-        <Typography variant="body2" noWrap sx={{ color: skill.ranks > 0 ? 'text.primary' : 'text.secondary' }}>
+        <Typography
+          variant="body2"
+          noWrap
+          title={skillLabel(skill, t)}
+          sx={{ minWidth: 0, color: skill.ranks > 0 ? 'text.primary' : 'text.secondary' }}
+        >
           {skillLabel(skill, t)}
         </Typography>
-        {flags.includes('professional') && <Chip size="small" label={t('professional-skill')} color="primary" />}
-        {flags.includes('knack') && <Chip size="small" label={t('knack-skill')} variant="outlined" />}
+        {/* Icons rather than chips, so that the name keeps the room (the same marks as the skill table) */}
+        {flags.includes('professional') && (
+          <Tooltip title={t('professional-skill')}>
+            <TurnedInIcon color="primary" sx={{ fontSize: 16, flexShrink: 0 }} aria-label={t('professional-skill')} />
+          </Tooltip>
+        )}
+        {flags.includes('knack') && (
+          <Tooltip title={t('knack-skill')}>
+            <StarIcon color="primary" sx={{ fontSize: 16, flexShrink: 0 }} aria-label={t('knack-skill')} />
+          </Tooltip>
+        )}
       </Stack>
       <Typography
         variant="caption"
@@ -131,7 +152,7 @@ const SkillGroupList: FC<{
       .filter((skill) => !developedOnly || skill.ranks > 0)
       .filter((skill) => !term || skillLabel(skill, t).toLowerCase().includes(term))
       .forEach((skill) => {
-        const category = skill.category ?? OTHER_CATEGORY;
+        const category = skillCategoryOf(skill) ?? OTHER_CATEGORY;
         byCategory.set(category, [...(byCategory.get(category) ?? []), skill]);
       });
     return [...byCategory.entries()]
