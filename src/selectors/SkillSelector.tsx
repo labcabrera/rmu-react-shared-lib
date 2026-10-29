@@ -23,12 +23,7 @@ const SPECIALIZATION_FILTER_FROM = 10;
 export type OwnedSkill = { skillId: string; specialization?: string | null; ranks?: number };
 
 /** Lowercase text without accents, to compare names regardless of case and accents. */
-const normalize = (text: string): string =>
-  text
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .trim();
+const normalize = (text: string): string => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 
 /** Spell lists of the given realms (all of them without realms), as code and name, ordered by name. */
 async function fetchSpellListOptions(realms: string[] | undefined, auth: Parameters<typeof fetchSpellLists>[3]) {
@@ -62,6 +57,8 @@ const SkillSelector: FC<{
   const [availableSpecializations, setAvailableSpecializations] = useState<string[]>();
   // Names of the spell lists by code, to show the name of a list specialization
   const [spellListNames, setSpellListNames] = useState<Record<string, string>>({});
+  // Names of the enumerations by key: the option shows its translation or the name of the catalog (spec 050)
+  const [enumerationNames, setEnumerationNames] = useState<Record<string, string>>({});
 
   const [query, setQuery] = useState('');
   const [specializationQuery, setSpecializationQuery] = useState('');
@@ -70,12 +67,11 @@ const SkillSelector: FC<{
   const [selectedSpecialization, setSelectedSpecialization] = useState<string | null>(null);
 
   const ownedRanks = (skillId: string, specialization?: string | null): number | undefined => {
-    const entry = owned.find(
-      (o) => o.skillId === skillId && (o.specialization ?? null) === (specialization ?? null)
-    );
+    const entry = owned.find((o) => o.skillId === skillId && (o.specialization ?? null) === (specialization ?? null));
     return entry ? (entry.ranks ?? 0) : undefined;
   };
-  const isOwned = (skillId: string, specialization?: string | null) => ownedRanks(skillId, specialization) !== undefined;
+  const isOwned = (skillId: string, specialization?: string | null) =>
+    ownedRanks(skillId, specialization) !== undefined;
   // A skill with a specialization can be added again with another one
   const skillBlocked = (skill: Skill) => !skill.specialization && isOwned(skill.id);
 
@@ -90,7 +86,8 @@ const SkillSelector: FC<{
         const name = normalize(skillName(skill));
         if (name.startsWith(text)) return { skill, score: 0 };
         if (name.includes(text)) return { skill, score: 1 };
-        if (skill.id.includes(text) || normalize(categoryName(skill.categoryId)).includes(text)) return { skill, score: 2 };
+        if (skill.id.includes(text) || normalize(categoryName(skill.categoryId)).includes(text))
+          return { skill, score: 2 };
         return null;
       })
       .filter((entry): entry is { skill: Skill; score: number } => entry !== null);
@@ -112,10 +109,11 @@ const SkillSelector: FC<{
 
   const specializations = useMemo(() => {
     const text = normalize(specializationQuery);
-    const label = (value: string) => spellListNames[value] ?? t(value);
+    const label = (value: string) =>
+      spellListNames[value] ?? t(value, { defaultValue: enumerationNames[value] ?? value });
     const list = (availableSpecializations ?? []).filter((value) => !text || normalize(label(value)).includes(text));
     return list.sort((a, b) => label(a).localeCompare(label(b)));
-  }, [availableSpecializations, specializationQuery, spellListNames, t]);
+  }, [availableSpecializations, specializationQuery, spellListNames, enumerationNames, t]);
 
   useEffect(() => {
     fetchSkillCategories('', 0, 100, auth)
@@ -146,7 +144,11 @@ const SkillSelector: FC<{
       } else {
         const realmQuery = realmId ? `;(realmId==${realmId},realmId==null)` : ``;
         fetchEnumerations(`category==${selectedSkill.specialization}${realmQuery}`, 0, 200, auth)
-          .then((response) => setAvailableSpecializations(response.content.map((e) => e.key)))
+          .then((response) => {
+            // The key is stored; the option shows its translation or the name of the catalog
+            setEnumerationNames(Object.fromEntries(response.content.map((e) => [e.key, e.name ?? e.key])));
+            setAvailableSpecializations(response.content.map((e) => e.key));
+          })
           .catch((err) => onError(err.message));
       }
     }
@@ -229,9 +231,7 @@ const SkillSelector: FC<{
               endAdornment={(value) => (
                 <>
                   {!value.specialization && ownedAdornment(ownedRanks(value.id))}
-                  {value.specialization ? (
-                    <EditSquareIcon fontSize="small" sx={{ color: 'text.secondary' }} />
-                  ) : null}
+                  {value.specialization ? <EditSquareIcon fontSize="small" sx={{ color: 'text.secondary' }} /> : null}
                 </>
               )}
               emptyText={t('no-results')}
@@ -272,7 +272,9 @@ const SkillSelector: FC<{
                 )
               }
               getKey={(value) => value}
-              formatter={(value) => spellListNames[value] ?? t(value)}
+              formatter={(value) =>
+                spellListNames[value] ?? t(value, { defaultValue: enumerationNames[value] ?? value })
+              }
               isDisabled={(value) => isOwned(selectedSkill.id, value)}
               endAdornment={(value) => ownedAdornment(ownedRanks(selectedSkill.id, value))}
               emptyText={t('no-results')}

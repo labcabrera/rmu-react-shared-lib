@@ -18,14 +18,16 @@ import {
   Typography,
 } from '@mui/material';
 import { CharacterSkill } from '../../api/character.dto';
+import { specializationLabel, useSpecializationLabel } from '../enumerations/enumeration-names';
 import { formatBonus } from './StatPill';
 
 const OTHER_CATEGORY = 'other';
 
 type Group = { category: string; skills: CharacterSkill[]; best: number };
 
-const skillLabel = (skill: CharacterSkill, t: (key: string) => string) =>
-  skill.specialization ? `${t(skill.skillId)} (${t(skill.specialization)})` : t(skill.skillId);
+// The specialization is a catalog key (spec 050): its translation or the name of the catalog
+const skillLabel = (skill: CharacterSkill, t: (key: string, options?: Record<string, unknown>) => string) =>
+  skill.specialization ? `${t(skill.skillId)} (${specializationLabel(t, skill.specialization)})` : t(skill.skillId);
 
 /** Category of a skill: `categoryId` from strategic, `category` from older payloads. */
 export const skillCategoryOf = (skill: Pick<CharacterSkill, 'categoryId' | 'category'>): string | undefined =>
@@ -37,14 +39,14 @@ export const skillCategoryOf = (skill: Pick<CharacterSkill, 'categoryId' | 'cate
  */
 export const sortSkillsByName = <S extends Pick<CharacterSkill, 'skillId' | 'specialization'>>(
   skills: S[],
-  t: (key: string) => string,
+  t: (key: string, options?: Record<string, unknown>) => string,
   language?: string
 ): S[] => {
   const collator = new Intl.Collator(language, { sensitivity: 'base', numeric: true });
   return [...skills].sort(
     (a, b) =>
       collator.compare(t(a.skillId), t(b.skillId)) ||
-      collator.compare(a.specialization ? t(a.specialization) : '', b.specialization ? t(b.specialization) : '')
+      collator.compare(specializationLabel(t, a.specialization), specializationLabel(t, b.specialization))
   );
 };
 
@@ -141,6 +143,8 @@ const SkillGroupList: FC<{
   searchable?: boolean;
 }> = ({ skills, onSelect, renderActions, developedOnly: initialDevelopedOnly = false, toolbar, searchable = true }) => {
   const { t, i18n } = useTranslation();
+  // Re-renders when the names of the specializations arrive
+  useSpecializationLabel();
   const [search, setSearch] = useState('');
   const [developedOnly, setDevelopedOnly] = useState(initialDevelopedOnly);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
