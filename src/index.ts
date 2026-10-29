@@ -80,6 +80,7 @@ export { default as EntityPicker, ENTITY_PICKER_TILES_UP_TO } from './selectors/
 export type { EntityOption, EntityPickerProps, EntityPickerVariant } from './selectors/EntityPicker';
 export * from './selectors/pickers';
 export { default as SkillSelector, SPELL_LIST_SPECIALIZATION } from './selectors/SkillSelector';
+export type { OwnedSkill } from './selectors/SkillSelector';
 export { default as TraitSelector } from './selectors/TraitSelector';
 
 export * from './api/constants';
