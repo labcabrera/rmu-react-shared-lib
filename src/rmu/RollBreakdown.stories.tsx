@@ -32,3 +32,24 @@ export const WithoutGroups: Story = {
     roll: 45,
   },
 };
+
+/** Spec 051: the rows explain themselves (click or tap; mouse hover previews) and the rules not applied fold below. */
+export const WithExplanations: Story = {
+  args: {
+    modifiers: [
+      { key: 'bo', value: 94, group: 'offense', source: 'offensive-bonus', rule: '§9.5', params: { bo: 94 } },
+      { key: 'bd', value: -24, group: 'defense', source: 'defensive-bonus', rule: '§9.6', params: { bd: 24 } },
+      {
+        key: 'shield-block',
+        value: -29,
+        group: 'defense',
+        source: 'shield',
+        rule: '§9.6',
+        params: { mode: 'partial', skill: 78, injury: -10 },
+      },
+      { key: 'parry', value: -20, group: 'defense', source: 'parry', rule: '§9.6', params: { parry: 20 } },
+    ],
+    skipped: [{ source: 'dodge', group: 'defense', reason: 'target-flatfooted', rule: '§9.6' }],
+    roll: 80,
+  },
+};
