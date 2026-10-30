@@ -3,8 +3,8 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '../test/render';
-import { D100, OPEN_D100, TWO_D10 } from './presets';
 import RollField from './RollField';
+import { D100, OPEN_D100, TWO_D10 } from './presets';
 import { RollSpec } from './roll.types';
 
 const dice = (...values: number[]) => {
@@ -15,7 +15,14 @@ const dice = (...values: number[]) => {
 const setup = (spec: RollSpec, value: number | null = null, random?: () => number) => {
   const onChange = vi.fn();
   const view = renderWithProviders(
-    <RollField spec={spec} value={value} onChange={onChange} label="attack-roll" presentation="popover" random={random} />
+    <RollField
+      spec={spec}
+      value={value}
+      onChange={onChange}
+      label="attack-roll"
+      presentation="popover"
+      random={random}
+    />
   );
   return { onChange, ...view };
 };
@@ -113,7 +120,9 @@ describe('RollField', () => {
 
   it('opens as a bottom sheet', async () => {
     const onChange = vi.fn();
-    renderWithProviders(<RollField spec={D100} value={null} onChange={onChange} label="attack-roll" presentation="sheet" />);
+    renderWithProviders(
+      <RollField spec={D100} value={null} onChange={onChange} label="attack-roll" presentation="sheet" />
+    );
     const pad = await openPad();
     await press(pad, '4', '5', 'confirm');
     expect(onChange).toHaveBeenCalledWith({ total: 45, rolls: [45], unmodified: 45 });
@@ -122,10 +131,30 @@ describe('RollField', () => {
   it('empties an optional roll with the clear button', async () => {
     const onClear = vi.fn();
     renderWithProviders(
-      <RollField spec={D100} value={45} onChange={vi.fn()} onClear={onClear} label="attack-roll" placeholder="by-server" />
+      <RollField
+        spec={D100}
+        value={45}
+        onChange={vi.fn()}
+        onClear={onClear}
+        label="attack-roll"
+        placeholder="by-server"
+      />
     );
     await userEvent.click(screen.getByRole('button', { name: 'clear' }));
     expect(onClear).toHaveBeenCalled();
     expect(screen.queryByTestId('roll-pad')).not.toBeInTheDocument();
+  });
+
+  it('has the standard width unless it is asked to fill its container (spec 051)', () => {
+    const { container, rerender } = renderWithProviders(<RollField spec={D100} value={45} onChange={vi.fn()} />);
+    const field = () => container.querySelector('.MuiTextField-root') as HTMLElement;
+    expect(getComputedStyle(field()).width).toBe('220px');
+    expect(getComputedStyle(field()).maxWidth).toBe('100%');
+
+    rerender(<RollField spec={D100} value={45} onChange={vi.fn()} compact />);
+    expect(getComputedStyle(field()).width).toBe('150px');
+
+    rerender(<RollField spec={D100} value={45} onChange={vi.fn()} fullWidth />);
+    expect(getComputedStyle(field()).width).not.toBe('220px');
   });
 });

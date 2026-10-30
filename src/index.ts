@@ -228,7 +228,9 @@ export { rsqlAnd } from './data/rsql';
 
 // Rolemaster-specific selects shared by several MFEs
 export { default as RollBreakdown, useModifierLabel } from './rmu/RollBreakdown';
-export type { RollModifier, RollModifierGroup } from './rmu/RollBreakdown';
+export type { RollModifier, RollModifierGroup, SkippedRule } from './rmu/RollBreakdown';
+export { default as RuleHint, RuleParamList } from './rmu/RuleHint';
+export type { RuleParams } from './rmu/RuleHint';
 export { default as EffectList, effectColor, effectIcon, normalizeEffectStatus } from './rmu/EffectList';
 export { default as StatusBadge } from './rmu/StatusBadge';
 export type { StatusBadgeColor, StatusBadgeProps } from './rmu/StatusBadge';

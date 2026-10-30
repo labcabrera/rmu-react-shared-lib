@@ -1,14 +1,42 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, Divider, Stack, Typography } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Box, ButtonBase, Collapse, Divider, Stack, Typography } from '@mui/material';
+import RuleHint, { RuleParams } from './RuleHint';
 
 /** Group of a modifier in the breakdown: the attacker's side, the target's, the situation or the critical. */
 export type RollModifierGroup = 'offense' | 'defense' | 'situation' | 'critical' | 'resolution';
 
-/** One entry of a roll breakdown, as the combat API returns it. */
-export type RollModifier = { key: string; value: number; group?: RollModifierGroup; source?: string };
+/**
+ * One entry of a roll breakdown, as the combat API returns it: with the rule reference of its plugin and the inputs of
+ * its value since spec 051.
+ */
+export type RollModifier = {
+  key: string;
+  value: number;
+  group?: RollModifierGroup;
+  source?: string;
+  rule?: string;
+  params?: RuleParams;
+};
 
-const GROUP_ORDER: (RollModifierGroup | 'other')[] = ['offense', 'defense', 'situation', 'critical', 'resolution', 'other'];
+/** A rule that did not apply to the roll, and why (spec 051). */
+export type SkippedRule = {
+  source: string;
+  group?: RollModifierGroup;
+  reason: string;
+  rule?: string;
+  params?: RuleParams;
+};
+
+const GROUP_ORDER: (RollModifierGroup | 'other')[] = [
+  'offense',
+  'defense',
+  'situation',
+  'critical',
+  'resolution',
+  'other',
+];
 
 const signed = (value: number) => (value > 0 ? `+${value}` : `${value}`);
 
@@ -21,9 +49,25 @@ export const useModifierLabel = () => {
   };
 };
 
+/** Translated values of the text params of an explanation (`flank` → its label), numbers as they are. */
+const useExplanationValues = () => {
+  const { t } = useTranslation();
+  return (params: RuleParams = {}) =>
+    Object.fromEntries(
+      Object.entries(params).map(([name, value]) => [
+        name,
+        typeof value === 'string' ? t(value, { defaultValue: value }) : value,
+      ])
+    );
+};
+
 const Row: FC<{ label: string; value: number; strong?: boolean }> = ({ label, value, strong }) => (
   <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'baseline', gap: 2, py: 0.25 }}>
-    <Typography variant="body2" color={strong ? 'text.primary' : 'text.secondary'} sx={{ fontWeight: strong ? 700 : 400 }}>
+    <Typography
+      variant="body2"
+      color={strong ? 'text.primary' : 'text.secondary'}
+      sx={{ fontWeight: strong ? 700 : 400 }}
+    >
       {label}
     </Typography>
     <Typography
@@ -40,6 +84,75 @@ const Row: FC<{ label: string; value: number; strong?: boolean }> = ({ label, va
 );
 
 /**
+ * A modifier row that explains itself (spec 051): `combat-rule-<key>` says why, with the inputs and the rule
+ * reference the API sends. A modifier with nothing to explain is a plain row.
+ */
+const ModifierRow: FC<{ modifier: RollModifier }> = ({ modifier }) => {
+  const { t, i18n } = useTranslation();
+  const label = useModifierLabel();
+  const values = useExplanationValues();
+  const descriptionKey = `combat-rule-${modifier.key}`;
+  const description = i18n?.exists?.(descriptionKey) ? t(descriptionKey, values(modifier.params)) : undefined;
+  const row = <Row label={label(modifier.key)} value={modifier.value} />;
+  if (!description && !modifier.rule && !modifier.params) return row;
+  return (
+    <RuleHint
+      title={`${label(modifier.key)} ${signed(modifier.value)}`}
+      description={description}
+      params={modifier.params}
+      reference={modifier.rule}
+    >
+      {row}
+    </RuleHint>
+  );
+};
+
+/** The rules that did not apply, folded: each one with why (`combat-skip-<reason>`) and its reference. */
+const SkippedRules: FC<{ rules: SkippedRule[] }> = ({ rules }) => {
+  const { t } = useTranslation();
+  const label = useModifierLabel();
+  const values = useExplanationValues();
+  const [open, setOpen] = useState(false);
+  return (
+    <Box>
+      <ButtonBase
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        sx={{ width: '100%', minHeight: 40, justifyContent: 'space-between', borderRadius: 1 }}
+      >
+        <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+          {t('rules-not-applied', { count: rules.length })}
+        </Typography>
+        <ExpandMoreIcon
+          fontSize="small"
+          color="action"
+          sx={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'transform 150ms' }}
+        />
+      </ButtonBase>
+      <Collapse in={open} unmountOnExit>
+        <Stack spacing={0.75} sx={{ pt: 0.5 }}>
+          {rules.map((rule, index) => (
+            <Box key={`${rule.source}-${rule.reason}-${index}`}>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                {label(rule.source)}
+                {rule.rule && (
+                  <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
+                    {rule.rule}
+                  </Typography>
+                )}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t(`combat-skip-${rule.reason}`, { ...values(rule.params), defaultValue: rule.reason })}
+              </Typography>
+            </Box>
+          ))}
+        </Stack>
+      </Collapse>
+    </Box>
+  );
+};
+
+/**
  * How a roll total is built: the modifiers grouped by side (attacker, target, situation…) with their subtotal,
  * then the roll and the total. Works the same on phones and desktops: one readable column.
  */
@@ -50,9 +163,10 @@ const RollBreakdown: FC<{
   /** Total to show; defaults to the sum of the modifiers plus the roll. */
   total?: number;
   totalLabel?: string;
-}> = ({ modifiers, roll, total, totalLabel }) => {
+  /** Rules that did not apply, folded under the modifiers (spec 051). */
+  skipped?: SkippedRule[];
+}> = ({ modifiers, roll, total, totalLabel, skipped }) => {
   const { t } = useTranslation();
-  const label = useModifierLabel();
   const sum = modifiers.reduce((acc, modifier) => acc + modifier.value, 0);
   const computedTotal = total ?? sum + (roll ?? 0);
   const groups = GROUP_ORDER.map((group) => ({
@@ -75,13 +189,14 @@ const RollBreakdown: FC<{
             )}
           </Stack>
           {items.map((modifier, index) => (
-            <Row key={`${modifier.key}-${index}`} label={label(modifier.key)} value={modifier.value} />
+            <ModifierRow key={`${modifier.key}-${index}`} modifier={modifier} />
           ))}
         </Box>
       ))}
       <Divider />
       {roll !== undefined && roll !== null && <Row label={t('roll')} value={roll} />}
       <Row label={totalLabel ?? t('total')} value={computedTotal} strong />
+      {skipped && skipped.length > 0 && <SkippedRules rules={skipped} />}
     </Stack>
   );
 };

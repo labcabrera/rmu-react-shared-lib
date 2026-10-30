@@ -2,10 +2,26 @@ import React, { FC, KeyboardEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import CasinoIcon from '@mui/icons-material/Casino';
 import ClearIcon from '@mui/icons-material/Clear';
-import { Drawer, IconButton, InputAdornment, Popover, TextField, Tooltip, useMediaQuery, useTheme } from '@mui/material';
-import { RollSpec, RollValue } from './roll.types';
-import { formatRoll, fromNumber, randomDie, rollDice } from './roll-logic';
+import {
+  Drawer,
+  IconButton,
+  InputAdornment,
+  Popover,
+  TextField,
+  Tooltip,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import RollPad from './RollPad';
+import { formatRoll, fromNumber, randomDie, rollDice } from './roll-logic';
+import { RollSpec, RollValue } from './roll.types';
+
+/**
+ * Standard width of a roll field (spec 051), whatever its container: room for `142 (97+45)` and the dice button.
+ * The compact one is for table cells. Both shrink in a narrower container.
+ */
+export const ROLL_FIELD_WIDTH = 220;
+export const ROLL_FIELD_COMPACT_WIDTH = 150;
 
 /** How the keypad opens: `auto` is a popover from `md` and a bottom sheet below. */
 export type RollPresentation = 'auto' | 'popover' | 'sheet';
@@ -28,6 +44,8 @@ export interface RollFieldProps {
   helperText?: string;
   /** Small field for table cells. */
   compact?: boolean;
+  /** Takes the whole width of its container instead of the standard size (spec 051). */
+  fullWidth?: boolean;
   presentation?: RollPresentation;
   /** Die used by the dice buttons, for tests. */
   random?: (sides: number) => number;
@@ -50,6 +68,7 @@ const RollField: FC<RollFieldProps> = ({
   error,
   helperText,
   compact = false,
+  fullWidth = false,
   presentation = 'auto',
   random = randomDie,
 }) => {
@@ -69,8 +88,7 @@ const RollField: FC<RollFieldProps> = ({
           ? last
           : undefined
         : value;
-  const text =
-    value === null || value === undefined ? '' : known ? formatRoll(known, spec) : String(value as number);
+  const text = value === null || value === undefined ? '' : known ? formatRoll(known, spec) : String(value as number);
   const initial = known ?? (typeof value === 'number' ? fromNumber(spec, value) : undefined);
   const editable = !disabled && !readOnly;
   const fieldLabel = label ?? t('roll');
@@ -105,7 +123,8 @@ const RollField: FC<RollFieldProps> = ({
         value={text}
         placeholder={placeholder}
         size={compact ? 'small' : 'medium'}
-        fullWidth
+        fullWidth={fullWidth}
+        sx={fullWidth ? undefined : { width: compact ? ROLL_FIELD_COMPACT_WIDTH : ROLL_FIELD_WIDTH, maxWidth: '100%' }}
         variant="outlined"
         disabled={disabled}
         error={error}
