@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import { uploadImage } from '../api/image.api';
 import { IMAGE_CATEGORIES, ImageCategory, MediaImage } from '../api/image.dto';
+import { isAdmin } from '../auth/roles';
 import { resolveAssetUrl } from '../config/asset-url';
 
 export type ImageUploadEditorProps = {
@@ -55,7 +56,7 @@ export default function ImageUploadEditor({
 }: ImageUploadEditorProps) {
   const { t } = useTranslation();
   const auth = useAuth();
-  const isAdmin = ((auth.user?.profile.groups as string[]) || []).includes('rmu-admin');
+  const admin = isAdmin(auth);
   const editorRef = useRef<AvatarEditorRef>(null);
   const [file, setFile] = useState<File>();
   const [category, setCategory] = useState<ImageCategory>(defaultCategory);
@@ -158,7 +159,7 @@ export default function ImageUploadEditor({
         </Box>
 
         <Stack spacing={2} sx={{ flex: 1, minWidth: 220 }}>
-          {isAdmin && (
+          {admin && (
             <FormControl fullWidth size="small">
               <InputLabel id="upload-image-category-label">{t('category')}</InputLabel>
               <Select

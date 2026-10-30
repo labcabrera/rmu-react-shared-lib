@@ -1,3 +1,4 @@
+export { ADMIN_GROUP, isAdmin, useIsAdmin, userGroups } from './auth/roles';
 export { default as EditableAvatar } from './avatars/EditableAvatar';
 export { default as GenericAvatar } from './avatars/GenericAvatar';
 export { default as EntityAvatar, initialsOf } from './avatars/EntityAvatar';

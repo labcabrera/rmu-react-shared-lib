@@ -216,11 +216,8 @@ export const createAppTheme = (config: Partial<ThemeConfig> | ThemeMode = defaul
         MuiAppBar: {
           defaultProps: { elevation: 0, color: 'inherit' },
           styleOverrides: {
-            root: {
-              backgroundColor: alpha(palette.background.paper, 0.82),
-              backdropFilter: 'blur(12px)',
-              borderBottom: `1px solid ${palette.divider}`,
-            },
+            // Opaque and the same surface as the side navigation, so header and menu read as one frame (spec 053).
+            root: { backgroundColor: palette.background.paper, borderBottom: `1px solid ${palette.divider}` },
           },
         },
         MuiDrawer: { styleOverrides: { paper: { borderColor: palette.divider } } },
@@ -266,13 +263,15 @@ export const createAppTheme = (config: Partial<ThemeConfig> | ThemeMode = defaul
         MuiFormControl: small,
         MuiAutocomplete: small,
         MuiList: compact ? { defaultProps: { dense: true } } : {},
-        // The selected item (navigation, menus) takes the accent color, not only a tinted background.
+        // The selected item (navigation, menus) takes the accent color on a tint of it, not the neutral grey.
         MuiListItemButton: {
           styleOverrides: {
             root: {
               '&.Mui-selected': {
                 color: palette.primary.main,
+                backgroundColor: alpha(palette.primary.main, 0.12),
                 '& .MuiListItemIcon-root': { color: palette.primary.main },
+                '&:hover, &.Mui-focusVisible': { backgroundColor: alpha(palette.primary.main, 0.18) },
               },
             },
           },
