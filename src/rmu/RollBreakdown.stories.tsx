@@ -53,3 +53,17 @@ export const WithExplanations: Story = {
     roll: 80,
   },
 };
+
+/** Spec 052: a maneuver, with its texts under `maneuver-rule-*` and the skill and penalty groups. */
+export const Maneuver: Story = {
+  args: {
+    context: 'maneuver',
+    modifiers: [
+      { key: 'unskilled', value: -25, group: 'skill', rule: '§5.1', params: { skill: 'climbing' } },
+      { key: 'armor-maneuver', value: -10, group: 'penalty', rule: '§7.2', params: { armor: 'chain' } },
+      { key: 'pace', value: -10, group: 'situation', rule: '§5.3', params: { pace: 'run' } },
+    ],
+    skipped: [{ source: 'light', group: 'situation', reason: 'light-not-needed' }],
+    roll: 62,
+  },
+};

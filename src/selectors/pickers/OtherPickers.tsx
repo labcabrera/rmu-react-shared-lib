@@ -161,17 +161,51 @@ export const EnumPicker: FC<
     groupOf?: (value: string) => string | undefined;
     /** Label of a value instead of `t(labelPrefix + value)`: enumeration keys shown by their name (spec 050). */
     formatLabel?: (value: string) => string;
+    /**
+     * Prefix of a description of each value, `t(descriptionPrefix + value)` (spec 052): shown under the option in the
+     * list and, for the chosen one, as the helper text.
+     */
+    descriptionPrefix?: string;
+    /** Description of a value instead of `t(descriptionPrefix + value)`. */
+    formatDescription?: (value: string) => string | undefined;
     label: string;
   }
-> = ({ values, labelPrefix = '', images, kind, groupOf, formatLabel, ...props }) => {
+> = ({
+  values,
+  labelPrefix = '',
+  images,
+  kind,
+  groupOf,
+  formatLabel,
+  descriptionPrefix,
+  formatDescription,
+  ...props
+}) => {
   const { t } = useTranslation();
   const imageOf = (value: string) => (typeof images === 'function' ? images(value) : images?.[value]);
+  const describe =
+    formatDescription ??
+    (descriptionPrefix
+      ? (value: string) => t(`${descriptionPrefix}${value}`, { defaultValue: '' }) || undefined
+      : undefined);
   const options: EntityOption<string>[] = values.map((value) => ({
     id: value,
     label: formatLabel ? formatLabel(value) : t(`${labelPrefix}${value}`),
     imageUrl: imageOf(value),
     group: groupOf?.(value),
     entity: value,
+    ...(describe ? { secondary: describe(value), wrapSecondary: true } : {}),
   }));
-  return <PresetPicker props={props} kind={kind} label={props.label} hideImages={!images && !kind} options={options} />;
+  const chosen =
+    describe && props.mode !== 'multiple' ? options.find((option) => option.id === props.value) : undefined;
+  const helperText = props.helperText ?? chosen?.secondary;
+  return (
+    <PresetPicker
+      props={{ ...props, helperText }}
+      kind={kind}
+      label={props.label}
+      hideImages={!images && !kind}
+      options={options}
+    />
+  );
 };

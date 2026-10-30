@@ -1,10 +1,12 @@
 import React from 'react';
+import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { act, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import i18next from 'i18next';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '../test/render';
 import RollBreakdown from './RollBreakdown';
-import RuleHint from './RuleHint';
+import RuleHint, { FieldHint } from './RuleHint';
 
 const hint = () =>
   renderWithProviders(
@@ -103,5 +105,57 @@ describe('RollBreakdown explanations (spec 051)', () => {
     await userEvent.click(toggle);
     expect(screen.getByText('shield-not-front')).toBeInTheDocument();
     expect(screen.getByText('§9.6')).toBeInTheDocument();
+  });
+});
+
+describe('FieldHint (spec 052)', () => {
+  it('is an information button that pins the help of a form field', async () => {
+    renderWithProviders(<FieldHint title="Lethality" description="what it does" reference="§12" />);
+    const button = screen.getByRole('button', { name: 'rule-help-of' });
+
+    await userEvent.click(button);
+
+    expect(await screen.findByRole('dialog')).toHaveTextContent('what it does');
+    expect(button).toHaveAttribute('aria-expanded', 'true');
+  });
+});
+
+describe('RollBreakdown context (spec 052)', () => {
+  it('looks up the explanations and the skip reasons of its own roll', async () => {
+    const i18n = i18next.createInstance();
+    await i18n.use(initReactI18next).init({
+      lng: 'en',
+      resources: {
+        en: {
+          translation: {
+            'maneuver-rule-unskilled': 'no ranks in {{skill}}',
+            'combat-rule-unskilled': 'wrong context',
+            'maneuver-skip-light-not-needed': 'the skill does not need light',
+            'maneuver-rule-skill': 'ranks and stats ({{ranks}} ranks)',
+          },
+        },
+      },
+    });
+    renderWithProviders(
+      <I18nextProvider i18n={i18n}>
+        <RollBreakdown
+          context="maneuver"
+          modifiers={[
+            { key: 'unskilled', value: -25, group: 'skill', params: { skill: 'climbing' } },
+            { key: 'swimming', value: 40, group: 'skill', source: 'skill', params: { ranks: 6 } },
+          ]}
+          skipped={[{ source: 'light', reason: 'light-not-needed' }]}
+        />
+      </I18nextProvider>
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: /Unskilled/ }));
+    expect(await screen.findByRole('dialog')).toHaveTextContent('no ranks in climbing');
+    await userEvent.click(screen.getByRole('button', { name: /Unskilled/ }));
+    await userEvent.click(screen.getByRole('button', { name: /Swimming/ }));
+    expect(await screen.findByRole('dialog')).toHaveTextContent('ranks and stats (6 ranks)');
+    await userEvent.click(screen.getByRole('button', { name: /Swimming/ }));
+    await userEvent.click(screen.getByRole('button', { name: /rules-not-applied/ }));
+    expect(screen.getByText('the skill does not need light')).toBeInTheDocument();
   });
 });

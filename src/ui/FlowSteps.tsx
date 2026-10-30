@@ -10,6 +10,11 @@ export interface FlowStep {
   summary?: ReactNode;
   /** Body of the step while it is the current one (and of a done step while reviewed). */
   content?: ReactNode;
+  /**
+   * A reviewed done step is inert, so its inputs cannot change. A step that only shows results sets this to keep its
+   * explanations (rule hints) open to a click or a tap.
+   */
+  reviewInteractive?: boolean;
 }
 
 type StepState = 'done' | 'current' | 'next';
@@ -100,7 +105,7 @@ export default function FlowSteps({
               )}
               {open && step.content && (
                 <Box sx={[{ pl: 5, pt: 1, pb: 1 }, enterSx()]}>
-                  {state === 'done' ? (
+                  {state === 'done' && !step.reviewInteractive ? (
                     <Box inert sx={{ opacity: 0.85 }}>
                       {step.content}
                     </Box>

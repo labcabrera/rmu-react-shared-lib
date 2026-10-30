@@ -25,6 +25,8 @@ export interface EntityOption<T = unknown> {
   imageUrl?: string | null;
   /** Second line (select variant) or tooltip (tiles). */
   secondary?: string;
+  /** The secondary line wraps instead of being cut: a description of the option (spec 052). */
+  wrapSecondary?: boolean;
   badges?: string[];
   /** Group of the option in the select variant (skills by category, weapon skills by melee or ranged). */
   group?: string;
@@ -249,7 +251,8 @@ export default function EntityPicker<T = unknown>(props: EntityPickerProps<T>) {
             variant="caption"
             component="div"
             color={option.disabledReason ? 'error.main' : 'text.secondary'}
-            noWrap
+            noWrap={!option.wrapSecondary}
+            sx={option.wrapSecondary ? { whiteSpace: 'normal', maxWidth: 420 } : undefined}
           >
             {option.disabledReason ?? option.secondary}
           </Typography>

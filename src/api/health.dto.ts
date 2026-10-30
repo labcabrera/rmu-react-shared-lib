@@ -1,5 +1,7 @@
 // Health model shared by the strategic and the tactical modules (spec 013 §1): injuries with a stable UUID and
 // their origin, treatments, recovery, conditions and the healing log of a character.
+import type { RollModifier } from '../rmu/RollBreakdown';
+import type { RuleParams } from '../rmu/RuleHint';
 import { InjuryPoison } from './poison.dto';
 
 export type InjuryType = 'bone' | 'cut-burn' | 'muscle-tendon' | 'organ' | 'poison-disease' | 'skin-tissue' | 'unknown';
@@ -87,6 +89,10 @@ export interface InjuryTreatment {
 export interface InjuryRecovery {
   roll: number;
   modifiers: number;
+  /** The modifiers entry by entry, with their rules (spec 052). */
+  breakdown?: RollModifier[];
+  /** Where the days come from: the table column and each multiplier (spec 052). */
+  days?: RuleParams;
   total: number;
   /** Days by injury type and result, times the severity. */
   baseDays: number;
