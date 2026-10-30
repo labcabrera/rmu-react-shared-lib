@@ -1,6 +1,7 @@
 import React, { FC, PointerEvent, ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, ButtonBase, ClickAwayListener, Fade, Paper, Popper, Stack, Typography } from '@mui/material';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { Box, ButtonBase, ClickAwayListener, Fade, IconButton, Paper, Popper, Stack, Typography } from '@mui/material';
 
 /** Numbers behind a rule's value, as the combat API sends them (`{ mode: 'partial', skill: 25 }`). */
 export type RuleParams = Record<string, number | string | boolean>;
@@ -51,9 +52,9 @@ export const RuleParamList: FC<{ params: RuleParams }> = ({ params }) => {
  * explanation; with a mouse, resting on the row opens it as a preview that closes when the mouse leaves. Touch never
  * depends on hover: the pointer type of each event decides, so a touch laptop gets both.
  */
-const RuleHint: FC<{
-  /** The row that opens the explanation. */
-  children: ReactNode;
+type RuleHintProps = {
+  /** The row that opens the explanation (the `row` variant). */
+  children?: ReactNode;
   /** Heading of the panel: what is explained. */
   title: ReactNode;
   /** Plain text of why. */
@@ -61,7 +62,21 @@ const RuleHint: FC<{
   params?: RuleParams;
   /** Reference in the books (`§9.6`). */
   reference?: string;
-}> = ({ children, title, description, params, reference }) => {
+  /** `row` wraps its children; `icon` is an information button, for form fields (spec 052). */
+  variant?: 'row' | 'icon';
+  /** Accessible name of the icon button (default: the title when it is text). */
+  ariaLabel?: string;
+};
+
+const RuleHint: FC<RuleHintProps> = ({
+  children,
+  title,
+  description,
+  params,
+  reference,
+  variant = 'row',
+  ariaLabel,
+}) => {
   const { t } = useTranslation();
   const id = useId();
   const anchorRef = useRef<HTMLButtonElement>(null);
@@ -86,28 +101,45 @@ const RuleHint: FC<{
 
   return (
     <>
-      <ButtonBase
-        ref={anchorRef}
-        onClick={toggle}
-        onPointerEnter={onPointerEnter}
-        onPointerLeave={onPointerLeave}
-        aria-expanded={!!open}
-        aria-controls={open ? id : undefined}
-        sx={{
-          display: 'block',
-          width: '100%',
-          minHeight: 40,
-          textAlign: 'left',
-          borderRadius: 1,
-          px: 0.5,
-          mx: -0.5,
-          boxSizing: 'content-box',
-          '&:hover, &[aria-expanded="true"]': { bgcolor: 'action.hover' },
-          '&.Mui-focusVisible': { outline: 2, outlineColor: 'primary.main' },
-        }}
-      >
-        {children}
-      </ButtonBase>
+      {variant === 'icon' ? (
+        <IconButton
+          ref={anchorRef}
+          onClick={toggle}
+          onPointerEnter={onPointerEnter}
+          onPointerLeave={onPointerLeave}
+          aria-expanded={!!open}
+          aria-controls={open ? id : undefined}
+          aria-label={
+            ariaLabel ?? (typeof title === 'string' ? t('rule-help-of', { name: title }) : t('rule-explanation'))
+          }
+          sx={{ width: 40, height: 40 }}
+        >
+          <InfoOutlinedIcon fontSize="small" color={open ? 'primary' : 'action'} />
+        </IconButton>
+      ) : (
+        <ButtonBase
+          ref={anchorRef}
+          onClick={toggle}
+          onPointerEnter={onPointerEnter}
+          onPointerLeave={onPointerLeave}
+          aria-expanded={!!open}
+          aria-controls={open ? id : undefined}
+          sx={{
+            display: 'block',
+            width: '100%',
+            minHeight: 40,
+            textAlign: 'left',
+            borderRadius: 1,
+            px: 0.5,
+            mx: -0.5,
+            boxSizing: 'content-box',
+            '&:hover, &[aria-expanded="true"]': { bgcolor: 'action.hover' },
+            '&.Mui-focusVisible': { outline: 2, outlineColor: 'primary.main' },
+          }}
+        >
+          {children}
+        </ButtonBase>
+      )}
       <Popper
         open={!!open}
         anchorEl={anchorRef.current}
@@ -155,5 +187,13 @@ const RuleHint: FC<{
     </>
   );
 };
+
+/**
+ * The explanation of a form field (spec 052): an information button next to its label, with what the option does,
+ * what raising or lowering it implies, its default and its reference. Same behaviour as RuleHint.
+ */
+export const FieldHint: FC<Omit<RuleHintProps, 'children' | 'variant'>> = (props) => (
+  <RuleHint {...props} variant="icon" />
+);
 
 export default RuleHint;

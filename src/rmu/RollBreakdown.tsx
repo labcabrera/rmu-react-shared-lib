@@ -4,8 +4,20 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box, ButtonBase, Collapse, Divider, Stack, Typography } from '@mui/material';
 import RuleHint, { RuleParams } from './RuleHint';
 
-/** Group of a modifier in the breakdown: the attacker's side, the target's, the situation or the critical. */
-export type RollModifierGroup = 'offense' | 'defense' | 'situation' | 'critical' | 'resolution';
+/**
+ * Group of a modifier in the breakdown: the attacker's side, the target's, the situation or the critical; outside
+ * combat (spec 052) the skill, the penalties, the casting conditions and the target's.
+ */
+export type RollModifierGroup =
+  | 'skill'
+  | 'offense'
+  | 'casting'
+  | 'defense'
+  | 'target'
+  | 'situation'
+  | 'penalty'
+  | 'critical'
+  | 'resolution';
 
 /**
  * One entry of a roll breakdown, as the combat API returns it: with the rule reference of its plugin and the inputs of
@@ -30,13 +42,33 @@ export type SkippedRule = {
 };
 
 const GROUP_ORDER: (RollModifierGroup | 'other')[] = [
+  'skill',
   'offense',
+  'casting',
   'defense',
+  'target',
   'situation',
+  'penalty',
   'critical',
   'resolution',
   'other',
 ];
+
+/**
+ * Which roll a breakdown is (spec 052): its texts are `<context>-rule-<key>` and `<context>-skip-<reason>`, since
+ * a key means different things in different rolls (`armor` of a maneuver or of a spell).
+ */
+export type RollContext =
+  | 'combat'
+  | 'maneuver'
+  | 'spell-cast'
+  | 'spell-rr'
+  | 'medical'
+  | 'recovery'
+  | 'poison-rr'
+  | 'fear-rr'
+  | 'endurance'
+  | 'breakage';
 
 const signed = (value: number) => (value > 0 ? `+${value}` : `${value}`);
 
@@ -87,11 +119,11 @@ const Row: FC<{ label: string; value: number; strong?: boolean }> = ({ label, va
  * A modifier row that explains itself (spec 051): `combat-rule-<key>` says why, with the inputs and the rule
  * reference the API sends. A modifier with nothing to explain is a plain row.
  */
-const ModifierRow: FC<{ modifier: RollModifier }> = ({ modifier }) => {
+const ModifierRow: FC<{ modifier: RollModifier; context: RollContext }> = ({ modifier, context }) => {
   const { t, i18n } = useTranslation();
   const label = useModifierLabel();
   const values = useExplanationValues();
-  const descriptionKey = `combat-rule-${modifier.key}`;
+  const descriptionKey = `${context}-rule-${modifier.key}`;
   const description = i18n?.exists?.(descriptionKey) ? t(descriptionKey, values(modifier.params)) : undefined;
   const row = <Row label={label(modifier.key)} value={modifier.value} />;
   if (!description && !modifier.rule && !modifier.params) return row;
@@ -108,7 +140,7 @@ const ModifierRow: FC<{ modifier: RollModifier }> = ({ modifier }) => {
 };
 
 /** The rules that did not apply, folded: each one with why (`combat-skip-<reason>`) and its reference. */
-const SkippedRules: FC<{ rules: SkippedRule[] }> = ({ rules }) => {
+const SkippedRules: FC<{ rules: SkippedRule[]; context: RollContext }> = ({ rules, context }) => {
   const { t } = useTranslation();
   const label = useModifierLabel();
   const values = useExplanationValues();
@@ -142,7 +174,7 @@ const SkippedRules: FC<{ rules: SkippedRule[] }> = ({ rules }) => {
                 )}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {t(`combat-skip-${rule.reason}`, { ...values(rule.params), defaultValue: rule.reason })}
+                {t(`${context}-skip-${rule.reason}`, { ...values(rule.params), defaultValue: rule.reason })}
               </Typography>
             </Box>
           ))}
@@ -165,7 +197,9 @@ const RollBreakdown: FC<{
   totalLabel?: string;
   /** Rules that did not apply, folded under the modifiers (spec 051). */
   skipped?: SkippedRule[];
-}> = ({ modifiers, roll, total, totalLabel, skipped }) => {
+  /** Which roll it is, for the texts of its explanations (spec 052). */
+  context?: RollContext;
+}> = ({ modifiers, roll, total, totalLabel, skipped, context = 'combat' }) => {
   const { t } = useTranslation();
   const sum = modifiers.reduce((acc, modifier) => acc + modifier.value, 0);
   const computedTotal = total ?? sum + (roll ?? 0);
@@ -189,14 +223,14 @@ const RollBreakdown: FC<{
             )}
           </Stack>
           {items.map((modifier, index) => (
-            <ModifierRow key={`${modifier.key}-${index}`} modifier={modifier} />
+            <ModifierRow key={`${modifier.key}-${index}`} modifier={modifier} context={context} />
           ))}
         </Box>
       ))}
       <Divider />
       {roll !== undefined && roll !== null && <Row label={t('roll')} value={roll} />}
       <Row label={totalLabel ?? t('total')} value={computedTotal} strong />
-      {skipped && skipped.length > 0 && <SkippedRules rules={skipped} />}
+      {skipped && skipped.length > 0 && <SkippedRules rules={skipped} context={context} />}
     </Stack>
   );
 };

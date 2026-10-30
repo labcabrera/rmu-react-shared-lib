@@ -52,4 +52,21 @@ describe('picker presets', () => {
     );
     expect(screen.getByRole('radio', { name: 'status-open' })).toHaveAttribute('aria-checked', 'true');
   });
+
+  it('describes each value under its option and the chosen one as helper text (spec 052)', async () => {
+    renderWithProviders(
+      <EnumPicker
+        label="Policy"
+        variant="select"
+        values={['free', 'locked']}
+        labelPrefix="policy-"
+        formatDescription={(value) => `policy-help-${value}`}
+        value="free"
+        onChange={vi.fn()}
+      />
+    );
+    expect(screen.getByText('policy-help-free')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('combobox', { name: 'Policy' }));
+    expect(await screen.findByText('policy-help-locked')).toBeInTheDocument();
+  });
 });
