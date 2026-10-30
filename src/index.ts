@@ -240,6 +240,9 @@ export {
   biomeLabel,
   creatureSizeLabel,
 } from './rmu/creature/CreatureStatBlock';
+export { environmentFactionName, npcImage, npcName, npcSummary } from './rmu/creature/npc-format';
+export { isValidNpcCount, NpcEntryDialog, NpcEntryList } from './rmu/creature/NpcEntries';
+export type { NpcEntry } from './rmu/creature/NpcEntries';
 export type { StatusBadgeColor, StatusBadgeProps } from './rmu/StatusBadge';
 export { default as SpellEffectList, spellEffectColor, spellEffectSummary } from './rmu/SpellEffectList';
 export type { SpellEffectColor } from './rmu/SpellEffectList';

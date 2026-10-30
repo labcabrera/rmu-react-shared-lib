@@ -12,6 +12,8 @@ export type Realm = {
   description: string | undefined;
   imageUrl: string | undefined;
   accessType: AccessType;
+  /** A realm whose NPCs every campaign can use (RMU Core, spec 055); only an admin sets it. Missing means `false`. */
+  generic?: boolean;
 };
 
 export type CreateRealmDto = Omit<Realm, 'id'>;

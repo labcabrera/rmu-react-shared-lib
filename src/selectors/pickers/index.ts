@@ -18,3 +18,4 @@ export {
   StrategicGamePicker,
 } from './OtherPickers';
 export type { PickerBaseProps, PickerMultipleProps, PickerProps, PickerSingleProps } from './preset';
+export { fetchCampaignNpcs, NpcPicker, npcOptions, npcRealmsRsql, useCampaignNpcs } from './NpcPicker';

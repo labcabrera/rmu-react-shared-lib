@@ -1,7 +1,7 @@
 import { AuthContextProps } from 'react-oidc-context';
 import { apiStrategicGameUrl } from '../config/config.service';
 import callApi, { Page } from './api';
-import { CreateFactionDto, Faction, UpdateFactionDto } from './faction.dto';
+import { CreateFactionDto, Faction, FactionNpcInput, UpdateFactionDto } from './faction.dto';
 
 export async function fetchFaction(factionId: string, auth: AuthContextProps): Promise<Faction> {
   const url = `${apiStrategicGameUrl}/factions/${factionId}`;
@@ -38,6 +38,15 @@ export async function updateFaction(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
+}
+
+/** Replaces the NPCs of a faction (spec 055); the API checks each NPC's realm and access (400 `validation`). */
+export async function updateFactionNpcs(
+  factionId: string,
+  npcs: FactionNpcInput[],
+  auth: AuthContextProps
+): Promise<Faction> {
+  return updateFaction(factionId, { npcs }, auth);
 }
 
 export async function deleteFaction(factionId: string, auth: AuthContextProps): Promise<void> {

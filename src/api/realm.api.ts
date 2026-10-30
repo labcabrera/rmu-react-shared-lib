@@ -18,6 +18,11 @@ export async function fetchRealms(
   return await callApi(auth, url, { method: 'GET' });
 }
 
+/** The generic realms (spec 055): their NPCs join the campaigns of any realm. */
+export async function fetchGenericRealms(auth: AuthContextProps): Promise<Realm[]> {
+  return (await fetchRealms('generic==true', 0, 100, auth)).content;
+}
+
 export async function createRealm(realm: CreateRealmDto, auth: AuthContextProps): Promise<Realm> {
   const url = `${apiCoreUrl}/realms`;
   return await callApi(auth, url, {
