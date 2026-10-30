@@ -73,12 +73,15 @@ export type RollContext =
 
 const signed = (value: number) => (value > 0 ? `+${value}` : `${value}`);
 
-/** Translated label of a modifier key; unknown keys are shown readable ("restricted-quarters" → "Restricted quarters"). */
+/**
+ * Translated label of a modifier key; unknown keys are shown readable ("restricted-quarters" → "Restricted quarters").
+ * `modifier-label-<key>` wins over the plain key, for keys whose usual text means something else (`light`).
+ */
 export const useModifierLabel = () => {
   const { t } = useTranslation();
   return (key: string) => {
     const fallback = key.replace(/[-_]/g, ' ').replace(/^\w/, (c) => c.toUpperCase());
-    return t(key, { defaultValue: fallback });
+    return t(`modifier-label-${key}`, { defaultValue: t(key, { defaultValue: fallback }) });
   };
 };
 
