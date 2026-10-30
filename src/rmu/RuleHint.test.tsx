@@ -131,6 +131,7 @@ describe('RollBreakdown context (spec 052)', () => {
             'maneuver-rule-unskilled': 'no ranks in {{skill}}',
             'combat-rule-unskilled': 'wrong context',
             'maneuver-skip-light-not-needed': 'the skill does not need light',
+            'maneuver-rule-skill': 'ranks and stats ({{ranks}} ranks)',
           },
         },
       },
@@ -139,7 +140,10 @@ describe('RollBreakdown context (spec 052)', () => {
       <I18nextProvider i18n={i18n}>
         <RollBreakdown
           context="maneuver"
-          modifiers={[{ key: 'unskilled', value: -25, group: 'skill', params: { skill: 'climbing' } }]}
+          modifiers={[
+            { key: 'unskilled', value: -25, group: 'skill', params: { skill: 'climbing' } },
+            { key: 'swimming', value: 40, group: 'skill', source: 'skill', params: { ranks: 6 } },
+          ]}
           skipped={[{ source: 'light', reason: 'light-not-needed' }]}
         />
       </I18nextProvider>
@@ -147,6 +151,10 @@ describe('RollBreakdown context (spec 052)', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /Unskilled/ }));
     expect(await screen.findByRole('dialog')).toHaveTextContent('no ranks in climbing');
+    await userEvent.click(screen.getByRole('button', { name: /Unskilled/ }));
+    await userEvent.click(screen.getByRole('button', { name: /Swimming/ }));
+    expect(await screen.findByRole('dialog')).toHaveTextContent('ranks and stats (6 ranks)');
+    await userEvent.click(screen.getByRole('button', { name: /Swimming/ }));
     await userEvent.click(screen.getByRole('button', { name: /rules-not-applied/ }));
     expect(screen.getByText('the skill does not need light')).toBeInTheDocument();
   });

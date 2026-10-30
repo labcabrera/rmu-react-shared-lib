@@ -116,15 +116,19 @@ const Row: FC<{ label: string; value: number; strong?: boolean }> = ({ label, va
 );
 
 /**
- * A modifier row that explains itself (spec 051): `combat-rule-<key>` says why, with the inputs and the rule
- * reference the API sends. A modifier with nothing to explain is a plain row.
+ * A modifier row that explains itself (spec 051): `<context>-rule-<key>` (or `<context>-rule-<source>`) says why, with
+ * the inputs and the rule reference the API sends. A modifier with nothing to explain is a plain row.
  */
 const ModifierRow: FC<{ modifier: RollModifier; context: RollContext }> = ({ modifier, context }) => {
   const { t, i18n } = useTranslation();
   const label = useModifierLabel();
   const values = useExplanationValues();
-  const descriptionKey = `${context}-rule-${modifier.key}`;
-  const description = i18n?.exists?.(descriptionKey) ? t(descriptionKey, values(modifier.params)) : undefined;
+  // The key's own text, else its source's: a skill rolled by its id explains itself as `maneuver-rule-skill`
+  const descriptionKey = [modifier.key, modifier.source]
+    .filter(Boolean)
+    .map((name) => `${context}-rule-${name}`)
+    .find((key) => i18n?.exists?.(key));
+  const description = descriptionKey ? t(descriptionKey, values(modifier.params)) : undefined;
   const row = <Row label={label(modifier.key)} value={modifier.value} />;
   if (!description && !modifier.rule && !modifier.params) return row;
   return (
