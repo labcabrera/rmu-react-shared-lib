@@ -234,6 +234,12 @@ export { default as RuleHint, FieldHint, RuleParamList } from './rmu/RuleHint';
 export type { RuleParams } from './rmu/RuleHint';
 export { default as EffectList, effectColor, effectIcon, normalizeEffectStatus } from './rmu/EffectList';
 export { default as StatusBadge } from './rmu/StatusBadge';
+export {
+  default as CreatureStatBlock,
+  additionalCriticalLabel,
+  biomeLabel,
+  creatureSizeLabel,
+} from './rmu/creature/CreatureStatBlock';
 export type { StatusBadgeColor, StatusBadgeProps } from './rmu/StatusBadge';
 export { default as SpellEffectList, spellEffectColor, spellEffectSummary } from './rmu/SpellEffectList';
 export type { SpellEffectColor } from './rmu/SpellEffectList';
