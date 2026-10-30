@@ -67,6 +67,7 @@ export type RollContext =
   | 'recovery'
   | 'poison-rr'
   | 'fear-rr'
+  | 'physical-rr'
   | 'endurance'
   | 'breakage';
 
