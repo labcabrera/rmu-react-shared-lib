@@ -1,5 +1,6 @@
 // Poisons (workspace spec 042): the poison and antidote blocks of the catalog, the poisoning of an injury and the
 // requests of the strategic and tactical poison endpoints. Time is counted in rounds from the exposure.
+import type { RollModifier } from '../rmu/RollBreakdown';
 import { InjurySource } from './health.dto';
 
 export type PoisonCategory =
@@ -144,7 +145,8 @@ export type ItemCoating = {
   hoursLeft?: number | null;
 };
 
-export type PoisonRrModifier = { key: string; value: number };
+/** An entry of the RR breakdown, with its group, rule and inputs since workspace spec 052. */
+export type PoisonRrModifier = RollModifier;
 
 /** The poison RR the server resolved. */
 export type PoisonRrResult = {
