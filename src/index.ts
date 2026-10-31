@@ -121,6 +121,8 @@ export * from './api/maneuver-modifier.api';
 export * from './api/maneuver-modifier.dto';
 export * from './api/npc.dto';
 export * from './api/npc.api';
+export * from './api/encounter.dto';
+export * from './api/encounter.api';
 export * from './api/profession.api';
 export * from './api/profession.dto';
 export * from './api/race.api';
