@@ -17,6 +17,7 @@ import {
 import { fetchItems } from '../../api/item.api';
 import { Item } from '../../api/item.dto';
 import { Realm } from '../../api/realm.dto';
+import { GEM_GRADES, HERB_BIOMES, HERB_GROUPS } from '../../api/treasure-goods.dto';
 import { ListFilters } from '../../data/useListFilters';
 import { useLocalPagedQuery } from '../../data/useLocalPagedQuery';
 import { PagedQuery } from '../../data/usePagedQuery';
@@ -170,9 +171,14 @@ export const ItemCatalogFilterSections: FC<{ filters: ListFilters<Item>; realms?
     skill: multiple('skill'),
     rarity: multiple('rarity'),
     feature: multiple('feature'),
+    herbGroup: multiple('herbGroup'),
+    biome: multiple('biome'),
+    gemGrade: single('gemGrade'),
   };
   const armor = filters.isActive('at');
   const weapon = filters.isActive('skill');
+  const herb = filters.isActive('herbGroup');
+  const gem = filters.isActive('gemGrade');
   const mine = filters.isActive('mine');
   const mineChecked = filters.get('mine') === 'true';
   const setMine = (checked: boolean) => filters.set('mine', checked ? 'true' : null);
@@ -212,6 +218,25 @@ export const ItemCatalogFilterSections: FC<{ filters: ListFilters<Item>; realms?
         />
         <EnumPicker {...bind.hands} variant="tiles" label={t('hands')} values={WEAPON_HANDS} />
         <EnumPicker {...bind.attack} variant="tiles" label={t('attack-type')} values={WEAPON_ATTACKS} />
+      </FilterSection>
+      <FilterSection title={t('item-category-herb')} hidden={!herb}>
+        <EnumPicker
+          {...bind.herbGroup}
+          variant="tiles"
+          label={t('herb-group')}
+          values={HERB_GROUPS}
+          labelPrefix="herb-group-"
+        />
+        <EnumPicker {...bind.biome} label={t('npc-biomes')} values={HERB_BIOMES} labelPrefix="npc-biome-" />
+      </FilterSection>
+      <FilterSection title={t('item-category-gem')} hidden={!gem}>
+        <EnumPicker
+          {...bind.gemGrade}
+          variant="tiles"
+          label={t('gem-grade')}
+          values={GEM_GRADES}
+          labelPrefix="gem-grade-"
+        />
       </FilterSection>
       <FilterSection title={t('rarity')}>
         <RarityPicker {...bind.rarity} label={t('rarity')} />

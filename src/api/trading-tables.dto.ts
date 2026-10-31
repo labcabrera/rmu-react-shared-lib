@@ -1,3 +1,5 @@
+import type { TaxRow } from './treasure-goods.dto';
+
 /** Side of a deal. */
 export type TradingContext = 'purchase' | 'sale';
 
@@ -25,5 +27,8 @@ export type PriceFactor = {
   description?: string;
 };
 
-/** Trading tables of rmu-api-core, imported from the rulebook data (spec 048). */
-export type TradingTables = { negotiation: NegotiationRow[]; priceFactors: PriceFactor[] };
+/**
+ * Trading tables of rmu-api-core, imported from the rulebook data (spec 048); `taxation` is the reference table of
+ * taxes and tolls (spec 062), missing until it is imported.
+ */
+export type TradingTables = { negotiation: NegotiationRow[]; priceFactors: PriceFactor[]; taxation?: TaxRow[] };

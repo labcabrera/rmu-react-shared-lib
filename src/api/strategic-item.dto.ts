@@ -2,6 +2,7 @@ import { ItemMaterial } from './crafting.dto';
 import { ItemCondition, StrategicItemModifier } from './item-modifier.dto';
 import { ItemArmor, ItemCost, ItemFeatures, ItemInfo, ItemShield, ItemWeapon } from './item.dto';
 import { ItemCoating } from './poison.dto';
+import type { ItemSize, JewelryClass } from './treasure-goods.dto';
 
 /** Who holds an item (spec 023): a character or a faction (its armory) of the same game. */
 export type ItemHolderKind = 'character' | 'faction';
@@ -51,6 +52,14 @@ export type StrategicItem = {
   coating?: ItemCoating | null;
   /** Superior material it was crafted of (spec 043). */
   material?: ItemMaterial | null;
+  /** Spec 062: null is medium; a weapon mirrors its `wielderSize`. */
+  size?: ItemSize | null;
+  /** Spec 062: carats of a gem. */
+  carats?: number | null;
+  /** Spec 062: class of a jewel. */
+  jewelryClass?: JewelryClass | null;
+  /** Spec 062: multiplier of a modern cut of a gem (1, 5, 10). */
+  cutFactor?: number | null;
   owner: string;
 };
 

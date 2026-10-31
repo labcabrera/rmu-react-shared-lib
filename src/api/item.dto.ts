@@ -1,4 +1,13 @@
 import { ItemAntidote, ItemPoison } from './poison.dto';
+import type {
+  ItemAcid,
+  ItemAnimal,
+  ItemGem,
+  ItemHerb,
+  ItemIntoxicant,
+  ItemJewelry,
+  ItemProperty,
+} from './treasure-goods.dto';
 
 export type WeaponModeType = 'one-hand' | 'two-hands';
 export type WeaponAttackType = 'melee' | 'ranged' | 'thrown';
@@ -8,7 +17,10 @@ export type ItemModifierType = 'bonus' | 'item-damage' | 'skill-bonus' | 'materi
 export type OptionType = 'required' | 'optional' | 'forbidden';
 export type ItemArmorClass = 'light' | 'medium' | 'heavy';
 
-/** Categories of the item catalog; spec 041 adds the general equipment ones (container to instrument). */
+/**
+ * Categories of the item catalog; spec 041 adds the general equipment ones (container to instrument), spec 062 the
+ * Treasure Law goods (acid to property).
+ */
 export const ITEM_CATEGORIES = [
   'weapon',
   'armor',
@@ -26,6 +38,12 @@ export const ITEM_CATEGORIES = [
   'instrument',
   'poison',
   'herb',
+  'acid',
+  'intoxicant',
+  'gem',
+  'jewelry',
+  'animal',
+  'property',
   'other',
 ] as const;
 export type ItemCategory = (typeof ITEM_CATEGORIES)[number];
@@ -43,6 +61,15 @@ export type ItemFeatures = {
   /** Spec 042. */
   poison?: ItemPoison | null;
   antidote?: ItemAntidote | null;
+  /** Spec 062: Treasure Law goods. An antidote herb has both `antidote` and `herb`. */
+  herb?: ItemHerb | null;
+  acid?: ItemAcid | null;
+  intoxicant?: ItemIntoxicant | null;
+  gem?: ItemGem | null;
+  jewelry?: ItemJewelry | null;
+  /** Animals and mounts. */
+  animal?: ItemAnimal | null;
+  property?: ItemProperty | null;
 };
 
 export type Item = {

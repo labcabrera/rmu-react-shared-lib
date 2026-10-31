@@ -1,6 +1,7 @@
 import { ITEM_RARITIES } from '../../api/constants';
 import { ITEM_CATEGORIES, Item, ItemArmorClass, WeaponAttackType, WeaponModeType } from '../../api/item.dto';
 import { Realm } from '../../api/realm.dto';
+import { GEM_GRADES, HERB_BIOMES, HERB_GROUPS, HerbBiome } from '../../api/treasure-goods.dto';
 import { FilterSchema } from '../../data/useListFilters';
 import { ItemFeatureTranslate } from './ItemFeatureChips';
 
@@ -79,6 +80,8 @@ export const itemCatalogFilters = (
 ): FilterSchema<Item> => {
   const isArmor = (values: Record<string, unknown>) => values.category === 'armor';
   const isWeapon = (values: Record<string, unknown>) => values.category === 'weapon';
+  const isHerb = (values: Record<string, unknown>) => values.category === 'herb';
+  const isGem = (values: Record<string, unknown>) => values.category === 'gem';
   return {
     q: {
       kind: 'text',
@@ -167,6 +170,31 @@ export const itemCatalogFilters = (
       format: (value) => t(value),
       when: isWeapon,
       match: (item, value) => !!item.weapon?.modes.some((mode) => mode.attackTypes.includes(value as WeaponAttackType)),
+    },
+    herbGroup: {
+      kind: 'multiple',
+      label: t('herb-group'),
+      options: HERB_GROUPS,
+      format: (value) => t(`herb-group-${value}`),
+      when: isHerb,
+      match: (item, value) => !!item.features?.herb && list(value).includes(item.features.herb.group),
+    },
+    biome: {
+      kind: 'multiple',
+      label: t('npc-biomes'),
+      options: HERB_BIOMES,
+      format: (value) => t(`npc-biome-${value}`),
+      when: isHerb,
+      match: (item, value) =>
+        !!item.features?.herb && list(value).some((code) => item.features!.herb!.biomes.includes(code as HerbBiome)),
+    },
+    gemGrade: {
+      kind: 'single',
+      label: t('gem-grade'),
+      options: GEM_GRADES,
+      format: (value) => t(`gem-grade-${value}`),
+      when: isGem,
+      match: (item, value) => item.features?.gem?.grade === value,
     },
     feature: {
       kind: 'multiple',

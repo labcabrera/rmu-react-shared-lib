@@ -1,5 +1,6 @@
 import { CraftingQualityDto } from './crafting.dto';
 import { ItemHolder, StrategicItem } from './strategic-item.dto';
+import type { PurchaseItemOptions } from './treasure-goods.dto';
 
 /** Operations of the item ledger (spec 023). */
 export type ItemLedgerKind = 'purchase' | 'sale' | 'transfer' | 'craft' | 'repair' | 'discard' | 'gold-transfer';
@@ -61,6 +62,8 @@ export type EconomyRules = {
   salePercent: number;
   materialsPercent: number;
   conditionPercent: { intact: number; damaged: number; broken: number };
+  /** Spec 062: commission of a jeweler buying gems and jewelry (`RMU_STRATEGIC_JEWELER_PERCENT`, 3). */
+  jewelerPercent?: number;
 };
 
 export type PriceQuote = { price: PriceBreakdown; rules: EconomyRules };
@@ -115,7 +118,8 @@ export type ItemOperationResult = {
   entry: ItemLedgerEntry;
 };
 
-export type PurchaseItemDto = {
+/** Spec 062 adds the size, carats and cut, jewelry class and base value of `PurchaseItemOptions`. */
+export type PurchaseItemDto = PurchaseItemOptions & {
   buyer: ItemHolder;
   itemTypeId: string;
   gameId?: string;
@@ -135,9 +139,14 @@ export type SellItemDto = {
   salePercent?: number;
   factors?: PriceFactorSelection[];
   trading?: TradingRequest;
+  /** Spec 062: a gem or a jewel sold to a jeweler, for its value less the commission and without a Trading roll. */
+  jeweler?: boolean;
+  /** 0-100; the economy rules give the default. */
+  jewelerPercent?: number;
 };
 
-export type PurchaseOrderLine = { itemTypeId: string; amount: number };
+/** Spec 062 adds the instance data of each line (`PurchaseItemOptions`). */
+export type PurchaseOrderLine = PurchaseItemOptions & { itemTypeId: string; amount: number };
 
 /** Several item types bought at once with the same market conditions and Trading (spec 048). */
 export type PurchaseOrderDto = {
@@ -208,4 +217,7 @@ export type QuotePriceDto = {
   salePercent?: number;
   factors?: PriceFactorSelection[];
   trading?: TradingRequest;
-};
+  /** Spec 062: the quote of a sale to a jeweler. */
+  jeweler?: boolean;
+  jewelerPercent?: number;
+} & PurchaseItemOptions;

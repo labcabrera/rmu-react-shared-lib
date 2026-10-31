@@ -146,6 +146,8 @@ export * from './api/item-operations.api';
 export * from './api/item-operations.dto';
 export * from './api/trading-tables.api';
 export * from './api/trading-tables.dto';
+export * from './api/treasure-goods.api';
+export * from './api/treasure-goods.dto';
 export * from './api/crafting.api';
 export * from './api/crafting.dto';
 export * from './api/strategic-game.api';
@@ -303,7 +305,22 @@ export type { ManeuverOrigin } from './rmu/maneuver/ManeuverOriginChip';
 export { default as InjuryTypeChip } from './rmu/health/InjuryTypeChip';
 export { default as ItemConditionChip } from './rmu/item/ItemConditionChip';
 export { default as ItemModifierChips } from './rmu/item/ItemModifierChips';
-export { default as ItemFeatureChips, itemFeatureLines } from './rmu/item/ItemFeatureChips';
+export { default as ItemFeatureChips, itemFeatureLines, moneyText } from './rmu/item/ItemFeatureChips';
+export { default as ItemFeaturesView, itemFeatureSections } from './rmu/item/ItemFeaturesView';
+export type { ItemFeatureSection } from './rmu/item/ItemFeaturesView';
+export {
+  catalogUnitValue,
+  DEFAULT_JEWELRY_CLASS,
+  ITEM_SIZE_STEPS,
+  itemSizeFactor,
+  itemSizeLengthFactor,
+  itemSizeWeight,
+  itemUnitValue,
+  JEWELRY_CLASS_FACTORS,
+  jewelryBaseAverage,
+  strategicItemUnitValue,
+} from './rmu/item/item-value';
+export type { UnitValueSource } from './rmu/item/item-value';
 export type { ItemFeatureLine, ItemFeatureSource, ItemFeatureTranslate } from './rmu/item/ItemFeatureChips';
 export { default as ItemThumb, itemImageUrl } from './rmu/item/ItemThumb';
 export {
@@ -343,7 +360,12 @@ export {
 export type { ItemCatalogFilterOptions, ItemSort } from './rmu/item/item-catalog';
 export { default as MoneyDisplay } from './rmu/item/MoneyDisplay';
 export { default as PriceBreakdownView, formatPriceFactorValue } from './rmu/item/PriceBreakdownView';
-export { default as ItemInventory, itemTotalValue, itemTotalWeight } from './rmu/item/ItemInventory';
+export {
+  default as ItemInventory,
+  itemInstanceLabels,
+  itemTotalValue,
+  itemTotalWeight,
+} from './rmu/item/ItemInventory';
 export type { ItemAction } from './rmu/item/ItemInventory';
 export { COINS, formatMoney, roundGold, toCoins } from './rmu/item/money';
 export type { Coin, CoinAmount } from './rmu/item/money';
