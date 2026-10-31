@@ -196,11 +196,32 @@ export interface NpcRunning {
   bonus: number;
 }
 
+/** Shield types of Core Law Table 9-6, the letter of the stat block (`T`, `N`, `F`, `W`). */
+export const NPC_SHIELD_TYPES = ['target', 'normal', 'full', 'wall'] as const;
+export type NpcShieldType = (typeof NPC_SHIELD_TYPES)[number];
+
+/** DB each shield type adds (Table 9-6): the npcs API takes it when a shield is sent without `db`. */
+export const NPC_SHIELD_TYPE_DB: Readonly<Record<NpcShieldType, number>> = {
+  target: 15,
+  normal: 20,
+  full: 25,
+  wall: 30,
+};
+
+/**
+ * `(N20+8/+60)` (ADR 0010): the shield type, the DB the shield adds (not part of `db` of the stat block), and the
+ * Shield skill of the creature, its ranks and total bonus (null when the stat block gives only the type). `db` is
+ * missing in NPCs stored before spec 056 and optional when sending: the DB of the type.
+ */
 export interface NpcShield {
-  type: string;
-  ranks: number;
-  bonus: number;
+  type: NpcShieldType;
+  db?: number | null;
+  ranks: number | null;
+  bonus: number | null;
 }
+
+/** The DB of a shield: its own, or the one of its type. */
+export const npcShieldDb = (shield: NpcShield): number => shield.db ?? NPC_SHIELD_TYPE_DB[shield.type] ?? 0;
 
 export interface NpcPoison {
   type: string | null;

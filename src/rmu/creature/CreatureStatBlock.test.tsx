@@ -34,6 +34,22 @@ describe('CreatureStatBlock', () => {
     expect(screen.getByText('npc-pp')).toBeInTheDocument();
   });
 
+  it('shows the shield type with its DB and the Shield skill (ADR 0010)', () => {
+    const { unmount } = renderWithProviders(
+      <CreatureStatBlock npc={{ ...sampleCreature, shield: { type: 'normal', db: 20, ranks: 8, bonus: 60 } }} />
+    );
+    expect(screen.getByText('npc-shield-type-normal +20')).toBeInTheDocument();
+    expect(screen.getByText('8 / +60')).toBeInTheDocument();
+    unmount();
+
+    // Stored before spec 056: the DB of its type, and no skill without ranks or bonus.
+    renderWithProviders(
+      <CreatureStatBlock npc={{ ...sampleCreature, shield: { type: 'full', ranks: null, bonus: null } }} />
+    );
+    expect(screen.getByText('npc-shield-type-full +25')).toBeInTheDocument();
+    expect(screen.queryByText('npc-shield-skill')).not.toBeInTheDocument();
+  });
+
   it('shows one row per attack with its table, notation and extras', () => {
     renderWithProviders(<CreatureStatBlock npc={sampleCreature} />);
 
