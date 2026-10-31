@@ -40,3 +40,17 @@ export const Minimal: Story = {
     },
   },
 };
+
+/** Attacks with no table of their own (`we`, `rw`, special attacks; spec 060) show their notation. */
+export const AttacksWithNoTable: Story = {
+  args: {
+    npc: {
+      ...sampleCreature,
+      attacks: [
+        { ...sampleCreature.attacks[0], attackTable: null, sequence: null, ob: 70, size: 5, notation: '70we' },
+        { ...sampleCreature.attacks[0], attackTable: null, sequence: null, ob: 50, size: 5, notation: '50rw' },
+        sampleCreature.attacks[1],
+      ],
+    },
+  },
+};
