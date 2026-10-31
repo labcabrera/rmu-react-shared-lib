@@ -38,7 +38,7 @@ export const defaultImages: Readonly<Record<EntityKind, string>> = {
   'tactical-game': 'images/generic/tactical.png',
   npc: 'images/generic/npcs.png',
   character: 'images/generic/warrior.png',
-  'attack-table': 'images/generic/armor.png',
+  'attack-table': 'images/generic/warrior.png',
   generic: 'images/generic/configuration.png',
 };
 
