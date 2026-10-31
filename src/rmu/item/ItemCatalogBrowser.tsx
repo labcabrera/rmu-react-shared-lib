@@ -227,7 +227,7 @@ export const ItemCatalogFilterSections: FC<{ filters: ListFilters<Item>; realms?
       </FilterSection>
       {(realms || mine) && (
         <FilterSection title={t('realm')}>
-          {realms && <RealmPicker {...bind.realm} realms={realms} />}
+          {realms && <RealmPicker {...bind.realm} realms={realms} variant="select" />}
           {mine && (
             <FormControlLabel
               control={<Switch checked={mineChecked} onChange={(event) => setMine(event.target.checked)} />}
@@ -260,8 +260,6 @@ export interface ItemCatalogBrowserProps {
   price?: (item: Item) => ReactNode;
   /** Replaces ItemCard. */
   renderItem?: (item: Item) => ReactNode;
-  /** Cards of at least this width, as many per row as fit (CardGrid `minWidth`; cardMinWidth by default). */
-  cardMinWidth?: number;
   /**
    * Shown at the top of the side panel, above the filters, and kept when the filters are hidden (the cart of the
    * market). Only in the side layout: below `lg` the caller places it.
@@ -293,7 +291,6 @@ const ItemCatalogBrowser: FC<ItemCatalogBrowserProps> = ({
   actions,
   price,
   renderItem,
-  cardMinWidth,
   panelHeader,
   panelWidth = 280,
   truncated = false,
@@ -311,7 +308,7 @@ const ItemCatalogBrowser: FC<ItemCatalogBrowserProps> = ({
 
   let content: ReactNode;
   if (error && !query.items) content = <ErrorState error={error} onRetry={refresh} />;
-  else if (!query.items) content = <LoadingState variant="showcase" cardMinWidth={cardMinWidth} />;
+  else if (!query.items) content = <LoadingState variant="showcase" />;
   else if (query.items.length === 0) content = <EmptyState title={t('catalog-empty')} />;
   else if (mode === 'table')
     content = (
@@ -322,7 +319,6 @@ const ItemCatalogBrowser: FC<ItemCatalogBrowserProps> = ({
       <CardGrid
         items={query.items}
         getKey={(item) => item.id}
-        minWidth={cardMinWidth}
         renderItem={(item) =>
           renderItem?.(item) ?? (
             <ItemCard
