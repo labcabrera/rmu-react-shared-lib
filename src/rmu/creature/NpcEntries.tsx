@@ -162,13 +162,7 @@ export const NpcEntryList: FC<{
             spacing={{ xs: 1, sm: 1.5 }}
             sx={{ alignItems: 'center', minWidth: 0, border: 1, borderColor: 'divider', borderRadius: 1, p: 1 }}
           >
-            <EntityAvatar
-              name={entry.name}
-              imageUrl={npc ? npcImage(npc) : undefined}
-              kind="npc"
-              size={48}
-              variant="rounded"
-            />
+            <EntityAvatar name={entry.name} imageUrl={npc ? npcImage(npc) : undefined} kind="npc" size={48} />
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography variant="subtitle2" sx={{ fontWeight: 700, overflowWrap: 'anywhere' }}>
                 {entry.name}

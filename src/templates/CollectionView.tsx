@@ -10,11 +10,6 @@ import CardGrid from './CardGrid';
 
 export type CollectionMode = 'cards' | 'table' | 'grouped';
 
-type GridSize = Partial<Record<'xs' | 'sm' | 'md' | 'lg' | 'xl', number>>;
-
-/** Grid sizes for showcase cards (EntityCard): fewer, larger cards than the default list grid. */
-export const gridSizeShowcase: GridSize = { xs: 12, sm: 6, md: 4, lg: 3 };
-
 /** How a list page shows its items besides the default card grid. */
 export interface CollectionConfig<T> {
   /** Views the user can choose; the first one is the default. */
@@ -26,8 +21,6 @@ export interface CollectionConfig<T> {
   /** Group key of the `grouped` view. Groups follow the order of the items. */
   groupBy?: (item: T) => string;
   groupLabel?: (group: string) => ReactNode;
-  /** Grid sizes of the `cards` view (gridSizeShowcase for EntityCard). */
-  cardSize?: GridSize;
   /** Row click in the `table` and `grouped` views (cards handle their own clicks). */
   onSelect?: (item: T) => void;
 }
@@ -141,5 +134,5 @@ export default function CollectionView<T>({
       </Stack>
     );
   }
-  return <CardGrid items={items} renderItem={renderItem} getKey={getKey} size={config?.cardSize} />;
+  return <CardGrid items={items} renderItem={renderItem} getKey={getKey} />;
 }

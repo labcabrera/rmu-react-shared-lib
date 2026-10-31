@@ -84,7 +84,6 @@ const ItemCard: FC<{
       subtitle={itemCategoryLabel(item.category, t)}
       image={image}
       fallbackImages={fallbackImages}
-      imageRatio="square"
       selected={selected}
       onClick={onClick}
       actions={actions}

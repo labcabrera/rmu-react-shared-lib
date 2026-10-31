@@ -86,10 +86,10 @@ describe('EntityCard', () => {
     expect(onClick).toHaveBeenCalled();
   });
 
-  it('renders an image by default and none with imageRatio none', () => {
+  it('renders an image by default and none with noImage', () => {
     const { container, rerender } = renderWithProviders(<EntityCard title="Climbing" image="images/climb.png" />);
     expect(container.querySelector('img')).not.toBeNull();
-    rerender(<EntityCard title="Climbing" image="images/climb.png" imageRatio="none" locked lockedLabel="private" />);
+    rerender(<EntityCard title="Climbing" image="images/climb.png" noImage locked lockedLabel="private" />);
     expect(container.querySelector('img')).toBeNull();
     expect(screen.getByLabelText('private')).toBeInTheDocument();
   });

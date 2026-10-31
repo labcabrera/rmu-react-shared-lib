@@ -61,7 +61,9 @@ const STATUS_COLORS: Record<string, 'error' | 'warning' | 'default'> = { bleedin
 /** Image of a status (images/icons), as a chip avatar; undefined when there is none. */
 export const effectIcon = (status: string) => {
   const file = ICONS[normalizeEffectStatus(status)];
-  return file ? <Avatar alt="" src={resolveAssetUrl(`images/icons/${file}.png`)} /> : undefined;
+  return file ? (
+    <Avatar variant="rounded" alt="" src={resolveAssetUrl(`images/icons/${file}.png`)} sx={{ borderRadius: '4px' }} />
+  ) : undefined;
 };
 
 /**

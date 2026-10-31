@@ -11,7 +11,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import EntityAvatar from '../avatars/EntityAvatar';
+import EntityAvatar, { avatarSize } from '../avatars/EntityAvatar';
 import { EntityKind } from '../config/default-images';
 
 export { default as EntityAvatar } from '../avatars/EntityAvatar';
@@ -144,7 +144,7 @@ export default function EntityPicker<T = unknown>(props: EntityPickerProps<T>) {
     }
   };
 
-  const avatar = (option: EntityOption<T>, size: number, rounded = false) =>
+  const avatar = (option: EntityOption<T>, size: number) =>
     hideImages && !option.icon ? undefined : (
       <EntityAvatar
         name={option.label}
@@ -152,7 +152,6 @@ export default function EntityPicker<T = unknown>(props: EntityPickerProps<T>) {
         kind={option.id === ALL_ID ? undefined : kind}
         icon={option.icon}
         size={size}
-        variant={rounded ? 'rounded' : 'circular'}
         faded={!!option.disabledReason}
         imageFilter={imageFilter}
       />
@@ -214,13 +213,13 @@ export default function EntityPicker<T = unknown>(props: EntityPickerProps<T>) {
                 aria-disabled={isDisabled(option) || undefined}
                 tabIndex={isDisabled(option) ? -1 : multiple || option.id === focusId ? 0 : -1}
                 label={option.label}
-                avatar={avatar(option, 24)}
+                avatar={avatar(option, avatarSize.tile)}
                 color={checked ? 'primary' : 'default'}
                 variant={checked ? 'filled' : 'outlined'}
                 disabled={isDisabled(option)}
                 onClick={() => choose(option.id)}
                 onKeyDown={(event) => onKeyDown(event, option)}
-                sx={{ minHeight: 32 }}
+                sx={{ minHeight: 40 }}
               />
             );
             const hint = option.disabledReason ?? option.secondary;
@@ -241,7 +240,7 @@ export default function EntityPicker<T = unknown>(props: EntityPickerProps<T>) {
 
   const optionContent = (option: EntityOption<T>) => (
     <Stack direction="row" spacing={1} sx={{ alignItems: 'center', minWidth: 0 }}>
-      {avatar(option, 28, true)}
+      {avatar(option, avatarSize.option)}
       <Box sx={{ minWidth: 0 }}>
         <Typography variant="body2" noWrap>
           {option.label}
@@ -325,7 +324,7 @@ export default function EntityPicker<T = unknown>(props: EntityPickerProps<T>) {
         renderValue={(selected, getItemProps) =>
           selected.map((option, index) => {
             const { key, ...itemProps } = getItemProps({ index });
-            return <Chip key={key} {...itemProps} label={option.label} avatar={avatar(option, 20)} />;
+            return <Chip key={key} {...itemProps} label={option.label} avatar={avatar(option, avatarSize.chip)} />;
           })
         }
         renderInput={(params) => input(params)}
@@ -343,7 +342,9 @@ export default function EntityPicker<T = unknown>(props: EntityPickerProps<T>) {
       disableClearable={!clearable}
       value={selected ?? (null as unknown as EntityOption<T>)}
       onChange={(_, option) => choose(option?.id ?? ALL_ID)}
-      renderInput={(params) => input(params, selected && selected.id !== ALL_ID ? avatar(selected, 24) : undefined)}
+      renderInput={(params) =>
+        input(params, selected && selected.id !== ALL_ID ? avatar(selected, avatarSize.input) : undefined)
+      }
     />
   );
 }

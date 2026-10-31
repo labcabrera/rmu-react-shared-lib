@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
-import EditableAvatar from '../avatars/EditableAvatar';
+import EntityImage from '../avatars/EntityImage';
 import AddButton from '../buttons/AddButton';
 import DeleteButton from '../buttons/DeleteButton';
 import EditButton from '../buttons/EditButton';
@@ -53,7 +53,7 @@ export const DetailPage: Story = {
     ],
     leftPanel: (
       <>
-        <EditableAvatar imageUrl="images/items/arming-sword.png" onImageChange={fn()} />
+        <EntityImage image="images/items/arming-sword.png" onImageChange={fn()} />
         <Typography variant="h6">Arming sword</Typography>
         <Typography>Weapon</Typography>
       </>

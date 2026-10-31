@@ -42,7 +42,7 @@ export const Compact: Story = {
   args: {
     title: 'Climbing',
     subtitle: 'Athletic',
-    imageRatio: 'none',
+    noImage: true,
     chips: (
       <>
         <Chip size="small" label="AG" />
@@ -54,5 +54,5 @@ export const Compact: Story = {
 };
 
 export const CompactLocked: Story = {
-  args: { imageRatio: 'none', locked: true, lockedLabel: 'Private' },
+  args: { noImage: true, locked: true, lockedLabel: 'Private' },
 };

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { isUploadPath, resolveAssetUrl } from './asset-url';
+import { assetCandidates, isUploadPath, resolveAssetUrl, thumbPath, thumbSizeFor } from './asset-url';
 
 describe('resolveAssetUrl', () => {
   const original = { assets: process.env.RMU_MFE_ASSETS_URI, media: process.env.RMU_MFE_MEDIA_URI };
@@ -45,5 +45,45 @@ describe('resolveAssetUrl', () => {
     expect(isUploadPath('uploads/npcs/a.png')).toBe(true);
     expect(isUploadPath('images/uploads/a.png')).toBe(false);
     expect(isUploadPath(undefined)).toBe(false);
+  });
+});
+
+describe('thumbnails (spec 058)', () => {
+  const original = process.env.RMU_MFE_ASSETS_URI;
+  afterEach(() => {
+    process.env.RMU_MFE_ASSETS_URI = original;
+  });
+
+  it('maps a base image to its webp thumbnail', () => {
+    expect(thumbPath('images/races/elf-01.png', 128)).toBe('images/thumbs/128/races/elf-01.webp');
+    expect(thumbPath('./images/npcs/warg.alt.png', 512)).toBe('images/thumbs/512/npcs/warg.alt.webp');
+    expect(thumbPath('images/items/category-melee-weapon@blade.png', 128)).toBe(
+      'images/thumbs/128/items/category-melee-weapon@blade.webp'
+    );
+  });
+
+  it('has no thumbnail for uploads, absolute URLs, thumbnails or paths outside a category', () => {
+    expect(thumbPath('uploads/races/a.png', 128)).toBeUndefined();
+    expect(thumbPath('https://x/images/races/a.png', 128)).toBeUndefined();
+    expect(thumbPath('images/thumbs/128/races/a.webp', 128)).toBeUndefined();
+    expect(thumbPath('images/a.png', 128)).toBeUndefined();
+    expect(thumbPath(null, 128)).toBeUndefined();
+  });
+
+  it('picks the thumbnail size for a rendered size', () => {
+    expect(thumbSizeFor(40)).toBe(128);
+    expect(thumbSizeFor(64)).toBe(128);
+    expect(thumbSizeFor(96)).toBe(512);
+  });
+
+  it('lists the thumbnail before the original, without duplicates', () => {
+    process.env.RMU_MFE_ASSETS_URI = '/a/';
+    process.env.RMU_MFE_MEDIA_URI = '/media/';
+    expect(assetCandidates(['images/races/x.png', 'uploads/u.png', 'images/races/x.png', null], 128)).toEqual([
+      '/a/images/thumbs/128/races/x.webp',
+      '/a/images/races/x.png',
+      '/media/uploads/u.png',
+    ]);
+    expect(assetCandidates(['images/races/x.png'])).toEqual(['/a/images/races/x.png']);
   });
 });
