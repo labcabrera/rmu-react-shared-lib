@@ -8,6 +8,9 @@ export async function fetchSpellList(id: string, auth: AuthContextProps): Promis
   return callApi(auth, url, { method: 'GET' });
 }
 
+/** Largest page of `GET /spell-lists`, a catalog loaded whole (`CatalogPagedQueryDto` of rmu-api-spells). */
+export const SPELL_LIST_CATALOG_MAX = 1000;
+
 export async function fetchSpellLists(
   rsql: string,
   page: number,

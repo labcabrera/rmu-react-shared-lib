@@ -8,6 +8,7 @@ import {
   NPC_RESISTANCES,
   NpcAttack,
   NpcBiome,
+  npcShieldDb,
   NpcStatBlock,
 } from '../../api/npc.dto';
 import Panel from '../../layouts/Panel';
@@ -265,8 +266,15 @@ const CreatureStatBlock: FC<{
           {npc.shield && (
             <Value
               label={t('npc-shield')}
-              value={`${npc.shield.ranks} / ${formatBonus(npc.shield.bonus)}`}
-              hint={npc.shield.type}
+              value={`${t(`npc-shield-type-${npc.shield.type}`)} ${formatBonus(npcShieldDb(npc.shield))}`}
+              hint={t('npc-shield-hint')}
+            />
+          )}
+          {npc.shield && (npc.shield.ranks !== null || npc.shield.bonus !== null) && (
+            <Value
+              label={t('npc-shield-skill')}
+              value={`${npc.shield.ranks ?? '–'} / ${formatBonus(npc.shield.bonus ?? 0)}`}
+              hint={t('npc-shield-skill-hint')}
             />
           )}
           {npc.powerPoints !== null && npc.powerPoints !== undefined && (

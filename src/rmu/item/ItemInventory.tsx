@@ -23,6 +23,7 @@ import EmptyState from '../../ui/states/EmptyState';
 import ItemConditionChip from './ItemConditionChip';
 import ItemModifierChips from './ItemModifierChips';
 import ItemThumb from './ItemThumb';
+import { normalizeText } from './item-catalog';
 import MoneyDisplay from './MoneyDisplay';
 import { roundGold } from './money';
 
@@ -181,11 +182,11 @@ const ItemInventory: FC<{
   const [grouping, setGrouping] = useState<Grouping>(groupings[0]);
 
   const visible = useMemo(() => {
-    const text = search.trim().toLowerCase();
+    const text = normalizeText(search.trim());
     const name = (item: StrategicItem) => t(item.name, { defaultValue: item.name });
     return items
       .filter((item) => !hideItemTypeIds.includes(item.itemTypeId))
-      .filter((item) => !text || name(item).toLowerCase().includes(text) || item.itemTypeId.includes(text))
+      .filter((item) => !text || normalizeText(name(item)).includes(text) || item.itemTypeId.includes(text))
       .sort((a, b) => name(a).localeCompare(name(b)));
   }, [items, search, hideItemTypeIds, t]);
 
