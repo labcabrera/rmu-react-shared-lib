@@ -133,13 +133,6 @@ export const ItemSortControl: FC<{ filters: ListFilters<Item> }> = ({ filters })
   );
 };
 
-const slotImages: Record<string, string> = {
-  head: 'images/items/category-head.png',
-  body: 'images/items/category-body.png',
-  arms: 'images/items/category-arms.png',
-  legs: 'images/items/category-legs.png',
-};
-
 /**
  * The filter sections of the item catalog (decision 11), for the side panel of a ListPage (`filters` with
  * `filtersLayout="side"`) or of ItemCatalogBrowser. The armor and weapon sections show only with their category.
@@ -167,7 +160,7 @@ export const ItemCatalogFilterSections: FC<{ filters: ListFilters<Item>; realms?
     hands: single('hands'),
     attack: single('attack'),
     realm: single('realm'),
-    at: multiple('at'),
+    at: single('at'),
     skill: multiple('skill'),
     rarity: multiple('rarity'),
     feature: multiple('feature'),
@@ -195,7 +188,7 @@ export const ItemCatalogFilterSections: FC<{ filters: ListFilters<Item>; realms?
       </FilterSection>
       <FilterSection title={t('item-category-armor')} hidden={!armor}>
         <EnumPicker {...bind.at} variant="tiles" label={t('at-short')} values={ARMOR_TYPES} />
-        <EnumPicker {...bind.slot} variant="tiles" label={t('slot')} values={ARMOR_SLOT_FILTERS} images={slotImages} />
+        <EnumPicker {...bind.slot} variant="tiles" label={t('slot')} values={ARMOR_SLOT_FILTERS} />
         <EnumPicker
           {...bind.armorClass}
           variant="tiles"
