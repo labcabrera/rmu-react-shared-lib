@@ -43,6 +43,9 @@ export type ImageCategorySelectorProps = {
   onDeleted?: (image: MediaImage) => void;
 };
 
+/** The file name of a path without its extension: `images/races/elf-01.png` → `elf-01`. */
+const fileName = (path: string): string => path.split('/').pop()?.replace(/\.[^.]+$/, '') ?? '';
+
 /**
  * Whether the signed-in user may edit or delete an image: only uploads, by their owner or an admin. Base
  * images (the files of rmu-mfe-assets) are read only (workspace spec 057). Only hides UI: media enforces it.
@@ -166,7 +169,8 @@ export default function ImageCategorySelector({
             const selected = selectedImageId === image.id;
             const base = isBaseImage(image);
             const manageable = canManageImage(image, userId, admin);
-            const title = image.altText || image.originalFilename || image.category;
+            // Base images have no alt text: their file name tells them apart (spec 057).
+            const title = image.altText || image.originalFilename || fileName(imagePath(image)) || image.category;
             return (
               <ImageListItem
                 key={image.id}
