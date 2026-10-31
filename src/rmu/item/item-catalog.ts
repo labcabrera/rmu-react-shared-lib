@@ -125,7 +125,7 @@ export const itemCatalogFilters = (
       match: (item) => item.owner === owner,
     },
     at: {
-      kind: 'multiple',
+      kind: 'single',
       label: t('at-short'),
       options: ARMOR_TYPES,
       when: isArmor,
