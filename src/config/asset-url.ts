@@ -63,7 +63,10 @@ const BASE_IMAGE = /^images\/(?!thumbs\/)([^/]+)\/([^/]+)\.[a-z0-9]+$/i;
  * rmu-mfe-assets. Undefined for anything else: uploads, absolute URLs, paths outside a category.
  */
 export const thumbPath = (path: string | null | undefined, size: ThumbSize): string | undefined => {
-  const match = path?.replace(/^\.\//, '').match(BASE_IMAGE);
+  // Paths already resolved against RMU_MFE_ASSETS_URI (`${imageBaseUrl}images/...`) count as base images too.
+  const assets = process.env.RMU_MFE_ASSETS_URI || '';
+  const relative = assets && path?.startsWith(assets) ? path.slice(assets.length).replace(/^\//, '') : path;
+  const match = relative?.replace(/^\.\//, '').match(BASE_IMAGE);
   return match ? `images/thumbs/${size}/${match[1]}/${match[2]}.webp` : undefined;
 };
 

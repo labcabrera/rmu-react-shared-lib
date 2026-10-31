@@ -70,6 +70,12 @@ describe('thumbnails (spec 058)', () => {
     expect(thumbPath(null, 128)).toBeUndefined();
   });
 
+  it('also maps base images already resolved against RMU_MFE_ASSETS_URI', () => {
+    process.env.RMU_MFE_ASSETS_URI = '/mfe/assets/';
+    expect(thumbPath('/mfe/assets/images/generic/core.png', 512)).toBe('images/thumbs/512/generic/core.webp');
+    expect(thumbPath('/other/images/generic/core.png', 512)).toBeUndefined();
+  });
+
   it('picks the thumbnail size for a rendered size', () => {
     expect(thumbSizeFor(40)).toBe(128);
     expect(thumbSizeFor(64)).toBe(128);
