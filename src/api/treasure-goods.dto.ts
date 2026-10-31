@@ -34,6 +34,18 @@ export type HerbEffectDelay = (typeof HERB_EFFECT_DELAYS)[number];
 export const ANY_INJURY = 'any';
 export type HerbTreats = InjuryType | typeof ANY_INJURY;
 
+/** Injury types a herb may treat, and `any` (the `HERB_INJURY_KINDS` of rmu-api-items). */
+export const HERB_INJURY_KINDS: readonly HerbTreats[] = [
+  'bone',
+  'cut-burn',
+  'muscle-tendon',
+  'organ',
+  'poison-disease',
+  'skin-tissue',
+  'unknown',
+  ANY_INJURY,
+];
+
 /** Stun relief that removes every round of stun. */
 export const ALL_STUN_ROUNDS = 999;
 
@@ -164,9 +176,13 @@ export type PurchaseItemOptions = {
 /** `POST v1/characters/:id/herb-uses`. Without a roll the server rolls the hits in the range of the herb. */
 export type UseHerbDto = { itemId: string; roll?: number };
 
-/** What a herb use answers: hits healed, the hits of the character and the item (null once the last dose is gone). */
+/**
+ * What a herb use answers: hits healed (capped by the max hits), the roll of the dose, the hits of the character and
+ * the item (null once the last dose is gone).
+ */
 export type UseHerbResult = {
   healed: number;
+  roll: number;
   hp: { current: number; max: number };
   item: StrategicItem | null;
 };
@@ -186,51 +202,83 @@ export type HerbSearchDto = {
   bonus?: number;
   /** Complementary skills (Herbalism, Region Lore) and any other modifier. */
   modifiers?: RollModifier[];
-  previousSearches: number;
-  familiar: boolean;
+  previousSearches?: number;
+  familiar?: boolean;
 };
 
 export const HERB_SEARCH_RESULTS = ['found', 'not-found', 'absolute-failure', 'not-here'] as const;
 export type HerbSearchOutcome = (typeof HERB_SEARCH_RESULTS)[number];
 
-/** The result of one herb. `doses` is 1d10 + 1 per full 10 over 100; `doseRoll` is that d10. */
+/** The result of one herb. `doses` is 1d10 + 1 per full 10 over 100 when found (else 0); `d10` is that die. */
 export type HerbSearchEntry = {
   itemTypeId: string;
-  /** Find difficulty of the herb. */
-  difficulty: number;
-  total: number | null;
+  name: string;
+  /** Find code of the herb (`h`, `vh`...). */
+  difficulty: string | null;
+  /** Difficulty, previous searches and several herbs. */
+  modifiers: RollModifier[];
+  /** Total of the maneuver; 0 when the herb is not here. */
+  total: number;
+  /** Result of the absolute maneuver of core. */
+  maneuverResult?: string;
   result: HerbSearchOutcome;
+  d10?: number;
   doses: number;
-  doseRoll?: number | null;
-  /** Penalties of this herb: repeated search and several herbs. */
-  modifiers?: RollModifier[];
+  /** Items of the character the doses went to. */
+  itemIds: string[];
 };
 
 export type HerbSearchResult = {
-  results: HerbSearchEntry[];
+  biome: HerbBiome;
+  highAltitude: boolean;
+  skillId: HerbSearchSkill;
+  roll: number;
+  /** Skill bonus used. */
+  bonus: number;
+  modifiers: RollModifier[];
+  /** Roll + bonus + modifiers, before the modifiers of each herb. */
+  base: number;
   /** Hours the search takes (10, halved when familiar); the campaign clock is not advanced. */
   hours: number;
-  /** The items the doses were added as. */
-  items?: StrategicItem[];
+  unusualEvent?: boolean;
+  herbs: HerbSearchEntry[];
+  /** The items with the doses found. */
+  items: StrategicItem[];
 };
 
 /** `POST v1/actor-rounds/:id/herbs` in the tactical module. */
 export type UseActorHerbDto = { itemId: string; roll?: number };
 
-/** What a tactical herb use answers; the actor round type lives in the tactical MFE. */
+/**
+ * What a tactical herb use answers; the actor round type lives in the tactical MFE. Tactical does not spend the dose
+ * (like the antidotes of spec 042): the caller discards one unit of the strategic item.
+ */
 export type ActorHerbResult<T = unknown> = {
   actorRound: T;
-  healed?: number;
-  stunRemoved?: number;
+  item: { id: string; itemTypeId: string; name: string };
+  roll?: number;
+  healed: number;
+  stunRoundsRemoved: number;
 };
 
-/** Bonuses of a treatment with a specific herb (spec 062). */
+/** The herb of the inventory a treatment used and what it added to the Medicine and recovery rolls (spec 062). */
 export type TreatmentHerb = {
-  itemId?: string;
-  itemTypeId?: string;
-  name?: string;
+  itemId: string;
+  itemTypeId: string;
+  name: string;
+  magical: boolean;
   medicineBonus: number;
   recoveryBonus: number;
+};
+
+/** The instance fields of a purchase-order quote line, with their defaults (a jewel is quoted at mid range). */
+export type ItemInstanceSpec = {
+  size?: ItemSize | null;
+  carats?: number | null;
+  cutFactor?: number | null;
+  jewelryClass?: JewelryClass | null;
+  /** Jewelry: base value before the class factor. */
+  jewelryValue?: number | null;
 };
 
 // Taxes (Treasure Law table 2-2i), a reference table of rmu-api-core.

@@ -1,9 +1,18 @@
 import { CraftingQualityDto } from './crafting.dto';
 import { ItemHolder, StrategicItem } from './strategic-item.dto';
-import type { PurchaseItemOptions } from './treasure-goods.dto';
+import type { ItemInstanceSpec, PurchaseItemOptions } from './treasure-goods.dto';
 
-/** Operations of the item ledger (spec 023). */
-export type ItemLedgerKind = 'purchase' | 'sale' | 'transfer' | 'craft' | 'repair' | 'discard' | 'gold-transfer';
+/** Operations of the item ledger (spec 023); `import` (spec 024) and `found`, the doses of a herb search (spec 062). */
+export type ItemLedgerKind =
+  | 'purchase'
+  | 'sale'
+  | 'transfer'
+  | 'craft'
+  | 'repair'
+  | 'discard'
+  | 'gold-transfer'
+  | 'import'
+  | 'found';
 
 /** Who pays a purchase of a character: its coins, its faction, or its coins and then the faction. */
 export type PayerMode = 'holder' | 'faction' | 'split';
@@ -54,6 +63,8 @@ export type PriceBreakdown = {
   /** Base times the factor, before the negotiation */
   expectedUnitPrice?: number;
   trading?: TradingResult;
+  /** Spec 062: commission of the jeweler that bought it. */
+  jewelerPercent?: number;
   unitPrice: number;
   total: number;
 };
@@ -161,7 +172,8 @@ export type PurchaseOrderDto = {
 export type QuotePurchaseOrderDto = Omit<PurchaseOrderDto, 'buyer' | 'gameId' | 'payer'> & { buyer?: ItemHolder };
 
 export type PurchaseOrderQuote = {
-  lines: { itemTypeId: string; amount: number; price: PriceBreakdown }[];
+  /** `instance`: the instance fields with their defaults (spec 062). */
+  lines: { itemTypeId: string; amount: number; instance?: ItemInstanceSpec; price: PriceBreakdown }[];
   factor?: PriceFactors;
   /** A null `pricePercent` means there is no deal: buying fails. */
   trading?: TradingResult;

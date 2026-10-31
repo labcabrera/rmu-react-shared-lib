@@ -33,8 +33,9 @@ describe('itemUnitValue (spec 062)', () => {
     expect(itemUnitValue({ category: 'gem', features: gem, carats: 0.5, cutFactor: 10 })).toBe(10);
   });
 
-  it('has no value for a gem without carats', () => {
-    expect(itemUnitValue({ category: 'gem', features: gem })).toBeNull();
+  it('takes one carat by default, and the catalog cost without a value per carat', () => {
+    expect(itemUnitValue({ category: 'gem', features: gem })).toBe(2);
+    expect(itemUnitValue({ category: 'gem', features: {}, carats: 3, cost: 7 })).toBe(7);
     expect(itemUnitValue({ category: 'gem', features: {}, carats: 3 })).toBeNull();
   });
 
@@ -45,9 +46,14 @@ describe('itemUnitValue (spec 062)', () => {
     expect(itemUnitValue({ category: 'jewelry', features: jewel, value: 20, jewelryClass: 'costume' })).toBe(0.2);
   });
 
-  it('takes the middle of the range and the quality class when they are missing', () => {
+  it('takes the catalog cost, of the quality class, without a base value', () => {
     expect(jewelryBaseAverage(jewel)).toBe(20);
-    expect(itemUnitValue({ category: 'jewelry', features: jewel })).toBe(2);
+    expect(itemUnitValue({ category: 'jewelry', features: jewel, cost: 2 })).toBe(2);
+    expect(itemUnitValue({ category: 'jewelry', features: jewel, cost: 2, jewelryClass: 'fine' })).toBe(20);
+    expect(itemUnitValue({ category: 'jewelry', features: jewel, cost: 2, jewelryClass: 'junk', size: 'big' })).toBe(
+      0.08
+    );
+    expect(itemUnitValue({ category: 'jewelry', features: jewel, value: 20 })).toBe(2);
   });
 
   it('scales a jewel of another size', () => {
@@ -65,10 +71,11 @@ describe('itemUnitValue (spec 062)', () => {
     expect(itemUnitValue({ category: 'tools', cost: null })).toBeNull();
   });
 
-  it('keeps very small prices instead of rounding them to copper', () => {
+  it('keeps an unscaled catalog cost and rounds a scaled one to copper, as strategic does', () => {
     // 0.005 sp is 0.0005 gp
     expect(itemUnitValue({ category: 'herb', cost: 0.0005 })).toBe(0.0005);
-    expect(itemUnitValue({ category: 'herb', cost: 0.0005, size: 'small' })).toBe(0.000125);
+    expect(itemUnitValue({ category: 'herb', cost: 0.0005, size: 'big' })).toBe(0.002);
+    expect(itemUnitValue({ category: 'herb', cost: 0.0005, size: 'small' })).toBe(0);
   });
 
   it('scales weight and length with the size', () => {
@@ -95,6 +102,6 @@ describe('itemUnitValue (spec 062)', () => {
     } as unknown as StrategicItem;
     expect(strategicItemUnitValue(owned)).toBe(99);
     expect(strategicItemUnitValue({ ...owned, value: undefined, carats: 3 })).toBe(6);
-    expect(strategicItemUnitValue({ ...owned, value: undefined, carats: null })).toBe(0);
+    expect(strategicItemUnitValue({ ...owned, value: undefined, carats: null })).toBe(2);
   });
 });

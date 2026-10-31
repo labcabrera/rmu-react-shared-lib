@@ -1,6 +1,7 @@
 import type { ItemFeatures } from '../../api/item.dto';
 import type { StrategicItem } from '../../api/strategic-item.dto';
 import type { ItemSize, JewelryClass } from '../../api/treasure-goods.dto';
+import { roundGold } from './money';
 
 // Unit value of an item of spec 062 (gold), the same rule rmu-api-strategic applies to purchases and price quotes.
 
@@ -19,9 +20,6 @@ export const JEWELRY_CLASS_FACTORS: Record<JewelryClass, number> = {
 /** The class a jewel takes when none is given, the one of the indicative catalog cost. */
 export const DEFAULT_JEWELRY_CLASS: JewelryClass = 'quality';
 
-/** Float noise off, without rounding small prices (0.005 sp is 0.0005 gp) to copper. */
-const clean = (value: number): number => Math.round(value * 1e9) / 1e9;
-
 const steps = (size: ItemSize | null | undefined): number => (size ? ITEM_SIZE_STEPS[size] : 0);
 
 /** Multiplier of the cost and the weight of an item of that size (null is medium). */
@@ -32,7 +30,11 @@ export const itemSizeLengthFactor = (size: ItemSize | null | undefined): number 
 
 /** Weight of an item of that size; null stays null. */
 export const itemSizeWeight = (weight: number | null | undefined, size: ItemSize | null | undefined): number | null =>
-  weight === null || weight === undefined ? null : clean(weight * itemSizeFactor(size));
+  weight === null || weight === undefined
+    ? null
+    : steps(size) === 0
+      ? weight
+      : Math.round(weight * itemSizeFactor(size) * 100) / 100;
 
 /** The middle of the base range of a jewelry type, before the class factor. */
 export const jewelryBaseAverage = (features: ItemFeatures | null | undefined): number | null => {
@@ -50,33 +52,38 @@ export type UnitValueSource = {
   carats?: number | null;
   cutFactor?: number | null;
   jewelryClass?: JewelryClass | null;
-  /** Jewelry: base value rolled or entered, before the class factor; the middle of the range when missing. */
+  /** Jewelry: base value rolled or entered, before the class factor; without it the catalog cost is used. */
   value?: number | null;
 };
 
 /**
- * Gold of one unit (spec 062 §3):
- * - a gem: value per carat × carats × cut factor (null without carats);
- * - a jewel: base value × the factor of its class (`quality` by default) × the size factor;
- * - anything else: catalog cost × 4 per size category from medium.
+ * Gold of one unit (spec 062 §3), the `ItemUnitValue.unitValue` of rmu-api-strategic:
+ * - a gem: value per carat × carats (1 by default) × cut factor; its catalog cost without a value per carat;
+ * - a jewel with a base value: base × the gold factor of its class (`quality` by default) × the size factor;
+ * - anything else, a jewel without a base value too: catalog cost × 4 per size category from medium (a jewel also by
+ *   its class against `quality`, the class of the catalog cost).
  *
- * Null when there is nothing to price.
+ * Rounded to copper like every price, except an unscaled catalog cost. Null when there is nothing to price.
  */
 export const itemUnitValue = (source: UnitValueSource): number | null => {
   const { features } = source;
-  if (source.category === 'gem' || features?.gem) {
+  const factor = itemSizeFactor(source.size);
+  if (source.category === 'gem') {
     const perCarat = features?.gem?.valuePerCarat;
-    if (perCarat === undefined || perCarat === null || !source.carats) return null;
-    return clean(perCarat * source.carats * (source.cutFactor ?? 1));
+    if (perCarat === undefined || perCarat === null) return source.cost ?? null;
+    return roundGold(perCarat * (source.carats ?? 1) * (source.cutFactor ?? 1));
   }
-  if (source.category === 'jewelry' && features?.jewelry) {
-    const base = source.value ?? jewelryBaseAverage(features);
-    if (base === null) return null;
-    const factor = JEWELRY_CLASS_FACTORS[source.jewelryClass ?? DEFAULT_JEWELRY_CLASS];
-    return clean(base * factor * itemSizeFactor(source.size));
+  const jewel = source.category === 'jewelry';
+  if (jewel && source.value !== undefined && source.value !== null) {
+    const base = roundGold(source.value * JEWELRY_CLASS_FACTORS[source.jewelryClass ?? DEFAULT_JEWELRY_CLASS]);
+    return roundGold(base * factor);
   }
   if (source.cost === undefined || source.cost === null) return null;
-  return clean(source.cost * itemSizeFactor(source.size));
+  const classFactor =
+    jewel && source.jewelryClass
+      ? JEWELRY_CLASS_FACTORS[source.jewelryClass] / JEWELRY_CLASS_FACTORS[DEFAULT_JEWELRY_CLASS]
+      : 1;
+  return factor === 1 && classFactor === 1 ? source.cost : roundGold(source.cost * classFactor * factor);
 };
 
 /** Unit value of a catalog item bought with that instance data (the market preview). */
