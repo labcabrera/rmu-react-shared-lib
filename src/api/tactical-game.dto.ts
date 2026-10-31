@@ -10,9 +10,12 @@ export type TacticalGame = {
   status: TacticalGameStatus;
   round: number;
   phase: string;
+  /** Ids of the strategic factions, plus {@link ENVIRONMENT_FACTION_ID} while the environment has NPCs (spec 055). */
   factions: string[];
-  actors: ActorRoundSelection[];
+  actors: TacticalGameActor[];
   environment: TacticalGameEnvironment;
+  /** The environment faction (spec 055): the NPCs of no player, owned by the game master. */
+  environmentFaction?: TacticalGameEnvironmentFaction | null;
   description: string;
   owner: string;
   imageUrl?: string;
@@ -20,9 +23,56 @@ export type TacticalGame = {
   outcome?: TacticalGameOutcome;
 };
 
+/** @deprecated The API sends {@link TacticalGameActor}. */
 export type ActorRoundSelection = {
   id: string;
   actorId: string;
+};
+
+/** Reserved faction id of the environment of a tactical game (spec 055, decision 2). */
+export const ENVIRONMENT_FACTION_ID = 'environment';
+
+/** Name the API gives the environment when none is set; the front shows it translated. */
+export const DEFAULT_ENVIRONMENT_NAME = 'Environment';
+
+/**
+ * An actor of a tactical game. A character has the id of its sheet; an NPC specimen (spec 055) has an id of its own
+ * and its NPC in `npcId`, named `Wolf 1`, `Wolf 2`…
+ */
+export type TacticalGameActor = {
+  id: string;
+  name: string;
+  faction: { id: string; name: string };
+  type: 'character' | 'npc';
+  /** Who plays it: the owner of the character or of the faction, the game master for the environment. */
+  owner: string;
+  npcId?: string;
+};
+
+/** NPCs of one kind chosen for a game: `count` specimens named after `name`. */
+export type TacticalGameNpc = {
+  npcId: string;
+  count: number;
+  name: string;
+};
+
+export type TacticalGameEnvironmentFaction = {
+  factionId: typeof ENVIRONMENT_FACTION_ID;
+  name: string;
+  npcs: TacticalGameNpc[];
+};
+
+/** NPCs requested for a faction of the game (`environment` for the environment): 1 specimen by default. */
+export type TacticalGameNpcRequest = {
+  npcId: string;
+  factionId: string;
+  count?: number;
+  name?: string;
+};
+
+export type CreateEnvironmentFactionDto = {
+  name?: string;
+  npcs: Omit<TacticalGameNpcRequest, 'factionId'>[];
 };
 
 export type TacticalGameEnvironment = {
@@ -32,12 +82,25 @@ export type TacticalGameEnvironment = {
 
 export type CreateTacticalGameDto = Omit<
   TacticalGame,
-  'id' | 'status' | 'round' | 'phase' | 'factions' | 'actors' | 'owner'
->;
+  'id' | 'status' | 'round' | 'phase' | 'factions' | 'actors' | 'owner' | 'environmentFaction'
+> & {
+  factions?: string[];
+  /** The NPCs of the strategic factions in `factions` become actors; `true` by default (spec 055). */
+  includeFactionNpcs?: boolean;
+  /** Extra NPCs for factions of the game. */
+  npcs?: TacticalGameNpcRequest[];
+  environmentFaction?: CreateEnvironmentFactionDto;
+};
 
 export type UpdateTacticalGameDto = Partial<
-  Omit<TacticalGame, 'id' | 'strategicGameId' | 'status' | 'round' | 'phase' | 'factions' | 'actors' | 'owner'>
->;
+  Omit<
+    TacticalGame,
+    'id' | 'strategicGameId' | 'status' | 'round' | 'phase' | 'factions' | 'actors' | 'owner' | 'environmentFaction'
+  >
+> & {
+  /** Renames the environment, only while the game is `created`. */
+  environmentFaction?: { name: string };
+};
 
 /** Modifiers an item of the character got in the game (spec 019). */
 export type TacticalGameItemOutcome = {

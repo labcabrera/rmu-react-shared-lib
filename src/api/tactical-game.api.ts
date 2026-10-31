@@ -5,7 +5,9 @@ import {
   CreateTacticalGameDto,
   FinishPreview,
   FinishTacticalGameDto,
+  ENVIRONMENT_FACTION_ID,
   TacticalGame,
+  TacticalGameNpcRequest,
   UpdateTacticalGameDto,
 } from './tactical-game.dto';
 
@@ -111,6 +113,33 @@ export async function addActor(
     body: JSON.stringify(request),
   });
 }
+
+/** Adds NPC specimens to factions of a `created` game (spec 055); `factionId` may be `environment`. */
+export async function addTacticalGameNpcs(
+  gameId: string,
+  npcs: TacticalGameNpcRequest[],
+  auth: AuthContextProps
+): Promise<TacticalGame> {
+  const url = `${apiTacticalUrl}/tactical-games/${gameId}/actors`;
+  return await callApi(auth, url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ npcs }),
+  });
+}
+
+/** Renames the environment faction of a `created` game (spec 055). */
+export async function renameEnvironmentFaction(
+  gameId: string,
+  name: string,
+  auth: AuthContextProps
+): Promise<TacticalGame> {
+  return updateTacticalGame(gameId, { environmentFaction: { name } }, auth);
+}
+
+/** Whether a faction id is the environment of a tactical game (spec 055). */
+export const isEnvironmentFaction = (factionId: string | null | undefined): boolean =>
+  factionId === ENVIRONMENT_FACTION_ID;
 
 export async function deleteActor(gameId: string, actorId: string, auth: AuthContextProps): Promise<TacticalGame> {
   const data = { actors: [actorId] };
