@@ -74,6 +74,8 @@ const ItemCard: FC<{
   const [image, fallbackImages] = itemCardImages(item);
   const weight = item.info.weight;
   const cost = item.info.cost?.average;
+  // Gems have no unit cost: they are priced per carat (spec 062).
+  const perCarat = !cost ? item.features?.gem?.valuePerCarat : undefined;
   const metrics: EntityMetric[] = [
     ...itemMetrics(item, t),
     ...(weight !== null && weight !== undefined ? [{ label: t('weight'), value: `${weight} ${t('lbs')}` }] : []),
@@ -98,10 +100,12 @@ const ItemCard: FC<{
       metrics={[
         ...metrics,
         {
-          label: t('cost'),
+          label: !price && perCarat ? t('gem-value-per-carat') : t('cost'),
           value:
             price ??
-            (cost ? (
+            (perCarat ? (
+              <MoneyDisplay gold={perCarat} variant="subtitle2" />
+            ) : cost ? (
               <MoneyDisplay gold={cost} variant="subtitle2" />
             ) : (
               <Typography variant="subtitle2" color="text.secondary" component="span">

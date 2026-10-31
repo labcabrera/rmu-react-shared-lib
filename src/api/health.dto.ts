@@ -3,6 +3,7 @@
 import type { RollModifier } from '../rmu/RollBreakdown';
 import type { RuleParams } from '../rmu/RuleHint';
 import { InjuryPoison } from './poison.dto';
+import type { TreatmentHerb } from './treasure-goods.dto';
 
 export type InjuryType = 'bone' | 'cut-burn' | 'muscle-tendon' | 'organ' | 'poison-disease' | 'skin-tissue' | 'unknown';
 
@@ -84,6 +85,8 @@ export interface InjuryTreatment {
   tacticalGameId?: string;
   /** Severity of the heat critical a cauterization inflicts, for the game master to resolve (e.g. "A"). */
   heatCritical?: string;
+  /** Spec 062: the herb of the character it used (one dose spent) and the bonuses it gave. */
+  herb?: TreatmentHerb;
 }
 
 export interface InjuryRecovery {
@@ -152,7 +155,15 @@ export interface CharacterCondition {
   resolvedAt?: string;
 }
 
-export type HealingLogKind = 'tactical-outcome' | 'treatment' | 'recovery-roll' | 'permanent-roll' | 'rest' | 'manual';
+export type HealingLogKind =
+  | 'tactical-outcome'
+  | 'treatment'
+  | 'recovery-roll'
+  | 'permanent-roll'
+  | 'rest'
+  | 'manual'
+  /** Spec 062: a dose of a healing herb. */
+  | 'herb';
 
 export interface HealingLogEntry {
   id: string;
@@ -218,6 +229,11 @@ export interface TreatInjuryDto {
   healingType?: HealingType;
   /** Herbalism roll; a success adds +25 to the Medicine roll. Give `healerCharacterId` or `bonus`. */
   herbalism?: { healerCharacterId?: string; bonus?: number; roll: number };
+  /**
+   * Spec 062: a herb of the character that treats the injury (+25 to Medicine, +50 to the recovery roll, +75 with
+   * magic; a mundane herb only +25). One dose is spent; a herb that does not treat it is a 400 `herb-not-applicable`.
+   */
+  herbItemId?: string;
 }
 
 /** `POST v1/actor-rounds/:id/injuries/:injuryId/treatments` in the tactical module. */

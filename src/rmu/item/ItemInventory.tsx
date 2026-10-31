@@ -21,9 +21,11 @@ import { StrategicItem, itemUnits } from '../../api/strategic-item.dto';
 import SearchField from '../../templates/SearchField';
 import EmptyState from '../../ui/states/EmptyState';
 import ItemConditionChip from './ItemConditionChip';
+import { ItemFeatureTranslate } from './ItemFeatureChips';
 import ItemModifierChips from './ItemModifierChips';
 import ItemThumb from './ItemThumb';
 import { normalizeText } from './item-catalog';
+import { strategicItemUnitValue } from './item-value';
 import MoneyDisplay from './MoneyDisplay';
 import { roundGold } from './money';
 
@@ -39,9 +41,24 @@ export type ItemAction = {
 
 type Grouping = 'category' | 'carried';
 
-/** Reference gold of all the units of an item: its value, or the average cost of its type. */
-export const itemTotalValue = (item: StrategicItem): number =>
-  roundGold((item.value ?? item.catalog?.cost?.average ?? item.info?.cost?.average ?? 0) * itemUnits(item));
+/**
+ * Reference gold of all the units of an item: its value, or the one of its type, carats, jewelry class and size
+ * (spec 062).
+ */
+export const itemTotalValue = (item: StrategicItem): number => roundGold(strategicItemUnitValue(item) * itemUnits(item));
+
+/** Chips of the instance data of spec 062: size other than medium, carats and cut of a gem, class of a jewel. */
+export const itemInstanceLabels = (
+  item: Pick<StrategicItem, 'size' | 'carats' | 'cutFactor' | 'jewelryClass'>,
+  t: ItemFeatureTranslate
+): { key: string; label: string }[] => [
+  ...(item.size && item.size !== 'medium' ? [{ key: 'size', label: t(`item-size-${item.size}`) }] : []),
+  ...(item.carats ? [{ key: 'carats', label: t('gem-carats-value', { count: item.carats }) }] : []),
+  ...(item.cutFactor && item.cutFactor !== 1
+    ? [{ key: 'cut', label: t('gem-cut-factor-value', { value: item.cutFactor }) }]
+    : []),
+  ...(item.jewelryClass ? [{ key: 'class', label: t(`jewelry-class-${item.jewelryClass}`) }] : []),
+];
 
 /** Weight of all the units of an item. */
 export const itemTotalWeight = (item: StrategicItem): number =>
@@ -81,6 +98,9 @@ const ItemRow: FC<{
           {item.info?.stackable && <Chip size="small" label={`× ${itemUnits(item)}`} />}
           {equipped && <Chip size="small" color="primary" label={t('equipped')} />}
           <ItemConditionChip condition={item.condition} />
+          {itemInstanceLabels(item, t).map((label) => (
+            <Chip key={label.key} size="small" variant="outlined" label={label.label} data-testid={`item-${label.key}`} />
+          ))}
           {item.material && (
             <Chip
               size="small"
