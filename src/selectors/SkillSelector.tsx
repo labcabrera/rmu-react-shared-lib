@@ -10,7 +10,7 @@ import { fetchSkillCategories } from '../api/skill-category.api';
 import { SkillCategory } from '../api/skill-category.dto';
 import { fetchSkills } from '../api/skill.api';
 import { Skill } from '../api/skill.dto';
-import { fetchSpellLists } from '../api/spell-list.api';
+import { fetchSpellLists, SPELL_LIST_CATALOG_MAX } from '../api/spell-list.api';
 import CategorySeparator from '../display/CategorySeparator';
 
 /** Specialization of the skills whose value is a spell list of rmu-api-spells (spec 029): the list code. */
@@ -27,9 +27,12 @@ const normalize = (text: string): string => text.normalize('NFD').replace(/[Ì€-Í
 
 /** Spell lists of the given realms (all of them without realms), as code and name, ordered by name. */
 async function fetchSpellListOptions(realms: string[] | undefined, auth: Parameters<typeof fetchSpellLists>[3]) {
-  // One query per realm: a hybrid gets the lists of both, and each realm stays under the page size
-  const queries = realms && realms.length > 0 ? realms.map((realm) => `realms==${realm}`) : [''];
-  const pages = await Promise.all(queries.map((query) => fetchSpellLists(query, 0, 100, auth)));
+  // One query per realm: a hybrid gets the lists of both, and each realm stays under the page size. Without realms,
+  // the whole catalog in one page (spec 056, B-03)
+  const byRealm = realms && realms.length > 0;
+  const queries = byRealm ? realms.map((realm) => `realms==${realm}`) : [''];
+  const size = byRealm ? 100 : SPELL_LIST_CATALOG_MAX;
+  const pages = await Promise.all(queries.map((query) => fetchSpellLists(query, 0, size, auth)));
   const byCode = new Map<string, string>();
   pages.flatMap((page) => page.content).forEach((list) => list.code && byCode.set(list.code, list.name));
   return [...byCode.entries()].sort((a, b) => a[1].localeCompare(b[1]));

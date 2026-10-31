@@ -24,7 +24,7 @@ vi.mock('../api/skill.api', () => ({
 }));
 const fetchEnumerations = vi.fn();
 vi.mock('../api/enumerations.api', () => ({ fetchEnumerations: (...args: unknown[]) => fetchEnumerations(...args) }));
-vi.mock('../api/spell-list.api', () => ({ fetchSpellLists: vi.fn() }));
+vi.mock('../api/spell-list.api', () => ({ fetchSpellLists: vi.fn(), SPELL_LIST_CATALOG_MAX: 1000 }));
 
 const skillButtons = () =>
   screen
