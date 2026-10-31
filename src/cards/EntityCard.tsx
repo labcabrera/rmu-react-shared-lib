@@ -152,9 +152,15 @@ const EntityCard: FC<{
                 fontFamily: theme.fonts.display,
                 flex: 1,
                 minWidth: 0,
+                // Long names take a second line instead of being cut (spec 059, decision 3).
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                overflowWrap: 'anywhere',
+                lineHeight: 1.25,
                 [theme.breakpoints.down('sm')]: { fontSize: theme.typography.subtitle1.fontSize },
               })}
-              noWrap
             >
               {title}
             </Typography>

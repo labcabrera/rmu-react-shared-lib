@@ -66,3 +66,22 @@ describe('EntityCard (spec 058)', () => {
     expect(img(container)).toHaveStyle({ aspectRatio: '1' });
   });
 });
+
+describe('card grid and titles (spec 059)', () => {
+  it('lays the cards out in a size container whose columns follow its width', async () => {
+    const { default: CardGrid } = await import('../templates/CardGrid');
+    const { container } = renderWithProviders(
+      <CardGrid items={['a', 'b']} getKey={(item) => item} renderItem={(item) => <span>{item}</span>} />
+    );
+    const outer = container.firstElementChild as HTMLElement;
+    expect(getComputedStyle(outer).getPropertyValue('container-type')).toBe('inline-size');
+    expect(outer.firstElementChild).toHaveStyle({ display: 'grid' });
+  });
+
+  it('clamps the title to two lines instead of cutting it in one', () => {
+    renderWithProviders(<EntityCard title="Alligator/Crocodile, Giant" image="images/races/elf.png" />);
+    const title = screen.getByRole('heading', { name: 'Alligator/Crocodile, Giant' });
+    expect(title.className).not.toMatch(/noWrap/);
+    expect(title).toHaveStyle({ WebkitLineClamp: '2' });
+  });
+});

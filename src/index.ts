@@ -197,8 +197,9 @@ export { default as ErrorState } from './ui/states/ErrorState';
 
 // Grid presets
 export {
+  cardColumns,
+  cardGridContainerSx,
   cardGridSx,
-  cardMinWidth,
   gridSizeCard,
   gridSizeMain,
   gridSizeResume,

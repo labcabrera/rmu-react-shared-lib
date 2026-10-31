@@ -1,17 +1,31 @@
 // Grid presets shared by every MFE (they were copied in each one's services/display.ts).
 /**
- * Minimum width of an entity card (spec 058, decision 3): every list fits as many columns of at least this width as
- * its space allows, so cards have about the same size with or without a filter panel next to them.
+ * Columns of a grid of entity cards by the width the grid really has (spec 059, decision 1): one below 560 px, then
+ * 2, 3, 4 and 5. At full width that gives 5 cards per row without a filter panel (~1438 px) and 3 with it (~1142 px),
+ * with tens of px of margin before the next step; grids inside other views follow their own width.
  */
-export const cardMinWidth = 184;
+export const cardColumns = [
+  { minWidth: 560, columns: 2 },
+  { minWidth: 880, columns: 3 },
+  { minWidth: 1200, columns: 4 },
+  { minWidth: 1300, columns: 5 },
+] as const;
 
-/** CSS grid of entity cards: one column on phones (horizontal cards), then columns of at least `minWidth` px. */
-export const cardGridSx = (minWidth: number = cardMinWidth) =>
-  ({
-    display: 'grid',
-    gap: 1,
-    gridTemplateColumns: { xs: 'minmax(0, 1fr)', sm: `repeat(auto-fill, minmax(${minWidth}px, 1fr))` },
-  }) as const;
+/** The element whose width the card grid follows: wrap the grid (cardGridSx) in it. */
+export const cardGridContainerSx = { containerType: 'inline-size', width: '100%' } as const;
+
+/** CSS grid of entity cards, inside a cardGridContainerSx element: columns by the container's width (cardColumns). */
+export const cardGridSx = () => ({
+  display: 'grid',
+  gap: 1,
+  gridTemplateColumns: 'minmax(0, 1fr)',
+  ...Object.fromEntries(
+    cardColumns.map(({ minWidth, columns }) => [
+      `@container (min-width: ${minWidth}px)`,
+      { gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` },
+    ])
+  ),
+});
 
 export const gridSizeCard = { xs: 12, sm: 6, md: 4, lg: 3, xl: 3 } as const;
 export const gridSizeResume = { xs: 12, sm: 12, md: 12, lg: 12, xl: 2 } as const;

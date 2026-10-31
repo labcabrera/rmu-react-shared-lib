@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, Card, CardContent, CircularProgress, Grid, Skeleton, Stack } from '@mui/material';
-import { cardGridSx, gridSizeCard } from '../../layouts/grid';
+import { cardGridContainerSx, cardGridSx, gridSizeCard } from '../../layouts/grid';
 
 /**
  * Placeholder while data loads. `cards` mimics a card list page, `showcase` a grid of EntityCard (image, title,
@@ -11,40 +11,40 @@ import { cardGridSx, gridSizeCard } from '../../layouts/grid';
 const LoadingState: FC<{
   variant?: 'spinner' | 'cards' | 'showcase' | 'detail';
   count?: number;
-  /** Minimum width of the `showcase` cards (cardMinWidth by default, like CardGrid). */
-  cardMinWidth?: number;
-}> = ({ variant = 'spinner', count = 8, cardMinWidth }) => {
+}> = ({ variant = 'spinner', count = 8 }) => {
   const { t } = useTranslation();
 
   if (variant === 'showcase') {
     return (
-      <Box sx={cardGridSx(cardMinWidth)} aria-busy="true" aria-label={t('loading')}>
-        {Array.from({ length: count }, (_, index) => (
-          <Card key={index} sx={{ height: '100%', display: 'flex', flexDirection: { xs: 'row', sm: 'column' } }}>
-            <Skeleton
-              variant="rectangular"
-              sx={{ flex: 'none', width: { xs: 96, sm: '100%' }, height: 'auto', aspectRatio: '1 / 1' }}
-            />
-            <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Box>
-                <Skeleton variant="text" width="70%" sx={{ fontSize: '1.25rem' }} />
-                <Skeleton variant="text" width="45%" />
-              </Box>
-              <Stack direction="row" spacing={0.5}>
-                <Skeleton variant="rounded" width={56} height={24} />
-                <Skeleton variant="rounded" width={72} height={24} />
-              </Stack>
-              <Stack direction="row" spacing={2}>
-                {[0, 1, 2].map((metric) => (
-                  <Box key={metric}>
-                    <Skeleton variant="text" width={32} />
-                    <Skeleton variant="text" width={48} />
-                  </Box>
-                ))}
-              </Stack>
-            </CardContent>
-          </Card>
-        ))}
+      <Box sx={cardGridContainerSx} aria-busy="true" aria-label={t('loading')}>
+        <Box sx={cardGridSx()}>
+          {Array.from({ length: count }, (_, index) => (
+            <Card key={index} sx={{ height: '100%', display: 'flex', flexDirection: { xs: 'row', sm: 'column' } }}>
+              <Skeleton
+                variant="rectangular"
+                sx={{ flex: 'none', width: { xs: 96, sm: '100%' }, height: 'auto', aspectRatio: '1 / 1' }}
+              />
+              <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Box>
+                  <Skeleton variant="text" width="70%" sx={{ fontSize: '1.25rem' }} />
+                  <Skeleton variant="text" width="45%" />
+                </Box>
+                <Stack direction="row" spacing={0.5}>
+                  <Skeleton variant="rounded" width={56} height={24} />
+                  <Skeleton variant="rounded" width={72} height={24} />
+                </Stack>
+                <Stack direction="row" spacing={2}>
+                  {[0, 1, 2].map((metric) => (
+                    <Box key={metric}>
+                      <Skeleton variant="text" width={32} />
+                      <Skeleton variant="text" width={48} />
+                    </Box>
+                  ))}
+                </Stack>
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
       </Box>
     );
   }
