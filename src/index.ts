@@ -42,7 +42,7 @@ export { default as TechnicalInfo } from './display/TechnicalInfo';
 export { default as KeyValuePanel, KeyValueList } from './display/KeyValuePanel';
 export type { KeyValueRow } from './display/KeyValuePanel';
 
-export { default as ImageCategorySelector } from './images/ImageCategorySelector';
+export { canManageImage, default as ImageCategorySelector } from './images/ImageCategorySelector';
 export { default as ImageSelectorDialog } from './images/ImageSelectorDialog';
 export { default as ImageUploadEditor } from './images/ImageUploadEditor';
 

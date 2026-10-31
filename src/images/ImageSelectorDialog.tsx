@@ -15,7 +15,7 @@ import {
   Tab,
   Tabs,
 } from '@mui/material';
-import { MediaImage } from '../api/image.dto';
+import { imagePath, MediaImage } from '../api/image.dto';
 import ImageCategorySelector from './ImageCategorySelector';
 import ImageUploadEditor from './ImageUploadEditor';
 
@@ -51,13 +51,13 @@ export default function ImageSelectorDialog({
   // With onUpload, an uploaded image is applied right away; without it, it becomes the selection.
   const handleUploaded = (image: MediaImage) => {
     setSelectedImage(image);
-    onImageUploaded?.(image.storageKey || image.url);
+    onImageUploaded?.(imagePath(image));
   };
 
   const handleSelect = () => {
     if (!selectedImage) return;
-    // Store the path relative to the assets root (see config/asset-url.ts), not the public URL.
-    onImageSelected(selectedImage.storageKey || selectedImage.url);
+    // Store the relative path (`images/…` or `uploads/…`, see config/asset-url.ts), not the public URL.
+    onImageSelected(imagePath(selectedImage));
     onClose();
   };
 
@@ -89,7 +89,11 @@ export default function ImageSelectorDialog({
           <ImageUploadEditor value={value} onUploaded={handleUploaded} />
         </TabPanel>
         <TabPanel value={tab} index={1}>
-          <ImageCategorySelector selectedImageId={selectedImage?.id} onSelect={setSelectedImage} />
+          <ImageCategorySelector
+            selectedImageId={selectedImage?.id}
+            onSelect={setSelectedImage}
+            onDeleted={(image) => setSelectedImage((current) => (current?.id === image.id ? undefined : current))}
+          />
         </TabPanel>
       </DialogContent>
       <DialogActions>
