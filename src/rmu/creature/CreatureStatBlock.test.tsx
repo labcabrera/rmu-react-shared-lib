@@ -64,6 +64,28 @@ describe('CreatureStatBlock', () => {
     expect(within(attacks[1]).getByText('npc-attack-poison: nerve -10')).toBeInTheDocument();
   });
 
+  it('shows an attack with no table with its notation and a no-table label (spec 060)', () => {
+    const generic = { ...sampleCreature.attacks[0], attackTable: null, sequence: null };
+    renderWithProviders(
+      <CreatureStatBlock
+        npc={{
+          ...sampleCreature,
+          attacks: [
+            { ...generic, ob: 70, size: 5, notation: '70we' },
+            { ...generic, ob: 40, size: 5, notation: null },
+          ],
+        }}
+      />
+    );
+
+    const attacks = screen.getAllByTestId('creature-attack');
+    expect(within(attacks[0]).getByText('npc-attack-no-table')).toBeInTheDocument();
+    expect(within(attacks[0]).getByText('70we')).toBeInTheDocument();
+    // No stored notation: the one built from its fields.
+    expect(within(attacks[1]).getByText('npc-attack-no-table')).toBeInTheDocument();
+    expect(within(attacks[1]).getByText('40M(5)?')).toBeInTheDocument();
+  });
+
   it('shows movement, the five RRs, skills and the encounter', () => {
     renderWithProviders(<CreatureStatBlock npc={sampleCreature} />);
 
@@ -107,6 +129,7 @@ describe('creature helpers', () => {
     expect(creatureSizeClass('medium')).toBe(5);
     expect(creatureSizeClass('nope')).toBeNull();
     expect(npcAttackNotation({ ob: 23, size: 6, attackTable: 'bite' })).toBe('23B(6)bi');
+    expect(npcAttackNotation({ ob: 60, size: 5, attackTable: null })).toBe('60M(5)?');
     expect(npcAttackNotation({ ob: -3, size: 1, attackTable: 'bite', cooperation: 100 })).toBe('-3MI(1)bi(Coop100)');
     expect(
       npcAttackNotation({ ob: 10, size: 5, attackTable: 'grapple', additionalCritical: 'krush', sequence: 'double' })

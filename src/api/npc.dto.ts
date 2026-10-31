@@ -232,8 +232,11 @@ export interface NpcAttack {
   ob: number;
   /** Size class of the attack, 1-13 (medium = 5). */
   size: number;
-  /** Attack table id of rmu-api-attack-tables. */
-  attackTable: string;
+  /**
+   * Attack table id of rmu-api-attack-tables; null for an attack with no table of its own (`we`, `rw`, special
+   * attacks, spec 060).
+   */
+  attackTable: string | null;
   fumbleTable: string | null;
   /** Critical type of the additional critical (a key of NPC_ADDITIONAL_CRITICALS). */
   additionalCritical: string | null;

@@ -7,6 +7,7 @@ import {
   NPC_ADDITIONAL_CRITICALS,
   NPC_RESISTANCES,
   NpcAttack,
+  npcAttackNotation,
   NpcBiome,
   npcShieldDb,
   NpcStatBlock,
@@ -134,6 +135,8 @@ const AttackRow: FC<{ attack: NpcAttack; t: Translate }> = ({ attack, t }) => {
       color: 'error',
     });
   }
+  // An attack with no table (spec 060) shows its notation, built from its fields when the stored one is missing.
+  const notation = attack.notation ?? (attack.attackTable ? null : npcAttackNotation(attack));
   return (
     <Box data-testid="creature-attack" sx={{ py: 1 }}>
       <Stack direction="row" sx={{ alignItems: 'center', gap: 1.5 }}>
@@ -146,20 +149,26 @@ const AttackRow: FC<{ attack: NpcAttack; t: Translate }> = ({ attack, t }) => {
           </Typography>
         </Box>
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography variant="body2" sx={{ fontWeight: 700 }} component="div">
-            {t(attack.attackTable)}
-          </Typography>
+          {attack.attackTable ? (
+            <Typography variant="body2" sx={{ fontWeight: 700 }} component="div">
+              {t(attack.attackTable)}
+            </Typography>
+          ) : (
+            <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }} component="div">
+              {t('npc-attack-no-table')}
+            </Typography>
+          )}
           <Typography variant="caption" color="text.secondary" component="div">
             {t('npc-attack-size', { size: creatureSizeLabel(sizeOfClass(attack.size), t) })}
           </Typography>
         </Box>
-        {attack.notation && (
+        {notation && (
           <Typography
             variant="caption"
             component="code"
             sx={{ fontFamily: fonts.mono, color: 'text.secondary', textAlign: 'right', wordBreak: 'break-word' }}
           >
-            {attack.notation}
+            {notation}
           </Typography>
         )}
       </Stack>
