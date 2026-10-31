@@ -5,7 +5,6 @@ import { FilterSchema, useListFilters } from '../data/useListFilters';
 import { useLocalPagedQuery } from '../data/useLocalPagedQuery';
 import ClearableTextField from '../inputs/ClearableTextField';
 import { EnumPicker } from '../selectors/pickers';
-import { gridSizeShowcase } from './CollectionView';
 import FilterBar from './FilterBar';
 import { FilterSection } from './FilterPanel';
 import ListPage from './ListPage';
@@ -81,7 +80,7 @@ const CreatureList = ({ layout }: { layout: 'top' | 'side' }) => {
           </FilterBar>
         )
       }
-      collection={{ modes: ['cards'], storageKey: 'stories.creatures', cardSize: gridSizeShowcase }}
+      collection={{ modes: ['cards'], storageKey: 'stories.creatures' }}
       renderItem={(creature) => (
         <EntityCard
           title={creature.name}

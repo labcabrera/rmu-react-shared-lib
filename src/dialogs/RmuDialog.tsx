@@ -16,7 +16,7 @@ import Dialog, { DialogProps } from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle, { dialogTitleClasses } from '@mui/material/DialogTitle';
 import { TransitionProps } from '@mui/material/transitions';
-import GenericAvatar from '../avatars/GenericAvatar';
+import EntityImage from '../avatars/EntityImage';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -102,7 +102,7 @@ const RmuDialog: FC<{
         }}
       >
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-          {avatarImg && <GenericAvatar variant="square" imageUrl={avatarImg} />}
+          {avatarImg && <EntityImage image={avatarImg} size="sm" />}
           <Stack direction="column">
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
               {title}

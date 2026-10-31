@@ -1,58 +1,51 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, Card, CardContent, CircularProgress, Grid, Skeleton, Stack } from '@mui/material';
-import { gridSizeCard } from '../../layouts/grid';
-
-const showcaseRatios = { wide: '16 / 9', portrait: '3 / 4', square: '1 / 1' } as const;
-const showcaseSize = { xs: 12, sm: 6, md: 4, lg: 3 };
+import { cardGridSx, gridSizeCard } from '../../layouts/grid';
 
 /**
  * Placeholder while data loads. `cards` mimics a card list page, `showcase` a grid of EntityCard (image, title,
- * subtitle, chips and metrics; `imageRatio` as the cards), `detail` a view page with its side panel; the default is a
+ * subtitle, chips and metrics, in the same grid), `detail` a view page with its side panel; the default is a
  * centered spinner.
  */
 const LoadingState: FC<{
   variant?: 'spinner' | 'cards' | 'showcase' | 'detail';
   count?: number;
-  /** Image shape of the `showcase` cards. */
-  imageRatio?: keyof typeof showcaseRatios;
-  /** Grid sizes of the `showcase` cards (gridSizeShowcase by default). */
-  cardSize?: Partial<Record<'xs' | 'sm' | 'md' | 'lg' | 'xl', number>>;
-}> = ({ variant = 'spinner', count = 8, imageRatio = 'wide', cardSize = showcaseSize }) => {
+  /** Minimum width of the `showcase` cards (cardMinWidth by default, like CardGrid). */
+  cardMinWidth?: number;
+}> = ({ variant = 'spinner', count = 8, cardMinWidth }) => {
   const { t } = useTranslation();
 
   if (variant === 'showcase') {
     return (
-      <Grid container spacing={1} aria-busy="true" aria-label={t('loading')}>
+      <Box sx={cardGridSx(cardMinWidth)} aria-busy="true" aria-label={t('loading')}>
         {Array.from({ length: count }, (_, index) => (
-          <Grid key={index} size={cardSize}>
-            <Card sx={{ height: '100%' }}>
-              <Skeleton
-                variant="rectangular"
-                sx={{ width: '100%', height: 'auto', aspectRatio: showcaseRatios[imageRatio] }}
-              />
-              <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Box>
-                  <Skeleton variant="text" width="70%" sx={{ fontSize: '1.25rem' }} />
-                  <Skeleton variant="text" width="45%" />
-                </Box>
-                <Stack direction="row" spacing={0.5}>
-                  <Skeleton variant="rounded" width={56} height={24} />
-                  <Skeleton variant="rounded" width={72} height={24} />
-                </Stack>
-                <Stack direction="row" spacing={2}>
-                  {[0, 1, 2].map((metric) => (
-                    <Box key={metric}>
-                      <Skeleton variant="text" width={32} />
-                      <Skeleton variant="text" width={48} />
-                    </Box>
-                  ))}
-                </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
+          <Card key={index} sx={{ height: '100%', display: 'flex', flexDirection: { xs: 'row', sm: 'column' } }}>
+            <Skeleton
+              variant="rectangular"
+              sx={{ flex: 'none', width: { xs: 96, sm: '100%' }, height: 'auto', aspectRatio: '1 / 1' }}
+            />
+            <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Box>
+                <Skeleton variant="text" width="70%" sx={{ fontSize: '1.25rem' }} />
+                <Skeleton variant="text" width="45%" />
+              </Box>
+              <Stack direction="row" spacing={0.5}>
+                <Skeleton variant="rounded" width={56} height={24} />
+                <Skeleton variant="rounded" width={72} height={24} />
+              </Stack>
+              <Stack direction="row" spacing={2}>
+                {[0, 1, 2].map((metric) => (
+                  <Box key={metric}>
+                    <Skeleton variant="text" width={32} />
+                    <Skeleton variant="text" width={48} />
+                  </Box>
+                ))}
+              </Stack>
+            </CardContent>
+          </Card>
         ))}
-      </Grid>
+      </Box>
     );
   }
 

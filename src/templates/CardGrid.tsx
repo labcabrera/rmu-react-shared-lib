@@ -1,55 +1,31 @@
 import React, { ReactNode } from 'react';
-import { Box, Grid } from '@mui/material';
-import { gridSizeCard } from '../layouts/grid';
+import { Box } from '@mui/material';
+import { cardGridSx, cardMinWidth } from '../layouts/grid';
 import { enterSx } from '../motion/motion';
 
-type GridSize = Partial<Record<'xs' | 'sm' | 'md' | 'lg' | 'xl', number>>;
-
 /**
- * Responsive grid of cards: one column on phones, up to four on desktop. The cards enter staggered. With `minWidth`,
- * the columns follow the width the grid really has (two on phones, then as many as fit cards of at least `minWidth`
- * px), for grids that share the page with side panels.
+ * Grid of entity cards (spec 058, decision 3): one column on phones, where the cards are horizontal, then as many
+ * columns as fit cards of at least `minWidth` px, so a card has the same size in every list whatever shares the page
+ * with it. The cards enter staggered.
  */
 export default function CardGrid<T>({
   items,
   renderItem,
   getKey,
-  size = gridSizeCard,
-  minWidth,
+  minWidth = cardMinWidth,
 }: {
   items: T[];
   renderItem: (item: T) => ReactNode;
   getKey: (item: T) => string;
-  size?: GridSize;
   minWidth?: number;
 }) {
-  if (minWidth) {
-    return (
-      <Box
-        sx={{
-          display: 'grid',
-          gap: 1,
-          gridTemplateColumns: {
-            xs: 'repeat(2, minmax(0, 1fr))',
-            sm: `repeat(auto-fill, minmax(${minWidth}px, 1fr))`,
-          },
-        }}
-      >
-        {items.map((item, index) => (
-          <Box key={getKey(item)} sx={{ minWidth: 0, ...enterSx(index) }}>
-            {renderItem(item)}
-          </Box>
-        ))}
-      </Box>
-    );
-  }
   return (
-    <Grid container spacing={1}>
+    <Box sx={cardGridSx(minWidth)}>
       {items.map((item, index) => (
-        <Grid key={getKey(item)} size={size} sx={enterSx(index)}>
+        <Box key={getKey(item)} sx={{ minWidth: 0, ...enterSx(index) }}>
           {renderItem(item)}
-        </Grid>
+        </Box>
       ))}
-    </Grid>
+    </Box>
   );
 }

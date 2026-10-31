@@ -52,3 +52,39 @@ export function resolveAssetUrl(path: string | null | undefined): string | undef
   }
   return join(process.env.RMU_MFE_ASSETS_URI || '', relative);
 }
+
+/** Widths of the generated thumbnails of the base images (workspace spec 058, decision 11). */
+export type ThumbSize = 128 | 512;
+
+const BASE_IMAGE = /^images\/(?!thumbs\/)([^/]+)\/([^/]+)\.[a-z0-9]+$/i;
+
+/**
+ * Path of the thumbnail of a base image (`images/races/elf.png` → `images/thumbs/128/races/elf.webp`), built by
+ * rmu-mfe-assets. Undefined for anything else: uploads, absolute URLs, paths outside a category.
+ */
+export const thumbPath = (path: string | null | undefined, size: ThumbSize): string | undefined => {
+  // Paths already resolved against RMU_MFE_ASSETS_URI (`${imageBaseUrl}images/...`) count as base images too.
+  const assets = process.env.RMU_MFE_ASSETS_URI || '';
+  const relative = assets && path?.startsWith(assets) ? path.slice(assets.length).replace(/^\//, '') : path;
+  const match = relative?.replace(/^\.\//, '').match(BASE_IMAGE);
+  return match ? `images/thumbs/${size}/${match[1]}/${match[2]}.webp` : undefined;
+};
+
+/** The smallest thumbnail that still looks sharp at `px` CSS pixels on a 2x screen. */
+export const thumbSizeFor = (px: number): ThumbSize => (px <= 64 ? 128 : 512);
+
+/**
+ * URLs to try in order for a list of images: for each one its thumbnail (when `size` is given and it is a base
+ * image), then the original. A missing thumbnail (an assets build without them) falls back to the original.
+ */
+export const assetCandidates = (paths: (string | null | undefined)[], size?: ThumbSize): string[] => {
+  const urls: string[] = [];
+  paths.forEach((path) => {
+    const thumb = size ? thumbPath(path, size) : undefined;
+    [thumb, path].forEach((candidate) => {
+      const url = resolveAssetUrl(candidate);
+      if (url && !urls.includes(url)) urls.push(url);
+    });
+  });
+  return urls;
+};

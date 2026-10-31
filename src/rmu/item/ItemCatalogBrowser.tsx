@@ -49,13 +49,8 @@ import {
   weaponSkillLabel,
 } from './item-catalog';
 
-type GridSize = Partial<Record<'xs' | 'sm' | 'md' | 'lg' | 'xl', number>>;
-
 /** Largest page of rmu-api-items (`CatalogPagedQueryDto`): the catalog is loaded whole (decision 12). */
 export const ITEM_CATALOG_MAX = 1000;
-
-/** Grid of item cards: two per row on phones. */
-export const gridSizeItemCard: GridSize = { xs: 6, sm: 4, md: 3, xl: 2 };
 
 /**
  * The item catalog loaded whole once (decision 4); `truncated` when it reached the API limit. `exclude` leaves out
@@ -265,8 +260,7 @@ export interface ItemCatalogBrowserProps {
   price?: (item: Item) => ReactNode;
   /** Replaces ItemCard. */
   renderItem?: (item: Item) => ReactNode;
-  cardSize?: GridSize;
-  /** Cards of at least this width, as many per row as fit (CardGrid `minWidth`); replaces `cardSize`. */
+  /** Cards of at least this width, as many per row as fit (CardGrid `minWidth`; cardMinWidth by default). */
   cardMinWidth?: number;
   /**
    * Shown at the top of the side panel, above the filters, and kept when the filters are hidden (the cart of the
@@ -299,7 +293,6 @@ const ItemCatalogBrowser: FC<ItemCatalogBrowserProps> = ({
   actions,
   price,
   renderItem,
-  cardSize = gridSizeItemCard,
   cardMinWidth,
   panelHeader,
   panelWidth = 280,
@@ -318,7 +311,7 @@ const ItemCatalogBrowser: FC<ItemCatalogBrowserProps> = ({
 
   let content: ReactNode;
   if (error && !query.items) content = <ErrorState error={error} onRetry={refresh} />;
-  else if (!query.items) content = <LoadingState variant="showcase" imageRatio="square" cardSize={cardSize} />;
+  else if (!query.items) content = <LoadingState variant="showcase" cardMinWidth={cardMinWidth} />;
   else if (query.items.length === 0) content = <EmptyState title={t('catalog-empty')} />;
   else if (mode === 'table')
     content = (
@@ -329,7 +322,6 @@ const ItemCatalogBrowser: FC<ItemCatalogBrowserProps> = ({
       <CardGrid
         items={query.items}
         getKey={(item) => item.id}
-        size={cardSize}
         minWidth={cardMinWidth}
         renderItem={(item) =>
           renderItem?.(item) ?? (

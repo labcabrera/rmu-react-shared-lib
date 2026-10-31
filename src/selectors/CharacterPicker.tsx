@@ -19,7 +19,7 @@ import {
   Typography,
 } from '@mui/material';
 import type { Character } from '../api/character.dto';
-import EntityAvatar from '../avatars/EntityAvatar';
+import EntityAvatar, { avatarSize } from '../avatars/EntityAvatar';
 
 /** A character (or an actor of a tactical game) as the picker shows it, independent of the API it comes from. */
 export interface CharacterOption {
@@ -76,17 +76,9 @@ export const characterOption = (character: Character, extra: Partial<CharacterOp
 export const CharacterAvatar: FC<{
   option: Pick<CharacterOption, 'name' | 'imageUrl' | 'icon'>;
   size?: number;
-  variant?: 'circular' | 'rounded' | 'square';
   faded?: boolean;
-}> = ({ option, size = 40, variant = 'rounded', faded = false }) => (
-  <EntityAvatar
-    name={option.name}
-    imageUrl={option.imageUrl}
-    icon={option.icon}
-    size={size}
-    variant={variant}
-    faded={faded}
-  />
+}> = ({ option, size = avatarSize.option, faded = false }) => (
+  <EntityAvatar name={option.name} imageUrl={option.imageUrl} icon={option.icon} size={size} faded={faded} />
 );
 
 type CommonProps = {
@@ -301,7 +293,7 @@ const CharacterPicker: FC<CharacterPickerProps> = (props) => {
   if (compact) {
     const optionContent = (option: CharacterOption) => (
       <Stack direction="row" spacing={1} sx={{ alignItems: 'center', minWidth: 0 }}>
-        <CharacterAvatar option={option} size={28} faded={!!option.disabledReason} />
+        <CharacterAvatar option={option} size={avatarSize.option} faded={!!option.disabledReason} />
         <Box sx={{ minWidth: 0 }}>
           <Typography variant="body2" noWrap>
             {option.name}
@@ -353,7 +345,7 @@ const CharacterPicker: FC<CharacterPickerProps> = (props) => {
                     {...itemProps}
                     size="small"
                     label={option.name}
-                    avatar={<CharacterAvatar option={option} size={20} variant="circular" />}
+                    avatar={<CharacterAvatar option={option} size={avatarSize.smallChip} />}
                   />
                 );
               })
@@ -378,7 +370,7 @@ const CharacterPicker: FC<CharacterPickerProps> = (props) => {
                       ...params.slotProps.input,
                       startAdornment: selected && (
                         <InputAdornment position="start">
-                          <CharacterAvatar option={selected} size={24} variant="circular" />
+                          <CharacterAvatar option={selected} size={avatarSize.input} />
                         </InputAdornment>
                       ),
                     },

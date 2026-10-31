@@ -1,7 +1,7 @@
 export { ADMIN_GROUP, isAdmin, useIsAdmin, userGroups } from './auth/roles';
-export { default as EditableAvatar } from './avatars/EditableAvatar';
-export { default as GenericAvatar } from './avatars/GenericAvatar';
-export { default as EntityAvatar, initialsOf } from './avatars/EntityAvatar';
+export { default as EntityImage } from './avatars/EntityImage';
+export type { EntityImageProps, EntityImageSize } from './avatars/EntityImage';
+export { avatarSize, default as EntityAvatar, initialsOf } from './avatars/EntityAvatar';
 export type { EntityAvatarProps } from './avatars/EntityAvatar';
 
 export { default as RmuBreadcrumbs } from './breadcrumbs/RmuBreadcrumbs';
@@ -196,7 +196,15 @@ export { default as EmptyState } from './ui/states/EmptyState';
 export { default as ErrorState } from './ui/states/ErrorState';
 
 // Grid presets
-export { gridSizeCard, gridSizeMain, gridSizeResume, itemFilter, itemFilterDisabled } from './layouts/grid';
+export {
+  cardGridSx,
+  cardMinWidth,
+  gridSizeCard,
+  gridSizeMain,
+  gridSizeResume,
+  itemFilter,
+  itemFilterDisabled,
+} from './layouts/grid';
 
 // Templates and generic components
 export { default as ListPage } from './templates/ListPage';
@@ -208,12 +216,7 @@ export type { DetailPageProps } from './templates/DetailPage';
 export { default as FormPage } from './templates/FormPage';
 export type { FormPageProps } from './templates/FormPage';
 export { default as CardGrid } from './templates/CardGrid';
-export {
-  default as CollectionView,
-  CollectionModeSwitch,
-  gridSizeShowcase,
-  useCollectionMode,
-} from './templates/CollectionView';
+export { default as CollectionView, CollectionModeSwitch, useCollectionMode } from './templates/CollectionView';
 export type { CollectionConfig, CollectionMode } from './templates/CollectionView';
 export { default as FilterBar } from './templates/FilterBar';
 export { default as SearchField } from './templates/SearchField';
@@ -311,7 +314,6 @@ export {
 } from './rmu/item/ItemCard';
 export {
   default as ItemCatalogBrowser,
-  gridSizeItemCard,
   ITEM_CATALOG_MAX,
   ItemCatalogFilterSections,
   ItemSortControl,

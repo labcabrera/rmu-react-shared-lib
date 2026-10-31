@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, useEffect, useState } from 'react';
-import { Avatar, Box, ButtonBase, Card, Fade, Stack, Typography } from '@mui/material';
-import { resolveAssetUrl } from '../config/asset-url';
+import { Box, Card, Fade, Stack, Typography } from '@mui/material';
+import EntityImage from '../avatars/EntityImage';
 
 export interface HeroHeaderProps {
   title: string;
@@ -69,29 +69,16 @@ const HeroHeader: FC<HeroHeaderProps> = ({
   const [full, setFull] = useState<HTMLDivElement | null>(null);
   const compact = useScrolledPast(full);
 
-  const avatar = (size: number | { xs: number; md: number }, transitionName?: string) => (
-    <Avatar
-      variant="rounded"
-      src={image ? resolveAssetUrl(image) : undefined}
-      alt={title}
-      sx={(theme) => ({
-        width: size,
-        height: size,
-        borderRadius: `${theme.radius.md}px`,
-        border: 1,
-        borderColor: 'divider',
-        viewTransitionName: transitionName,
-      })}
+  // The entity image (spec 058): square with the radius of the cards, a thumbnail for base images.
+  const imageButton = (size: number | { xs: number; md: number }, transitionName?: string) => (
+    <EntityImage
+      image={image}
+      size={size}
+      onClick={onImageClick}
+      actionLabel={imageActionLabel}
+      imageTransitionName={transitionName}
     />
   );
-  const imageButton = (size: number | { xs: number; md: number }, transitionName?: string) =>
-    onImageClick ? (
-      <ButtonBase onClick={onImageClick} aria-label={imageActionLabel} sx={{ borderRadius: 1, flexShrink: 0 }}>
-        {avatar(size, transitionName)}
-      </ButtonBase>
-    ) : (
-      avatar(size, transitionName)
-    );
   const actionsRow = actions && (
     <Stack direction="row" sx={{ alignItems: 'center', ml: 'auto' }}>
       {actions}

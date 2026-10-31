@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState } from 'react';
+import React, { FC, ReactNode, useEffect, useState } from 'react';
 import LockIcon from '@mui/icons-material/Lock';
 import {
   Box,
@@ -11,12 +11,13 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { resolveAssetUrl } from '../config/asset-url';
+import { assetCandidates } from '../config/asset-url';
 import { hoverLiftSx } from '../motion/motion';
 
 const defaultImage = 'images/generic/configuration.png';
 
-const ratios = { wide: '16 / 9', portrait: '3 / 4', square: '1 / 1' } as const;
+/** Width of the image of the horizontal card on phones (spec 058, decision 4). */
+const phoneImageSize = 96;
 
 export interface EntityMetric {
   label: string;
@@ -24,8 +25,9 @@ export interface EntityMetric {
 }
 
 /**
- * Showcase card for catalogs with few entries (realms, races, professions, games…): a large image,
- * the name in the display font, chips, a few metrics and a short description.
+ * Card of an entity in every list (realms, races, characters, NPCs, items…): a square image, the name in the display
+ * font, chips, a few metrics and a short description. The image has the same shape everywhere (spec 058): what each
+ * list shows below it may differ. On phones the card is horizontal, the image (96 px) on the left of the text.
  */
 const EntityCard: FC<{
   title: string;
@@ -33,11 +35,8 @@ const EntityCard: FC<{
   image?: string | null;
   /** Images tried in order when `image` fails to load (for example an item's category image, then a generic one). */
   fallbackImages?: string[];
-  /**
-   * Image shape: `wide` (16:9, default), `portrait` (3:4, for people and creatures), `square`, or `none` for a
-   * compact card without media (for example skills).
-   */
-  imageRatio?: keyof typeof ratios | 'none';
+  /** A compact card without image (key numbers, skills). */
+  noImage?: boolean;
   /** CSS filter for the image (for example the sepia filter of the item illustrations). */
   imageFilter?: string;
   chips?: ReactNode;
@@ -59,7 +58,7 @@ const EntityCard: FC<{
   title,
   subtitle,
   image,
-  imageRatio = 'wide',
+  noImage = false,
   imageFilter,
   chips,
   metrics,
@@ -74,7 +73,10 @@ const EntityCard: FC<{
   selected = false,
 }) => {
   const [failed, setFailed] = useState(0);
-  const sources = [image || defaultImage, ...fallbackImages];
+  // Thumbnail of base images first (512 px wide, spec 058), then the original, the fallbacks and a generic image.
+  const sources = assetCandidates([image, ...fallbackImages, defaultImage], 512);
+  const key = sources.join('|');
+  useEffect(() => setFailed(0), [key]);
   const source = sources[Math.min(failed, sources.length - 1)];
   const lockBadge = locked && (
     <Tooltip title={lockedLabel ?? ''}>
@@ -82,25 +84,48 @@ const EntityCard: FC<{
         fontSize="small"
         aria-label={lockedLabel}
         sx={
-          imageRatio === 'none'
+          noImage
             ? { flex: 'none', color: 'text.secondary' }
-            : { position: 'absolute', top: 8, right: 8, p: 0.5, borderRadius: '50%', bgcolor: 'background.paper' }
+            : {
+                position: 'absolute',
+                top: { xs: 4, sm: 8 },
+                right: { xs: 4, sm: 8 },
+                p: 0.5,
+                borderRadius: '50%',
+                bgcolor: 'background.paper',
+              }
         }
       />
     </Tooltip>
   );
   const content = (
-    <>
-      {imageRatio !== 'none' && (
-        <Box sx={{ position: 'relative' }}>
+    <Box
+      sx={{
+        flex: 1,
+        width: '100%',
+        display: 'flex',
+        flexDirection: noImage ? 'column' : { xs: 'row', sm: 'column' },
+        alignItems: 'stretch',
+      }}
+    >
+      {!noImage && (
+        <Box
+          sx={{
+            position: 'relative',
+            flex: 'none',
+            width: { xs: phoneImageSize, sm: '100%' },
+            alignSelf: 'flex-start',
+          }}
+        >
           <CardMedia
             component="img"
-            image={resolveAssetUrl(source)}
+            image={source}
             alt=""
             onError={() => failed < sources.length - 1 && setFailed(failed + 1)}
             sx={{
-              aspectRatio: ratios[imageRatio],
+              aspectRatio: '1',
               objectFit: 'cover',
+              objectPosition: 'center',
               filter: imageFilter,
               viewTransitionName: imageTransitionName,
             }}
@@ -108,18 +133,32 @@ const EntityCard: FC<{
           {lockBadge}
         </Box>
       )}
-      <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+      <CardContent
+        sx={{
+          flex: 1,
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1,
+          ...(!noImage && { p: { xs: 1.5, sm: 2 }, '&:last-child': { pb: { xs: 1.5, sm: 2 } } }),
+        }}
+      >
         <Box sx={{ minWidth: 0 }}>
           <Stack direction="row" sx={{ alignItems: 'center', gap: 1 }}>
             <Typography
               variant="h6"
               component="h3"
-              sx={{ fontFamily: (theme) => theme.fonts.display, flex: 1, minWidth: 0 }}
+              sx={(theme) => ({
+                fontFamily: theme.fonts.display,
+                flex: 1,
+                minWidth: 0,
+                [theme.breakpoints.down('sm')]: { fontSize: theme.typography.subtitle1.fontSize },
+              })}
               noWrap
             >
               {title}
             </Typography>
-            {imageRatio === 'none' && lockBadge}
+            {noImage && lockBadge}
           </Stack>
           {subtitle && (
             <Typography variant="body2" color="text.secondary" noWrap>
@@ -161,7 +200,7 @@ const EntityCard: FC<{
           </Stack>
         )}
       </CardContent>
-    </>
+    </Box>
   );
 
   return (
