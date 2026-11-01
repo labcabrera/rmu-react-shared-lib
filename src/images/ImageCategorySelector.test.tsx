@@ -69,3 +69,18 @@ describe('ImageCategorySelector (spec 057)', () => {
     expect(onDeleted).toHaveBeenCalledWith(own);
   });
 });
+
+describe('ImageCategorySelector categories', () => {
+  it('lists the cultures category with translated names', async () => {
+    fetchImages.mockResolvedValue({ content: [], pagination: { page: 0, size: 25, totalElements: 0, totalPages: 0 } });
+    renderWithProviders(<ImageCategorySelector />);
+
+    await userEvent.click(screen.getByRole('combobox'));
+    const options = await screen.findAllByRole('option');
+    expect(options.map((option) => option.textContent)).toContain('image-category-cultures');
+    expect(options.map((option) => option.textContent)).not.toContain('cultures');
+
+    await userEvent.click(screen.getByRole('option', { name: 'image-category-cultures' }));
+    await waitFor(() => expect(fetchImages).toHaveBeenLastCalledWith('cultures', 0, 25, auth));
+  });
+});

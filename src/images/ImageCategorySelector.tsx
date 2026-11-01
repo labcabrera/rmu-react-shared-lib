@@ -29,7 +29,7 @@ import {
   Typography,
 } from '@mui/material';
 import { deleteImage, fetchImages, updateImage } from '../api/image.api';
-import { ImageCategory, imagePath, isBaseImage, MediaImage, MediaImagePage } from '../api/image.dto';
+import { ImageCategory, imageCategoryKey, imagePath, isBaseImage, MediaImage, MediaImagePage } from '../api/image.dto';
 import { isAdmin } from '../auth/roles';
 import { resolveAssetUrl } from '../config/asset-url';
 import DeleteDialog from '../dialogs/DeleteDialog';
@@ -57,7 +57,7 @@ export const canManageImage = (image: MediaImage, userId: string | undefined, ad
 export default function ImageCategorySelector({
   defaultCategory = 'avatars',
   selectedImageId,
-  categories = ['actions', 'avatars', 'generic', 'items', 'npcs', 'photos', 'professions', 'races', 'user-data'],
+  categories = ['actions', 'avatars', 'cultures', 'generic', 'items', 'npcs', 'photos', 'professions', 'races', 'user-data'],
   onSelect,
   onDeleted,
 }: ImageCategorySelectorProps) {
@@ -149,7 +149,7 @@ export default function ImageCategorySelector({
         >
           {categories.map((imageCategory) => (
             <MenuItem key={imageCategory} value={imageCategory}>
-              {imageCategory}
+              {t(imageCategoryKey(imageCategory))}
             </MenuItem>
           ))}
         </Select>
