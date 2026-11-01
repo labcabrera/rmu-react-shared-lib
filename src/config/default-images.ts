@@ -59,6 +59,11 @@ export const ITEM_CATEGORIES_WITH_IMAGE: readonly string[] = [
   'instrument',
   'herb',
   'gem',
+  'poison',
+  'property',
+  'acid',
+  'intoxicant',
+  'jewelry',
 ];
 
 /** Asset path of the image of an item category, or of `images/generic/items.png` when it has none yet. */
