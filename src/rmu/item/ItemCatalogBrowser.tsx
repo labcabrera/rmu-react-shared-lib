@@ -34,6 +34,7 @@ import DataTable from '../../ui/DataTable';
 import EmptyState from '../../ui/states/EmptyState';
 import ErrorState from '../../ui/states/ErrorState';
 import LoadingState from '../../ui/states/LoadingState';
+import { ENTITY_SOURCES } from '../entity-source/entity-source';
 import ItemCard, { itemCatalogColumns } from './ItemCard';
 import {
   ARMOR_CLASSES,
@@ -167,6 +168,7 @@ export const ItemCatalogFilterSections: FC<{ filters: ListFilters<Item>; realms?
     herbGroup: multiple('herbGroup'),
     biome: multiple('biome'),
     gemGrade: single('gemGrade'),
+    source: single('source'),
   };
   const armor = filters.isActive('at');
   const weapon = filters.isActive('skill');
@@ -241,6 +243,15 @@ export const ItemCatalogFilterSections: FC<{ filters: ListFilters<Item>; realms?
           label={t('features')}
           values={ITEM_FEATURE_FILTERS}
           labelPrefix="item-filter-feature-"
+        />
+      </FilterSection>
+      <FilterSection title={t('entity-source')} defaultOpen={!!bind.source.value}>
+        <EnumPicker
+          {...bind.source}
+          variant="tiles"
+          label={t('entity-source')}
+          values={ENTITY_SOURCES}
+          labelPrefix="entity-source-"
         />
       </FilterSection>
       {(realms || mine) && (

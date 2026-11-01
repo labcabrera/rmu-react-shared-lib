@@ -6,6 +6,7 @@ import EntityCard, { EntityMetric } from '../../cards/EntityCard';
 import { resolveAssetUrl } from '../../config/asset-url';
 import { defaultImages, itemCategoryImage } from '../../config/default-images';
 import { DataTableColumn } from '../../ui/DataTable';
+import EntitySourceChip from '../entity-source/EntitySourceChip';
 import ItemFeatureChips, { ItemFeatureTranslate } from './ItemFeatureChips';
 import ItemThumb, { itemImageUrl } from './ItemThumb';
 import MoneyDisplay from './MoneyDisplay';
@@ -95,6 +96,7 @@ const ItemCard: FC<{
           <ItemFeatureChips
             item={{ features: item.features, lotSize: item.info.lotSize, armor: item.armor, weapon: item.weapon }}
           />
+          <EntitySourceChip entity={item} />
         </>
       }
       metrics={[

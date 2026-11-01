@@ -1,4 +1,4 @@
-import { AccessType } from './common.dto';
+import { AccessType, EntityType } from './common.dto';
 
 export type RealmType = 'channeling' | 'essence' | 'mentalism';
 
@@ -15,12 +15,15 @@ export interface Profession {
   professionalSkills: string[];
   description: string;
   imageUrl?: string;
+  owner?: string;
   accessType: AccessType;
+  /** Rulebook (`system`, admin only) or user content (spec 063). */
+  entitySource: EntityType;
 }
 
-export type CreateProfessionDto = Profession;
+export type CreateProfessionDto = Omit<Profession, 'owner' | 'entitySource'> & { entitySource?: EntityType };
 
-export type UpdateProfessionDto = Partial<Omit<Profession, 'id'>>;
+export type UpdateProfessionDto = Partial<Omit<Profession, 'id' | 'owner'>>;
 
 export interface ProfessionSkillCosts {
   animal: number[];

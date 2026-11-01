@@ -23,6 +23,7 @@ export const catalogItem = (overrides: Partial<Item> & Pick<Item, 'id'>): Item =
   description: null,
   imageUrl: '',
   owner: 'system',
+  entitySource: 'system',
   ...overrides,
 });
 
@@ -77,6 +78,7 @@ export const sampleCatalog: Item[] = [
     id: 'dagger',
     category: 'weapon',
     owner: 'user-1',
+    entitySource: 'user',
     weapon: {
       skillId: 'melee-weapon@blade',
       fumble: 1,

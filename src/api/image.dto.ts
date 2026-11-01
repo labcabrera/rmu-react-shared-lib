@@ -2,6 +2,7 @@ export const IMAGE_CATEGORIES = [
   'actions',
   'avatars',
   'backgrounds',
+  'cultures',
   'doc',
   'generic',
   'icons',
@@ -14,6 +15,9 @@ export const IMAGE_CATEGORIES = [
 ] as const;
 
 export type ImageCategory = (typeof IMAGE_CATEGORIES)[number];
+
+/** i18n key of the name of an image category: `cultures` → `image-category-cultures`. */
+export const imageCategoryKey = (category: string): string => `image-category-${category}`;
 
 /** `base`: a file of rmu-mfe-assets, read only; `user`: an upload (workspace spec 057, decision 2). */
 export type ImageSource = 'base' | 'user';

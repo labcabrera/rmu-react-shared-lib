@@ -61,6 +61,11 @@ describe('item catalog filters', () => {
     expect(filtered('?mine=true')).toHaveLength(sampleCatalog.length);
   });
 
+  it('filters by source (spec 063)', () => {
+    expect(filtered('?source=user')).toEqual(['dagger']);
+    expect(filtered('?source=system')).toHaveLength(sampleCatalog.length - 1);
+  });
+
   it('sorts by name, cost, weight or AT, with the items without the value last', () => {
     const ids = (sort: string, dir = 'asc') => sortItems(sampleCatalog, sort, dir, t).map((item) => item.id);
     expect(ids('name').slice(0, 3)).toEqual(['backpack', 'dagger', 'battle-axe']);

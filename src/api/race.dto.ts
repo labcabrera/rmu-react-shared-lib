@@ -1,5 +1,5 @@
 import { StatKey } from './character.dto';
-import { AccessType } from './common.dto';
+import { AccessType, EntityType } from './common.dto';
 
 export const resistances = ['channeling', 'mentalism', 'essence', 'physical', 'poison', 'disease', 'fear'];
 
@@ -27,7 +27,10 @@ export type Race = {
   skillBonuses: RaceSkillBonus[];
   description: string | undefined;
   imageUrl: string | undefined;
+  owner?: string;
   accessType: AccessType;
+  /** Rulebook (`system`, admin only) or user content (spec 063). */
+  entitySource: EntityType;
 };
 
 export type RaceResistances = {
@@ -79,6 +82,8 @@ export type CreateRaceDto = {
   defaultLanguage: string | undefined;
   description: string | undefined;
   imageUrl: string | undefined;
+  /** Only an admin may send `system` (spec 063). */
+  entitySource?: EntityType;
 };
 
 export type UpdateRaceDto = {
@@ -102,6 +107,8 @@ export type UpdateRaceDto = {
   defaultLanguage: string | undefined;
   description: string | undefined;
   imageUrl: string | undefined;
+  /** Only an admin may send `system` (spec 063). */
+  entitySource?: EntityType;
 };
 
 export type AddRaceTraitDto = {

@@ -1,3 +1,5 @@
+import { EntityType } from './common.dto';
+
 /** Spell types and enumerations (spec 028): the contract of rmu-api-spells. */
 export type SpellType = 'alchemical' | 'elemental' | 'force' | 'informational' | 'utility';
 export type SpellSubtype = 'ball' | 'directed' | 'mental-attack' | 'subconscious';
@@ -48,6 +50,8 @@ export type Spell = {
   imageUrl: string | null;
   owner?: string;
   accessType?: string;
+  /** Rulebook (`system`) or user content (spec 063); a spell inside a list follows the list's. */
+  entitySource: EntityType;
   version?: number;
   createdAt?: string;
   updatedAt?: string | null;

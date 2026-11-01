@@ -33,6 +33,12 @@ describe('ApiError', () => {
     expect(new ApiError(500, '', 'not json', '/x').code).toBeUndefined();
   });
 
+  it('explains a rulebook entity changed by a non-admin', () => {
+    const body = '{"statusCode":403,"error":"Forbidden","code":"system-entity-admin-only","message":"x"}';
+    expect(new ApiError(403, '', body, '/x').messageKey).toBe('error-system-entity-admin-only');
+    expect(new ApiError(403, '', '{"code":"forbidden"}', '/x').messageKey).toBe('error-forbidden');
+  });
+
   it('extracts the detail from NestJS and validation bodies', () => {
     expect(new ApiError(404, '', '{"message":"Item not found"}', '/x').detail).toBe('Item not found');
     expect(new ApiError(400, '', '{"message":["name is required","size must be positive"]}', '/x').detail).toBe(

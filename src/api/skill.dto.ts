@@ -1,4 +1,4 @@
-import { AccessType } from './common.dto';
+import { AccessType, EntityType } from './common.dto';
 import { ManeuverProfile, ManeuverProfileOverrides } from './maneuver-modifier.dto';
 
 export interface Skill {
@@ -13,13 +13,16 @@ export interface Skill {
   specializationOptional?: boolean;
   owner: string;
   accessType: AccessType;
+  /** Rulebook (`system`, admin only) or user content (spec 063). */
+  entitySource: EntityType;
   /** Effective maneuver profile (category profile with the skill's overrides applied). */
   maneuver?: ManeuverProfile;
   /** The skill's own partial values. */
   maneuverOverrides?: ManeuverProfileOverrides;
 }
 
-export type CreateSkillDto = Omit<Skill, 'owner' | 'maneuver' | 'maneuverOverrides'> & {
+export type CreateSkillDto = Omit<Skill, 'owner' | 'entitySource' | 'maneuver' | 'maneuverOverrides'> & {
+  entitySource?: EntityType;
   maneuver?: ManeuverProfileOverrides;
 };
 
