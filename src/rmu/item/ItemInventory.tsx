@@ -25,9 +25,9 @@ import ItemConditionChip from './ItemConditionChip';
 import { ItemFeatureTranslate } from './ItemFeatureChips';
 import ItemModifierChips from './ItemModifierChips';
 import ItemThumb from './ItemThumb';
+import MoneyDisplay from './MoneyDisplay';
 import { normalizeText } from './item-catalog';
 import { strategicItemUnitValue } from './item-value';
-import MoneyDisplay from './MoneyDisplay';
 import { roundGold } from './money';
 
 /** An action of the menu of an item: equip, sell, give, repair... */
@@ -42,11 +42,15 @@ export type ItemAction = {
 
 type Grouping = 'category' | 'carried';
 
+/** The group of the equipped items in the carried grouping. */
+const EQUIPPED_GROUP = 'equipped-items';
+
 /**
  * Reference gold of all the units of an item: its value, or the one of its type, carats, jewelry class and size
  * (spec 062).
  */
-export const itemTotalValue = (item: StrategicItem): number => roundGold(strategicItemUnitValue(item) * itemUnits(item));
+export const itemTotalValue = (item: StrategicItem): number =>
+  roundGold(strategicItemUnitValue(item) * itemUnits(item));
 
 /** Chips of the instance data of spec 062: size other than medium, carats and cut of a gem, class of a jewel. */
 export const itemInstanceLabels = (
@@ -67,10 +71,15 @@ export const itemTotalWeight = (item: StrategicItem): number =>
 
 const ItemRow: FC<{
   item: StrategicItem;
+  /** Show the equipped chip: not inside the equipped group, which already says it. */
   equipped: boolean;
+  /** The equipment slot of the item, under its name. */
+  slotLabel?: string;
+  highlighted?: boolean;
   actions: ItemAction[];
   onSelect?: (item: StrategicItem) => void;
-}> = ({ item, equipped, actions, onSelect }) => {
+  onHover?: (itemId: string | undefined) => void;
+}> = ({ item, equipped, slotLabel, highlighted, actions, onSelect, onHover }) => {
   const { t } = useTranslation();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const modifiers = (item.modifiers ?? []).filter((modifier) => modifier.type !== 'breakage');
@@ -85,9 +94,15 @@ const ItemRow: FC<{
         py: 0.75,
         borderRadius: 1,
         cursor: onSelect ? 'pointer' : 'default',
-        '&:hover': { bgcolor: 'action.hover' },
+        bgcolor: highlighted ? 'action.selected' : undefined,
+        outline: highlighted ? 1 : 0,
+        outlineColor: 'primary.main',
+        '&:hover': { bgcolor: highlighted ? 'action.selected' : 'action.hover' },
       }}
       onClick={() => onSelect?.(item)}
+      onMouseEnter={onHover ? () => onHover(item.id) : undefined}
+      onMouseLeave={onHover ? () => onHover(undefined) : undefined}
+      data-highlighted={highlighted || undefined}
       aria-label={name}
     >
       <ItemThumb item={item} size={44} disabled={!!item.condition?.broken} />
@@ -100,7 +115,13 @@ const ItemRow: FC<{
           {equipped && <Chip size="small" color="primary" label={t('equipped')} />}
           <ItemConditionChip condition={item.condition} />
           {itemInstanceLabels(item, t).map((label) => (
-            <Chip key={label.key} size="small" variant="outlined" label={label.label} data-testid={`item-${label.key}`} />
+            <Chip
+              key={label.key}
+              size="small"
+              variant="outlined"
+              label={label.label}
+              data-testid={`item-${label.key}`}
+            />
           ))}
           {item.material && (
             <Chip
@@ -132,6 +153,11 @@ const ItemRow: FC<{
             />
           )}
         </Stack>
+        {slotLabel && (
+          <Typography variant="caption" color="primary" component="div">
+            {slotLabel}
+          </Typography>
+        )}
         {modifiers.length > 0 && (
           <Box sx={{ mt: 0.25 }}>
             <ItemModifierChips modifiers={modifiers} max={2} />
@@ -192,8 +218,17 @@ const ItemInventory: FC<{
   items: StrategicItem[];
   actions?: (item: StrategicItem) => ItemAction[];
   equippedIds?: string[];
+  /** The slot key of each equipped item (item id → slot), shown translated under its name. */
+  equippedSlots?: Record<string, string>;
+  /** An item to highlight, for example the one of the equipment slot under the pointer. */
+  highlightedId?: string;
+  /** The pointer enters (id) or leaves (undefined) an item row. */
+  onHoverItem?: (itemId: string | undefined) => void;
   onSelect?: (item: StrategicItem) => void;
-  /** Group by carried and stored (a character) instead of by category. */
+  /**
+   * Group by carried and stored (a character) instead of by category. With equipped items, the carried grouping
+   * shows them in their own group first.
+   */
   groupings?: Grouping[];
   emptyTitle?: string;
   emptyAction?: ReactNode;
@@ -202,6 +237,9 @@ const ItemInventory: FC<{
   items,
   actions,
   equippedIds = [],
+  equippedSlots = {},
+  highlightedId,
+  onHoverItem,
   onSelect,
   groupings = ['category'],
   emptyTitle,
@@ -222,13 +260,16 @@ const ItemInventory: FC<{
   }, [items, search, hideItemTypeIds, t]);
 
   const groups = useMemo(() => {
-    const keyOf = (item: StrategicItem) =>
-      grouping === 'carried' ? (item.carried ? 'carried-items' : 'stored-items') : item.category;
+    const keyOf = (item: StrategicItem) => {
+      if (grouping !== 'carried') return item.category;
+      if (equippedIds.includes(item.id)) return EQUIPPED_GROUP;
+      return item.carried ? 'carried-items' : 'stored-items';
+    };
     const map = new Map<string, StrategicItem[]>();
     visible.forEach((item) => map.set(keyOf(item), [...(map.get(keyOf(item)) ?? []), item]));
-    const order = grouping === 'carried' ? ['carried-items', 'stored-items'] : [...map.keys()].sort();
+    const order = grouping === 'carried' ? [EQUIPPED_GROUP, 'carried-items', 'stored-items'] : [...map.keys()].sort();
     return order.filter((key) => map.has(key)).map((key) => ({ key, items: map.get(key)! }));
-  }, [visible, grouping]);
+  }, [visible, grouping, equippedIds]);
 
   const totalValue = roundGold(visible.reduce((sum, item) => sum + itemTotalValue(item), 0));
   const totalWeight = Math.round(visible.reduce((sum, item) => sum + itemTotalWeight(item), 0) * 100) / 100;
@@ -275,9 +316,12 @@ const ItemInventory: FC<{
             <ItemRow
               key={item.id}
               item={item}
-              equipped={equippedIds.includes(item.id)}
+              equipped={group.key !== EQUIPPED_GROUP && equippedIds.includes(item.id)}
+              slotLabel={equippedSlots[item.id] ? t(equippedSlots[item.id]) : undefined}
+              highlighted={highlightedId === item.id}
               actions={actions ? actions(item) : []}
               onSelect={onSelect}
+              onHover={onHoverItem}
             />
           ))}
         </Paper>
