@@ -50,6 +50,8 @@ const InjuryCard: FC<{
   const location = [
     injury.location ? t(injury.location) : undefined,
     injury.side ? t(`side-${injury.side}`) : undefined,
+    // Spec 065: the day of the campaign when it was received
+    injury.gameDay !== undefined ? t('campaign-day', { day: injury.gameDay }) : undefined,
   ]
     .filter(Boolean)
     .join(' · ');
