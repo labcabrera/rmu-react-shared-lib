@@ -12,7 +12,9 @@ export type ItemLedgerKind =
   | 'discard'
   | 'gold-transfer'
   | 'import'
-  | 'found';
+  | 'found'
+  | 'enchant'
+  | 'enchant-refund';
 
 /** Who pays a purchase of a character: its coins, its faction, or its coins and then the faction. */
 export type PayerMode = 'holder' | 'faction' | 'split';

@@ -1,5 +1,6 @@
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import DiamondIcon from '@mui/icons-material/Diamond';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ScienceIcon from '@mui/icons-material/Science';
@@ -109,6 +110,16 @@ const ItemRow: FC<{
               icon={<DiamondIcon />}
               data-testid="item-material"
               label={t(`material-${item.material.id}`, item.material.id)}
+            />
+          )}
+          {item.enchantment && (
+            <Chip
+              size="small"
+              color="secondary"
+              variant="outlined"
+              icon={<AutoAwesomeIcon />}
+              data-testid="item-enchanted"
+              label={t('item-enchanted', { level: item.enchantment.itemLevel })}
             />
           )}
           {item.coating && (

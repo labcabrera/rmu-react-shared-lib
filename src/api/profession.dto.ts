@@ -19,6 +19,8 @@ export interface Profession {
   accessType: AccessType;
   /** Rulebook (`system`, admin only) or user content (spec 063). */
   entitySource: EntityType;
+  /** Spec 064: most Base lists of the profession a character develops as base; the rest are closed. Null: no limit. */
+  baseListLimit?: number | null;
 }
 
 export type CreateProfessionDto = Omit<Profession, 'owner' | 'entitySource'> & { entitySource?: EntityType };

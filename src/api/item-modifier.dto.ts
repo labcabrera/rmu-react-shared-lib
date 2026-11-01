@@ -1,5 +1,9 @@
-/** Kind of modifier of an item (spec 019): breakage damage, quality or material, or anything else of the game master. */
-export type StrategicItemModifierType = 'breakage' | 'quality' | 'custom';
+/**
+ * Kind of modifier of an item (spec 019): breakage damage, quality or material, anything else of the game master, or
+ * an enchantment (spec 064).
+ */
+export type StrategicItemModifierType = 'breakage' | 'quality' | 'custom' | 'enchantment';
+/** Kinds a modifier added by hand can have; enchantment modifiers come only from an enchantment project. */
 export const STRATEGIC_ITEM_MODIFIER_TYPES: StrategicItemModifierType[] = ['breakage', 'quality', 'custom'];
 
 /** Uses of the item a modifier applies to: every use, only its breakage checks, or one kind of use. */
@@ -13,7 +17,7 @@ export const STRATEGIC_ITEM_MODIFIER_TARGETS: StrategicItemModifierTarget[] = [
 ];
 
 /** Where a modifier comes from; spec 023 adds the crafting and repair of the item and its catalog type. */
-export type StrategicItemModifierSourceKind = 'tactical' | 'manual' | 'crafting' | 'repair' | 'catalog';
+export type StrategicItemModifierSourceKind = 'tactical' | 'manual' | 'crafting' | 'repair' | 'catalog' | 'enchantment';
 
 export type StrategicItemModifierSource = {
   kind: StrategicItemModifierSourceKind;
@@ -23,6 +27,8 @@ export type StrategicItemModifierSource = {
   actionId?: string;
   /** Spec 023: the ledger entry of the operation that made it. */
   ledgerEntryId?: string;
+  /** Spec 064: the enchantment project that made it. */
+  projectId?: string;
 };
 
 /** A modifier of an item: the same uuid in the tactical game and in the strategic item once applied. */
