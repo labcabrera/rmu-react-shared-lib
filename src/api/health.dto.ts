@@ -140,6 +140,8 @@ export interface Injury {
   createdAt: string;
   updatedAt?: string;
   healedAt?: string;
+  /** Day of the campaign when it was received (spec 065); absent in older injuries. */
+  gameDay?: number;
   /** A poisoning (spec 042): its stages, RR and antidotes. */
   poison?: InjuryPoison;
 }
@@ -172,6 +174,8 @@ export interface HealingLogEntry {
   injuryId?: string;
   tacticalGameId?: string;
   healerName?: string;
+  /** Day of the campaign when it happened (spec 065); absent in older entries. */
+  gameDay?: number;
   /** Data to show with i18n. */
   summary: Record<string, unknown>;
 }
