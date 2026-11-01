@@ -1,7 +1,7 @@
-import type { TFunction } from 'i18next';
 import type { GameCalendar } from '../api/strategic-game.dto';
 
-type Translate = TFunction | ((...args: [string, object?]) => string);
+/** The `t` of react-i18next, without tying the lib to the i18next types of each MFE. */
+type Translate = (...args: [string, Record<string, unknown>]) => string;
 
 /** Day of the campaign (spec 065): "Day 37 · since 3 Víressë, 1640 T.A.", or only the day without a start date. */
 export function formatCampaignDate(calendar: GameCalendar | undefined, t: Translate): string {
