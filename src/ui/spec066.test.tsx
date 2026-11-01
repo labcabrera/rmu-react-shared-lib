@@ -3,6 +3,7 @@ import { act, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import DeleteDialog from '../dialogs/DeleteDialog';
+import RmuDialog from '../dialogs/RmuDialog';
 import { keyValueColor, KeyValueList } from '../display/KeyValuePanel';
 import NumberPad, { outOfRange, parsePadText } from '../inputs/NumberPad';
 import NumberPadField from '../inputs/NumberPadField';
@@ -206,5 +207,19 @@ describe('DeleteDialog, SelectableCard and SearchField (spec 066)', () => {
     rerender(<SearchField value="zz" onChange={onChange} delay={0} label="find" />);
     await act(async () => {});
     expect(screen.getByRole('textbox', { name: 'find' })).toHaveValue('zz');
+  });
+});
+
+describe('RmuDialog dismiss (spec 066)', () => {
+  it('closes with Escape without a Close button', async () => {
+    const onDismiss = vi.fn();
+    renderWithProviders(
+      <RmuDialog open title="t" onDismiss={onDismiss} buttons={<span>ok</span>}>
+        body
+      </RmuDialog>
+    );
+    expect(screen.queryByRole('button', { name: 'close' })).not.toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+    expect(onDismiss).toHaveBeenCalled();
   });
 });
