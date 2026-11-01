@@ -1,4 +1,5 @@
 import { EntityType } from './common.dto';
+import type { SpellAlchemy } from './enchantment.dto';
 
 /** Spell types and enumerations (spec 028): the contract of rmu-api-spells. */
 export type SpellType = 'alchemical' | 'elemental' | 'force' | 'informational' | 'utility';
@@ -47,6 +48,8 @@ export type Spell = {
   /** What the spell does to its targets. */
   effects: SpellEffect[];
   description: string | null;
+  /** Spec 064: alchemy data of an alchemical spell. */
+  alchemy?: SpellAlchemy | null;
   imageUrl: string | null;
   owner?: string;
   accessType?: string;

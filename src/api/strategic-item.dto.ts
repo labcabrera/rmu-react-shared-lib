@@ -1,4 +1,5 @@
 import { ItemMaterial } from './crafting.dto';
+import type { ItemEnchantment } from './enchantment.dto';
 import { ItemCondition, StrategicItemModifier } from './item-modifier.dto';
 import { ItemArmor, ItemCost, ItemFeatures, ItemInfo, ItemShield, ItemWeapon } from './item.dto';
 import { ItemCoating } from './poison.dto';
@@ -60,6 +61,8 @@ export type StrategicItem = {
   jewelryClass?: JewelryClass | null;
   /** Spec 062: multiplier of a modern cut of a gem (1, 5, 10). */
   cutFactor?: number | null;
+  /** Spec 064: the enchantment of the item. */
+  enchantment?: ItemEnchantment | null;
   owner: string;
 };
 
