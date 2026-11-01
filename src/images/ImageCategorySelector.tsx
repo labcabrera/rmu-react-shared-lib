@@ -44,7 +44,11 @@ export type ImageCategorySelectorProps = {
 };
 
 /** The file name of a path without its extension: `images/races/elf-01.png` → `elf-01`. */
-const fileName = (path: string): string => path.split('/').pop()?.replace(/\.[^.]+$/, '') ?? '';
+const fileName = (path: string): string =>
+  path
+    .split('/')
+    .pop()
+    ?.replace(/\.[^.]+$/, '') ?? '';
 
 /**
  * Whether the signed-in user may edit or delete an image: only uploads, by their owner or an admin. Base
@@ -53,11 +57,22 @@ const fileName = (path: string): string => path.split('/').pop()?.replace(/\.[^.
 export const canManageImage = (image: MediaImage, userId: string | undefined, admin: boolean): boolean =>
   !isBaseImage(image) && (admin || (!!userId && image.owner === userId));
 
-
 export default function ImageCategorySelector({
   defaultCategory = 'avatars',
   selectedImageId,
-  categories = ['actions', 'avatars', 'cultures', 'generic', 'items', 'npcs', 'photos', 'professions', 'races', 'user-data'],
+  categories = [
+    'actions',
+    'avatars',
+    'cultures',
+    'generic',
+    'items',
+    'npcs',
+    'photos',
+    'professions',
+    'races',
+    'spells',
+    'user-data',
+  ],
   onSelect,
   onDeleted,
 }: ImageCategorySelectorProps) {
