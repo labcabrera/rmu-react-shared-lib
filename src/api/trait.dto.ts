@@ -1,3 +1,5 @@
+import { EntityType } from './common.dto';
+
 // The Character Companion adds social contacts and status, wealth, epic talents and mental and special flaws (spec 039).
 export const traitCategories = [
   'combat',
@@ -42,8 +44,11 @@ export type Trait = {
   /** Ids of the flaws that can lower its cost. */
   possibleFlaws?: string[] | null;
   source?: 'core-law' | 'character-companion' | null;
+  owner?: string;
+  /** Rulebook (`system`, admin only) or user content (spec 063). */
+  entitySource: EntityType;
 };
 
-export type CreateTraitDto = Partial<Omit<Trait, 'id'>>;
+export type CreateTraitDto = Partial<Omit<Trait, 'id' | 'owner'>>;
 
-export type UpdateTraitDto = Partial<Omit<Trait, 'id'>>;
+export type UpdateTraitDto = Partial<Omit<Trait, 'id' | 'owner'>>;

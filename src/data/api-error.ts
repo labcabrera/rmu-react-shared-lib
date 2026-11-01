@@ -21,6 +21,7 @@ export class ApiError extends Error {
   /** i18n key describing the failure for the user. Status 0 means the request never got a response. */
   get messageKey(): string {
     if (this.code === 'version-conflict') return 'error-version-conflict';
+    if (this.code === 'system-entity-admin-only') return 'error-system-entity-admin-only';
     if (this.status === 0) return 'error-network';
     if (this.status === 400 || this.status === 422) return 'error-bad-request';
     if (this.status === 401) return 'error-unauthorized';

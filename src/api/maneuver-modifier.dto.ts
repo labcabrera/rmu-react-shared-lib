@@ -1,4 +1,4 @@
-import { AccessType } from './common.dto';
+import { AccessType, EntityType } from './common.dto';
 
 export type ManeuverType = 'absolute' | 'percent';
 
@@ -51,4 +51,6 @@ export interface ManeuverModifier {
   reference?: boolean;
   accessType: AccessType;
   owner: string;
+  /** Rulebook (`system`, admin only) or user content (spec 063). */
+  entitySource: EntityType;
 }

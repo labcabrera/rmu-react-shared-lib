@@ -1,4 +1,4 @@
-import { AccessType } from './common.dto';
+import { AccessType, EntityType } from './common.dto';
 
 export interface Enumeration {
   id: string;
@@ -10,9 +10,15 @@ export interface Enumeration {
   name: string;
   category: string;
   realmId: string | null;
+  owner?: string;
   accessType: AccessType;
+  /** Rulebook (`system`, admin only) or user content (spec 063). */
+  entitySource: EntityType;
 }
 
-export type CreateEnumerationDto = Omit<Enumeration, 'id' | 'key'> & { key?: string };
+export type CreateEnumerationDto = Omit<Enumeration, 'id' | 'key' | 'owner' | 'entitySource'> & {
+  key?: string;
+  entitySource?: EntityType;
+};
 
-export type UpdateEnumerationDto = Partial<Omit<Enumeration, 'id' | 'key'>>;
+export type UpdateEnumerationDto = Partial<Omit<Enumeration, 'id' | 'key' | 'owner'>>;

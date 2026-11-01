@@ -21,6 +21,6 @@ export interface EffectType {
   entitySource: EntityType;
 }
 
-export type CreateEffectTypeDto = Omit<EffectType, 'owner' | 'entitySource'>;
+export type CreateEffectTypeDto = Omit<EffectType, 'owner' | 'entitySource'> & { entitySource?: EntityType };
 
-export type UpdateEffectTypeDto = Partial<Omit<EffectType, 'id' | 'owner' | 'entitySource'>>;
+export type UpdateEffectTypeDto = Partial<Omit<EffectType, 'id' | 'owner'>>;

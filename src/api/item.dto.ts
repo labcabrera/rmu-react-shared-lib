@@ -1,3 +1,4 @@
+import { EntityType } from './common.dto';
 import { ItemAntidote, ItemPoison } from './poison.dto';
 import type {
   ItemAcid,
@@ -87,6 +88,8 @@ export type Item = {
   description: string | null;
   imageUrl: string;
   owner: string;
+  /** Rulebook (`system`, admin only) or user content (spec 063). */
+  entitySource: EntityType;
 };
 
 export type ItemWeapon = {
@@ -171,6 +174,8 @@ export interface CreateItemDto {
   info: Partial<ItemInfo> | undefined;
   description: string | undefined;
   imageUrl?: string;
+  /** Only an admin may send `system` (spec 063). */
+  entitySource?: EntityType;
 }
 
 export interface UpdateItemDto {
@@ -184,6 +189,8 @@ export interface UpdateItemDto {
   stackable: boolean | undefined;
   description: string | undefined;
   imageUrl: string | undefined;
+  /** Only an admin may send `system` (spec 063). */
+  entitySource?: EntityType;
 }
 
 export interface ItemModifierOption {

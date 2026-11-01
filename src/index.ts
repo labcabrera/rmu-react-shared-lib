@@ -1,4 +1,5 @@
-export { ADMIN_GROUP, isAdmin, useIsAdmin, userGroups } from './auth/roles';
+export { ADMIN_GROUP, canEditEntity, isAdmin, useCanEditEntity, useIsAdmin, userGroups } from './auth/roles';
+export type { EditableEntity } from './auth/roles';
 export { default as EntityImage } from './avatars/EntityImage';
 export type { EntityImageProps, EntityImageSize } from './avatars/EntityImage';
 export { avatarSize, default as EntityAvatar, initialsOf } from './avatars/EntityAvatar';
@@ -239,6 +240,11 @@ export { rsqlAnd } from './data/rsql';
 export { default as RollBreakdown, useModifierLabel } from './rmu/RollBreakdown';
 export type { RollContext, RollModifier, RollModifierGroup, SkippedRule } from './rmu/RollBreakdown';
 export { default as RuleHint, FieldHint, RuleParamList } from './rmu/RuleHint';
+export { default as EntitySourceChip } from './rmu/entity-source/EntitySourceChip';
+export type { EntitySourceChipProps } from './rmu/entity-source/EntitySourceChip';
+export { default as EntitySourceField } from './rmu/entity-source/EntitySourceField';
+export type { EntitySourceFieldProps } from './rmu/entity-source/EntitySourceField';
+export { ENTITY_SOURCES, entitySourceFilter, entitySourceOf } from './rmu/entity-source/entity-source';
 export type { RuleParams } from './rmu/RuleHint';
 export { default as EffectList, effectColor, effectIcon, normalizeEffectStatus } from './rmu/EffectList';
 export { default as StatusBadge } from './rmu/StatusBadge';

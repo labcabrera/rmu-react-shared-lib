@@ -1,4 +1,4 @@
-import { AccessType } from './common.dto';
+import { AccessType, EntityType } from './common.dto';
 
 export type CultureSkillRankType = 'skill' | 'skill-choice' | 'category-pool' | 'languages' | 'region';
 
@@ -38,8 +38,12 @@ export type Culture = {
   imageUrl: string | undefined;
   owner?: string;
   accessType: AccessType;
+  /** Rulebook (`system`, admin only) or user content (spec 063). */
+  entitySource: EntityType;
 };
 
-export type CreateCultureDto = Omit<Culture, 'id' | 'developmentCost' | 'owner'>;
+export type CreateCultureDto = Omit<Culture, 'id' | 'developmentCost' | 'owner' | 'entitySource'> & {
+  entitySource?: EntityType;
+};
 
 export type UpdateCultureDto = Partial<CreateCultureDto>;

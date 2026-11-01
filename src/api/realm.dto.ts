@@ -1,4 +1,4 @@
-import { AccessType } from './common.dto';
+import { AccessType, EntityType } from './common.dto';
 
 export type MagicPresence = 'unlimited' | 'limited' | 'none';
 
@@ -11,11 +11,14 @@ export type Realm = {
   shortDescription: string | undefined;
   description: string | undefined;
   imageUrl: string | undefined;
+  owner?: string;
   accessType: AccessType;
+  /** Rulebook (`system`, admin only) or user content (spec 063). */
+  entitySource: EntityType;
   /** A realm whose NPCs every campaign can use (RMU Core, spec 055); only an admin sets it. Missing means `false`. */
   generic?: boolean;
 };
 
-export type CreateRealmDto = Omit<Realm, 'id'>;
+export type CreateRealmDto = Omit<Realm, 'id' | 'owner' | 'entitySource'> & { entitySource?: EntityType };
 
-export type UpdateRealmDto = Partial<Omit<Realm, 'id'>>;
+export type UpdateRealmDto = Partial<Omit<Realm, 'id' | 'owner'>>;

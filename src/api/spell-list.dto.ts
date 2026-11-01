@@ -1,3 +1,4 @@
+import { EntityType } from './common.dto';
 import { RealmType } from './profession.dto';
 
 export type ListType = 'open' | 'closed' | 'base' | 'evil';
@@ -20,6 +21,8 @@ export type SpellList = {
   imageUrl: string | null;
   owner?: string;
   accessType?: string;
+  /** Rulebook (`system`, admin only) or user content (spec 063). */
+  entitySource: EntityType;
   version?: number;
   createdAt?: string;
   updatedAt?: string | null;
@@ -27,7 +30,7 @@ export type SpellList = {
 
 type ServerFields = 'id' | 'realm' | 'owner' | 'version' | 'createdAt' | 'updatedAt';
 
-export type CreateSpellListDto = Omit<SpellList, ServerFields>;
+export type CreateSpellListDto = Omit<SpellList, ServerFields | 'entitySource'> & { entitySource?: EntityType };
 
 /** A PATCH; send `version` back to detect a concurrent change. */
 export type UpdateSpellListDto = Partial<Omit<SpellList, 'id' | 'realm'>>;

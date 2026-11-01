@@ -3,6 +3,7 @@ import { ITEM_CATEGORIES, Item, ItemArmorClass, WeaponAttackType, WeaponModeType
 import { Realm } from '../../api/realm.dto';
 import { GEM_GRADES, HERB_BIOMES, HERB_GROUPS, HerbBiome } from '../../api/treasure-goods.dto';
 import { FilterSchema } from '../../data/useListFilters';
+import { entitySourceFilter } from '../entity-source/entity-source';
 import { ItemFeatureTranslate } from './ItemFeatureChips';
 
 /** The weapon skills of the catalog (spec 046, decision 11): 8 melee and 5 ranged specializations. */
@@ -71,7 +72,7 @@ export interface ItemCatalogFilterOptions {
 
 /**
  * Filters of the item catalog (spec 046, decision 11), for useListFilters: translated name, category, rarity, realm,
- * «only mine», and the contextual ones of armor (AT, slot, class) and weapons (skill, hands, attack), the general
+ * «only mine», the source (spec 063), and the contextual ones of armor (AT, slot, class) and weapons (skill, hands, attack), the general
  * equipment features, and the sort (`sort` and `dir`, not counted as filters). Everything is matched on the client.
  */
 export const itemCatalogFilters = (
@@ -124,6 +125,7 @@ export const itemCatalogFilters = (
       when: () => !!owner,
       match: (item) => item.owner === owner,
     },
+    source: entitySourceFilter<Item>(t),
     at: {
       kind: 'single',
       label: t('at-short'),
