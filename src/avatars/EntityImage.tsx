@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, ButtonBase } from '@mui/material';
+import type { ImageCategory } from '../api/image.dto';
 import { assetCandidates, ThumbSize, thumbSizeFor } from '../config/asset-url';
 import { defaultImages, EntityKind } from '../config/default-images';
 import ImageSelectorDialog from '../images/ImageSelectorDialog';
@@ -45,6 +46,8 @@ export interface EntityImageProps {
   actionLabel?: string;
   /** `view-transition-name` of the image, to morph from the list card. */
   imageTransitionName?: string;
+  /** Category the image gallery opens on; by default the one of the kind (items for an item). */
+  imageCategory?: ImageCategory;
 }
 
 /**
@@ -52,6 +55,14 @@ export interface EntityImageProps {
  * radius of the cards, loading the thumbnail of base images and falling back to the original, the given fallbacks,
  * the default image of its kind and a generic one.
  */
+/** Gallery category of the kinds that have their own folder in rmu-mfe-assets. */
+const KIND_IMAGE_CATEGORIES: Partial<Record<EntityKind, ImageCategory>> = {
+  item: 'items',
+  npc: 'npcs',
+  profession: 'professions',
+  race: 'races',
+};
+
 const EntityImage: FC<EntityImageProps> = ({
   image,
   fallbackImages = [],
@@ -62,6 +73,7 @@ const EntityImage: FC<EntityImageProps> = ({
   onClick,
   actionLabel,
   imageTransitionName,
+  imageCategory,
 }) => {
   const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -118,6 +130,7 @@ const EntityImage: FC<EntityImageProps> = ({
           open={dialogOpen}
           onClose={() => setDialogOpen(false)}
           onSelect={(selected) => onImageChange(selected)}
+          defaultCategory={imageCategory ?? (kind ? KIND_IMAGE_CATEGORIES[kind] : undefined)}
         />
       )}
     </>
