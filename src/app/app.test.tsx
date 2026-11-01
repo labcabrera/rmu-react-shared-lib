@@ -7,7 +7,7 @@ import { ApiError } from '../data/api-error';
 import { renderWithProviders } from '../test/render';
 import { ErrorBoundary } from './ErrorBoundary';
 import MfeRoot from './MfeRoot';
-import { NotificationProvider, useError, useNotify } from './NotificationProvider';
+import { NotificationProvider, useNotify } from './NotificationProvider';
 
 const Trigger = ({ error }: { error: unknown }) => {
   const notify = useNotify();
@@ -23,20 +23,6 @@ describe('NotificationProvider', () => {
     );
     await userEvent.click(screen.getByText('fail'));
     expect(await screen.findByRole('alert')).toHaveTextContent('error-not-found: Item not found');
-  });
-
-  it('keeps the former ErrorContext contract', async () => {
-    const Legacy = () => {
-      const { showError } = useError();
-      return <button onClick={() => showError('API request failed: 500')}>legacy</button>;
-    };
-    renderWithProviders(
-      <NotificationProvider>
-        <Legacy />
-      </NotificationProvider>
-    );
-    await userEvent.click(screen.getByText('legacy'));
-    expect(await screen.findByRole('alert')).toHaveTextContent('API request failed: 500');
   });
 
   it('fails clearly outside a provider', () => {

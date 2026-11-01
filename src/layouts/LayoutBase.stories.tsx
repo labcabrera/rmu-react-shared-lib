@@ -7,7 +7,7 @@ import AddButton from '../buttons/AddButton';
 import DeleteButton from '../buttons/DeleteButton';
 import EditButton from '../buttons/EditButton';
 import RefreshButton from '../buttons/RefreshButton';
-import RmuTextCard from '../cards/RmuTextCard';
+import EntityCard from '../cards/EntityCard';
 import StatRow from '../display/StatRow';
 import LayoutBase from './LayoutBase';
 import Section from './Section';
@@ -35,7 +35,7 @@ export const ListPage: Story = {
       <Grid container spacing={1}>
         {['Arming sword', 'Broadsword', 'Battle axe', 'Arrow', 'Boots', 'Bucket'].map((name) => (
           <Grid key={name} size={gridSizeCard}>
-            <RmuTextCard value={name} subtitle="Weapon" image="images/items/arming-sword.png" />
+            <EntityCard title={name} subtitle="Weapon" image="images/items/arming-sword.png" />
           </Grid>
         ))}
       </Grid>

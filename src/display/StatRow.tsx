@@ -1,30 +1,27 @@
-import { Stack, Typography } from '@mui/material';
+import React from 'react';
+import { KeyValueLine, KeyValueTone } from './KeyValuePanel';
 
+/** A single label / value row, the same as a row of KeyValueList (spec 066, decision 5). */
 export default function StatRow({
   label,
   value,
   danger,
   success,
+  penalty,
+  hint,
 }: {
   label: string;
   value: string | number;
   danger?: boolean;
   success?: boolean;
+  /** Red when negative, dimmed when zero. */
+  penalty?: boolean;
+  hint?: string;
 }) {
+  const tone: KeyValueTone = danger ? 'danger' : success ? 'success' : penalty ? 'penalty' : 'default';
   return (
-    <Stack direction="row" sx={{ py: 0.5, justifyContent: 'space-between' }}>
-      <Typography variant="body1" color="secondary">
-        {label}
-      </Typography>
-      <Typography
-        variant="body1"
-        sx={{
-          fontWeight: 600,
-          color: success ? 'success.main' : danger ? 'error.main' : 'primary.main',
-        }}
-      >
-        {value}
-      </Typography>
-    </Stack>
+    <dl style={{ margin: 0 }}>
+      <KeyValueLine label={label} value={value} tone={tone} hint={hint} />
+    </dl>
   );
 }
