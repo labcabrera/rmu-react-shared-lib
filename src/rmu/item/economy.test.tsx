@@ -143,6 +143,29 @@ describe('ItemInventory', () => {
     expect(sell).toHaveBeenCalledWith(items[0]);
   });
 
+  it('shows the equipped items first, with their slot, in the carried grouping', () => {
+    const onHoverItem = vi.fn();
+    renderWithProviders(
+      <ItemInventory
+        items={[item('sword', { carried: true }), item('rope', { carried: true }), item('tent')]}
+        groupings={['carried', 'category']}
+        equippedIds={['sword']}
+        equippedSlots={{ sword: 'mainHand' }}
+        highlightedId="sword"
+        onHoverItem={onHoverItem}
+      />
+    );
+    const overlines = screen.getAllByText(/^(equipped|carried|stored)-items$/).map((node) => node.textContent);
+    expect(overlines).toEqual(['equipped-items', 'carried-items', 'stored-items']);
+    expect(screen.getByText('mainHand')).toBeInTheDocument();
+    expect(screen.queryByText('equipped')).not.toBeInTheDocument();
+    const sword = screen.getByLabelText('sword');
+    expect(sword).toHaveAttribute('data-highlighted', 'true');
+    expect(screen.getByLabelText('rope')).not.toHaveAttribute('data-highlighted');
+    sword.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+    expect(onHoverItem).toHaveBeenCalledWith('sword');
+  });
+
   it('shows an empty state without items', () => {
     renderWithProviders(<ItemInventory items={[]} emptyTitle="nothing" />);
     expect(screen.getByText('nothing')).toBeInTheDocument();
