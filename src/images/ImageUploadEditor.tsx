@@ -19,7 +19,7 @@ import {
   Typography,
 } from '@mui/material';
 import { uploadImage } from '../api/image.api';
-import { IMAGE_CATEGORIES, ImageCategory, MediaImage } from '../api/image.dto';
+import { IMAGE_CATEGORIES, ImageCategory, imageCategoryKey, MediaImage } from '../api/image.dto';
 import { isAdmin } from '../auth/roles';
 import { resolveAssetUrl } from '../config/asset-url';
 
@@ -170,7 +170,7 @@ export default function ImageUploadEditor({
               >
                 {IMAGE_CATEGORIES.map((imageCategory) => (
                   <MenuItem key={imageCategory} value={imageCategory}>
-                    {imageCategory}
+                    {t(imageCategoryKey(imageCategory))}
                   </MenuItem>
                 ))}
               </Select>
