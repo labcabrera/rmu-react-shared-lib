@@ -8,7 +8,8 @@ import EntityAvatar from './EntityAvatar';
 import EntityImage from './EntityImage';
 
 vi.mock('../images/ImageSelectorDialog', () => ({
-  default: ({ open }: { open: boolean }) => (open ? <div role="dialog" /> : null),
+  default: ({ open, defaultCategory }: { open: boolean; defaultCategory?: string }) =>
+    open ? <div role="dialog" data-category={defaultCategory ?? ''} /> : null,
 }));
 
 const original = process.env.RMU_MFE_ASSETS_URI;
@@ -42,6 +43,17 @@ describe('EntityImage (spec 058)', () => {
     renderWithProviders(<EntityImage image="images/races/elf.png" onImageChange={vi.fn()} />);
     await userEvent.setup().click(screen.getByRole('button'));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
+  it('opens the gallery on the folder of the kind, or the one given', async () => {
+    const user = userEvent.setup();
+    const { unmount } = renderWithProviders(<EntityImage kind="item" onImageChange={vi.fn()} />);
+    await user.click(screen.getByRole('button'));
+    expect(screen.getByRole('dialog')).toHaveAttribute('data-category', 'items');
+    unmount();
+    renderWithProviders(<EntityImage kind="item" imageCategory="generic" onImageChange={vi.fn()} />);
+    await user.click(screen.getByRole('button'));
+    expect(screen.getByRole('dialog')).toHaveAttribute('data-category', 'generic');
   });
 
   it('is not a button without an action', () => {

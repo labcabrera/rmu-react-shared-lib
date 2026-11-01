@@ -15,7 +15,7 @@ import {
   Tab,
   Tabs,
 } from '@mui/material';
-import { imagePath, MediaImage } from '../api/image.dto';
+import { ImageCategory, imagePath, MediaImage } from '../api/image.dto';
 import ImageCategorySelector from './ImageCategorySelector';
 import ImageUploadEditor from './ImageUploadEditor';
 
@@ -26,6 +26,8 @@ export type ImageDialogProps = {
   onClose: () => void;
   onSelect: (image: string) => void;
   onUpload?: (image: string) => void;
+  /** Category the gallery opens on, like `items` for an item (avatars by default). */
+  defaultCategory?: ImageCategory;
 };
 
 function TabPanel({ children, value, index }: { children: React.ReactNode; value: number; index: number }) {
@@ -43,6 +45,7 @@ export default function ImageSelectorDialog({
   onClose,
   onSelect: onImageSelected,
   onUpload: onImageUploaded,
+  defaultCategory,
 }: ImageDialogProps) {
   const { t } = useTranslation();
   const [tab, setTab] = useState(0);
@@ -90,6 +93,7 @@ export default function ImageSelectorDialog({
         </TabPanel>
         <TabPanel value={tab} index={1}>
           <ImageCategorySelector
+            defaultCategory={defaultCategory}
             selectedImageId={selectedImage?.id}
             onSelect={setSelectedImage}
             onDeleted={(image) => setSelectedImage((current) => (current?.id === image.id ? undefined : current))}
