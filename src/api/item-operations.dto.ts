@@ -4,7 +4,7 @@ import type { ItemInstanceSpec, PurchaseItemOptions } from './treasure-goods.dto
 
 /**
  * Operations of the item ledger (spec 023); `import` (spec 024), `found`, the doses of a herb search (spec 062), and
- * the treasure, magic item, recharge and gem operations of workspace spec 067.
+ * the treasure, magic item, recharge and gem operations of workspace spec 067; `consumed` (workspace spec 068).
  */
 export type ItemLedgerKind =
   | 'purchase'
@@ -23,7 +23,9 @@ export type ItemLedgerKind =
   | 'recharge'
   | 'gem-cut'
   | 'gem-set'
-  | 'gem-unset';
+  | 'gem-unset'
+  /** Workspace spec 068: units spent in a tactical game. */
+  | 'consumed';
 
 /** Who pays a purchase of a character: its coins, its faction, or its coins and then the faction. */
 export type PayerMode = 'holder' | 'faction' | 'split';

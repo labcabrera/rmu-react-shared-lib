@@ -4,6 +4,7 @@ import {
   addCharacterInjury,
   fetchCharacterHealingLog,
   fetchCharacterTreatmentDifficulty,
+  removeCharacterTemporaryModifier,
   resolveCharacterCondition,
   restCharacter,
   rollCharacterInjuryPermanent,
@@ -77,6 +78,12 @@ describe('character health api', () => {
       /\/characters\/c1\/conditions\/k1\/resolve$/,
     ],
     [
+      'remove temporary modifier',
+      () => removeCharacterTemporaryModifier('c1', 'm1', auth),
+      'DELETE',
+      /\/characters\/c1\/temporary-modifiers\/m1$/,
+    ],
+    [
       'healing log',
       () => fetchCharacterHealingLog('c1', 0, 20, auth),
       'GET',
@@ -95,6 +102,26 @@ describe('character health api', () => {
     const dto = { procedure: 'pressure' as const, healerCharacterId: 'c2', roll: 70, difficulty: -10 };
     await treatCharacterInjury('c1', 'i1', dto, auth);
     expect(call(fetchMock).body).toEqual(dto);
+  });
+
+  it('sends the cast support and the salve modifier (spec 068)', async () => {
+    const fetchMock = mockFetch();
+    const cast = { procedure: 'cast' as const, healerCharacterId: 'c2', roll: 80, castSupport: 'crutches' as const };
+    await treatCharacterInjury('c1', 'i1', cast, auth);
+    expect(call(fetchMock).body).toEqual(cast);
+  });
+
+  it('sends the salve modifier (spec 068)', async () => {
+    const fetchMock = mockFetch();
+    const salve = { procedure: 'salve' as const, healerCharacterId: 'c2', roll: 60, salveModifier: 10 };
+    await treatCharacterInjury('c1', 'i1', salve, auth);
+    expect(call(fetchMock).body).toMatchObject({ salveModifier: 10 });
+  });
+
+  it('removes the limits of an injury with null (spec 068)', async () => {
+    const fetchMock = mockFetch();
+    await updateCharacterInjury('c1', 'i1', { limits: null }, auth);
+    expect(call(fetchMock).body).toEqual({ limits: null });
   });
 
   it('sends no difficulty when the game master does not override it', async () => {

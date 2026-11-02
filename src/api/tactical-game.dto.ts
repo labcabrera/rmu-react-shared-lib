@@ -1,5 +1,6 @@
 import { CharacterCondition, CharacterFate, HpBySource, HpLogEntry, Injury } from './health.dto';
 import { StrategicItemModifier } from './item-modifier.dto';
+import type { ItemConsumed, TemporaryModifier } from './temporary-modifier.dto';
 
 export type TacticalGameStatus = 'created' | 'in_progress' | 'finished';
 
@@ -21,6 +22,8 @@ export type TacticalGame = {
   imageUrl?: string;
   /** Result of the game, set when it is finished. */
   outcome?: TacticalGameOutcome;
+  /** Workspace spec 068: thresholds of fallen allies already alerted, by faction id. */
+  fearThresholdsAlerted?: Record<string, string[]>;
 };
 
 /** Reserved faction id of the environment of a tactical game (spec 055, decision 2). */
@@ -126,6 +129,10 @@ export type TacticalGameCharacterOutcome = {
   fate?: CharacterFate;
   /** Lasting breakage the items of the character got in the game (spec 019). */
   items?: TacticalGameItemOutcome[];
+  /** Workspace spec 068: units of strategic items spent in the game. */
+  itemsConsumed?: ItemConsumed[];
+  /** Workspace spec 068: temporary modifiers created in the game. */
+  temporaryModifiers?: TemporaryModifier[];
   /** Set once the result has been applied to the strategic character. */
   appliedAt?: string;
   /** Error of the last attempt to apply it. */

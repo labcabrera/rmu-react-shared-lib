@@ -135,3 +135,17 @@ export async function giveCharacterAntidote(
 ): Promise<CharacterAntidoteResult> {
   return await callApi(auth, `${characterUrl(characterId)}/injuries/${injuryId}/antidote`, jsonPost(dto));
 }
+
+/**
+ * Removes a temporary morale or fear modifier of the character (workspace spec 068): game owner or admin only; an
+ * unknown id is a 404 `err-temporary-modifier-not-found`.
+ */
+export async function removeCharacterTemporaryModifier(
+  characterId: string,
+  modifierId: string,
+  auth: AuthContextProps
+): Promise<Character> {
+  return await callApi(auth, `${characterUrl(characterId)}/temporary-modifiers/${encodeURIComponent(modifierId)}`, {
+    method: 'DELETE',
+  });
+}
