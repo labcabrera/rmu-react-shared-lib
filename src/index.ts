@@ -340,6 +340,7 @@ export {
   ITEM_PAGE_SIZES,
   ITEM_SORTS,
   itemCatalogFilters,
+  MAGIC_LEVEL_FILTERS,
   normalizeText,
   sortItems,
   WEAPON_ATTACKS,

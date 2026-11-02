@@ -31,7 +31,12 @@ export const moneyText = (gold: number, t: ItemFeatureTranslate): string =>
 /** Chips of the Treasure Law blocks of spec 062: the data that tells two items apart, the rest is in the view. */
 const treasureLines = (features: ItemFeatures, t: ItemFeatureTranslate): ItemFeatureLine[] => {
   const lines: ItemFeatureLine[] = [];
-  const { herb, acid, intoxicant, gem, jewelry, animal, property } = features;
+  const { herb, acid, intoxicant, gem, jewelry, animal, property, magic } = features;
+  if (magic)
+    lines.push({
+      key: 'magic',
+      label: `${t(`magic-kind-${magic.kind}`)} · ${t('magic-item-level-value', { level: magic.itemLevel })}`,
+    });
   if (herb) {
     lines.push({ key: 'herb-group', label: t(`herb-group-${herb.group}`) });
     if (herb.biomes.length)

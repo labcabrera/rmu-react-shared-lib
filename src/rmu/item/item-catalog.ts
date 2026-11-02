@@ -1,5 +1,6 @@
 import { ITEM_RARITIES } from '../../api/constants';
 import { ITEM_CATEGORIES, Item, ItemArmorClass, WeaponAttackType, WeaponModeType } from '../../api/item.dto';
+import { MAGIC_ITEM_KINDS } from '../../api/magic-item.dto';
 import { Realm } from '../../api/realm.dto';
 import { GEM_GRADES, HERB_BIOMES, HERB_GROUPS, HerbBiome } from '../../api/treasure-goods.dto';
 import { FilterSchema } from '../../data/useListFilters';
@@ -54,6 +55,8 @@ export const WEAPON_HANDS: readonly WeaponModeType[] = ['one-hand', 'two-hands']
 export const WEAPON_ATTACKS: readonly WeaponAttackType[] = ['melee', 'ranged', 'thrown'];
 /** General equipment features of the filter (spec 041 `features` blocks). */
 export const ITEM_FEATURE_FILTERS = ['container', 'transport', 'ammunition', 'light'] as const;
+/** Max item levels of the magic level filter (spec 067): items of that level or lower. */
+export const MAGIC_LEVEL_FILTERS = ['1', '5', '10', '15', '20', '30', '50'] as const;
 export const ITEM_SORTS = ['name', 'cost', 'weight', 'at'] as const;
 export type ItemSort = (typeof ITEM_SORTS)[number];
 export const ITEM_PAGE_SIZES = [24, 48, 96];
@@ -197,6 +200,20 @@ export const itemCatalogFilters = (
       format: (value) => t(`gem-grade-${value}`),
       when: isGem,
       match: (item, value) => item.features?.gem?.grade === value,
+    },
+    magicKind: {
+      kind: 'multiple',
+      label: t('magic-kind'),
+      options: MAGIC_ITEM_KINDS,
+      format: (value) => t(`magic-kind-${value}`),
+      match: (item, value) => !!item.features?.magic && list(value).includes(item.features.magic.kind),
+    },
+    magicLevel: {
+      kind: 'single',
+      label: t('magic-level-max'),
+      options: MAGIC_LEVEL_FILTERS,
+      format: (value) => t('magic-level-max-value', { level: value }),
+      match: (item, value) => !!item.features?.magic && item.features.magic.itemLevel <= Number(value),
     },
     feature: {
       kind: 'multiple',
