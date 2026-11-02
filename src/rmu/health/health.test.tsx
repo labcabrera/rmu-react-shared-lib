@@ -4,11 +4,13 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import {
   bleedingCut,
+  castLeg,
   healedSkin,
   permanentOrgan,
   poisonedNerve,
   recoveringBone,
   sampleInjuries,
+  tourniquetArm,
 } from '../../test/fixtures/injury';
 import { renderWithProviders } from '../../test/render';
 import HealerPicker, { HealerCandidate, HealerSelection, resolveHealer } from './HealerPicker';
@@ -80,6 +82,44 @@ describe('InjuryCard', () => {
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '75');
     expect(recoveryProgress(recoveringBone)).toBe(75);
     expect(recoveryProgress(bleedingCut)).toBeUndefined();
+  });
+
+  it('shows the limits of a cast and what reopens the wound (spec 068)', () => {
+    renderWithProviders(<InjuryCard injury={castLeg} />);
+    expect(screen.getByText('injury-limit-pace')).toBeInTheDocument();
+    expect(screen.getByText('injury-limit-maneuver-halved')).toBeInTheDocument();
+    expect(screen.getByText('injury-reopen-on-exertion')).toBeInTheDocument();
+    expect(screen.queryByText('injury-limit-limb-unusable')).not.toBeInTheDocument();
+    expect(screen.queryByText(/injury-tourniquet/)).not.toBeInTheDocument();
+    expect(screen.queryByText('injury-treatment-in-progress')).not.toBeInTheDocument();
+  });
+
+  it('shows the tourniquet, the useless limb and the treatment in progress (spec 068)', () => {
+    renderWithProviders(<InjuryCard injury={tourniquetArm} />);
+    expect(screen.getByText('injury-treatment-in-progress')).toBeInTheDocument();
+    expect(screen.getByText('injury-limit-limb-unusable')).toBeInTheDocument();
+    expect(screen.getByText('injury-tourniquet-tight')).toBeInTheDocument();
+    expect(screen.getByText('injury-reopen-on-failed-roll')).toBeInTheDocument();
+    expect(screen.queryByText('injury-limit-pace')).not.toBeInTheDocument();
+  });
+
+  it('shows a loosened tourniquet and another maneuver factor, and no care chips once healed (spec 068)', () => {
+    const { unmount } = renderWithProviders(
+      <InjuryCard
+        injury={{
+          ...tourniquetArm,
+          treatmentInProgress: null,
+          tourniquet: { tightSince: 4, loosenedAt: 14 },
+          limits: { maneuverPenaltyFactor: 0.75 },
+        }}
+      />
+    );
+    expect(screen.getByText('injury-tourniquet-loosened')).toBeInTheDocument();
+    expect(screen.getByText('injury-limit-maneuver-factor')).toBeInTheDocument();
+    unmount();
+    renderWithProviders(<InjuryCard injury={{ ...castLeg, status: 'healed' }} />);
+    expect(screen.queryByText('injury-limit-pace')).not.toBeInTheDocument();
+    expect(screen.queryByText('injury-reopen-on-exertion')).not.toBeInTheDocument();
   });
 
   it('marks permanent injuries and leaves out the description and origin when dense', () => {

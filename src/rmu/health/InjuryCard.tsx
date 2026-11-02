@@ -1,5 +1,6 @@
 import React, { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import { Box, Chip, LinearProgress, Paper, Stack, Typography } from '@mui/material';
 import { Injury, InjurySeverity, InjuryStatus } from '../../api/health.dto';
@@ -30,9 +31,67 @@ export const recoveryProgress = (injury: Injury): number | undefined => {
   return Math.min(100, Math.max(0, (passed / recovery.totalDays) * 100));
 };
 
+/** The factor of a cast: half the maneuver penalty (workspace spec 068, decision 10). */
+const HALF_FACTOR = 0.5;
+
+/**
+ * Chips of the care of an injury (workspace spec 068): its limits (pace, useless limb, maneuver penalty factor), the
+ * treatment in progress of a tactical `medical` action, the tourniquet and what reopens the wound.
+ */
+export const InjuryCareChips: FC<{ injury: Injury }> = ({ injury }) => {
+  const { t } = useTranslation();
+  if (injury.status === 'healed') return null;
+  const { limits, treatmentInProgress, tourniquet, reopenOn } = injury;
+  const factor = limits?.maneuverPenaltyFactor;
+  return (
+    <>
+      {treatmentInProgress && (
+        <Chip
+          size="small"
+          color="info"
+          icon={<HourglassTopIcon />}
+          label={t('injury-treatment-in-progress', {
+            procedure: t(`procedure-${treatmentInProgress.procedure}`),
+            count: treatmentInProgress.rounds,
+            round: treatmentInProgress.startedRound,
+          })}
+        />
+      )}
+      {limits?.pace && (
+        <Chip size="small" variant="outlined" label={t('injury-limit-pace', { pace: t(limits.pace) })} />
+      )}
+      {limits?.limbUnusable && (
+        <Chip size="small" variant="outlined" color="warning" label={t('injury-limit-limb-unusable')} />
+      )}
+      {factor !== undefined && factor !== null && factor !== 1 && (
+        <Chip
+          size="small"
+          variant="outlined"
+          label={
+            factor === HALF_FACTOR ? t('injury-limit-maneuver-halved') : t('injury-limit-maneuver-factor', { factor })
+          }
+        />
+      )}
+      {tourniquet && (
+        <Chip
+          size="small"
+          variant="outlined"
+          color="warning"
+          label={
+            tourniquet.loosenedAt === null || tourniquet.loosenedAt === undefined
+              ? t('injury-tourniquet-tight', { round: tourniquet.tightSince })
+              : t('injury-tourniquet-loosened', { round: tourniquet.tightSince, loosened: tourniquet.loosenedAt })
+          }
+        />
+      )}
+      {reopenOn && <Chip size="small" variant="outlined" label={t(`injury-reopen-on-${reopenOn}`)} />}
+    </>
+  );
+};
+
 /**
  * One injury: type, severity, status, location and side, current and initial penalty, bleeding, remaining days of
- * the recovery, permanent penalty, poisoning (spec 042), description and origin. `dense` leaves out the description and the origin.
+ * the recovery, permanent penalty, poisoning (spec 042), care chips (spec 068), description and origin. `dense` leaves out the description and the origin.
  */
 const InjuryCard: FC<{
   injury: Injury;
@@ -99,6 +158,7 @@ const InjuryCard: FC<{
           {(injury.flags || []).map((flag) => (
             <Chip key={flag} size="small" variant="outlined" color="warning" label={t(`injury-flag-${flag}`)} />
           ))}
+          <InjuryCareChips injury={injury} />
         </Stack>
         {(actions || onEdit) && (
           <Stack direction="row" sx={{ alignItems: 'center', flexShrink: 0 }}>

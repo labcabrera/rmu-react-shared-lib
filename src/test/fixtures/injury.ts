@@ -149,3 +149,52 @@ export const poisonedNerve: Injury = {
 };
 
 export const sampleInjuries: Injury[] = [healedSkin, permanentOrgan, recoveringBone, bleedingCut];
+
+/** Spec 068: a leg in a cast with crutches, a pressure treatment in progress and what reopens it. Invented data. */
+export const castLeg: Injury = {
+  id: 'injury-6',
+  type: 'bone',
+  severity: 'medium',
+  location: 'leg',
+  side: 'left',
+  penalty: -20,
+  initialPenalty: -20,
+  bleeding: 0,
+  bleedingControl: 'pressure',
+  source: { kind: 'critical', round: 2 },
+  treatments: [],
+  limits: { pace: 'walk', maneuverPenaltyFactor: 0.5 },
+  reopenOn: 'exertion',
+  status: 'active',
+  createdAt: '2026-10-20T10:00:00Z',
+};
+
+/** Spec 068: an arm under a tourniquet, splinted (useless) and with a stitching in progress. Invented data. */
+export const tourniquetArm: Injury = {
+  id: 'injury-7',
+  type: 'cut-burn',
+  severity: 'severe',
+  location: 'arm',
+  side: 'right',
+  penalty: -30,
+  initialPenalty: -30,
+  bleeding: 0,
+  bleedingControl: 'tourniquet',
+  source: { kind: 'critical', round: 4 },
+  treatments: [],
+  limits: { limbUnusable: true },
+  tourniquet: { tightSince: 4, loosenedAt: null },
+  treatmentInProgress: {
+    actionId: 'action-9',
+    healerActorId: 'actor-2',
+    procedure: 'stitches',
+    startedRound: 5,
+    rounds: 3,
+    roll: 70,
+    total: 95,
+    result: 'success',
+  },
+  reopenOn: 'failed-roll',
+  status: 'active',
+  createdAt: '2026-10-20T10:00:00Z',
+};

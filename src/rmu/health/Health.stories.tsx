@@ -2,7 +2,16 @@ import React, { useState } from 'react';
 import { Box, Button, Link, Stack } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PoisonData } from '../../api/poison.dto';
-import { bleedingCut, permanentOrgan, poisonedNerve, recoveringBone, sampleInjuries } from '../../test/fixtures/injury';
+import {
+  bleedingCut,
+  castLeg,
+  permanentOrgan,
+  poisonedNerve,
+  recoveringBone,
+  sampleInjuries,
+  tourniquetArm,
+} from '../../test/fixtures/injury';
+import { sampleTemporaryModifiers } from '../../test/fixtures/temporary-modifier';
 import HealerPicker, { HealerCandidate, HealerSelection } from './HealerPicker';
 import HpBreakdown from './HpBreakdown';
 import InjuryCard from './InjuryCard';
@@ -10,6 +19,7 @@ import InjuryList from './InjuryList';
 import InjurySourceLine from './InjurySourceLine';
 import InjuryTypeChip from './InjuryTypeChip';
 import PoisonDataFields from './PoisonDataFields';
+import TemporaryModifierList from './TemporaryModifierList';
 
 // Injuries and healing (spec 013 §7). Sample data only.
 
@@ -40,6 +50,27 @@ export const Permanent: Story = { args: { injury: permanentOrgan } };
 export const Poisoned: Story = { args: { injury: poisonedNerve } };
 
 export const Dense: Story = { args: { dense: true } };
+
+/** Spec 068: a cast leg (pace limit, halved maneuver penalty, reopens with exertion). */
+export const CastLimits: Story = { args: { injury: castLeg } };
+
+/** Spec 068: a tourniquet, a useless arm and a treatment in progress. */
+export const TourniquetInProgress: Story = { args: { injury: tourniquetArm } };
+
+const TemporaryModifiersDemo = () => {
+  const [modifiers, setModifiers] = useState(sampleTemporaryModifiers);
+  return (
+    <TemporaryModifierList
+      modifiers={modifiers}
+      currentGameDay={12}
+      onRemove={(modifier) => setModifiers((current) => current.filter((each) => each.id !== modifier.id))}
+      showEmpty
+    />
+  );
+};
+
+/** Spec 068: lasting morale and fear RR modifiers, removable. */
+export const TemporaryModifiers: Story = { render: () => <TemporaryModifiersDemo /> };
 
 export const List: Story = {
   render: () => (
