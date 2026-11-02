@@ -1,4 +1,4 @@
-import { AccessType, EntityType } from './common.dto';
+import { AccessType, EntityType, EntityAccess } from './common.dto';
 
 export interface Enumeration {
   id: string;
@@ -11,6 +11,8 @@ export interface Enumeration {
   category: string;
   realmId: string | null;
   owner?: string;
+  /** What the signed-in user can do with it: follows its realm (spec 069). */
+  access?: EntityAccess;
   accessType: AccessType;
   /** Rulebook (`system`, admin only) or user content (spec 063). */
   entitySource: EntityType;

@@ -1,4 +1,4 @@
-export { canEditEntity, useCanEditEntity, isAdmin, useIsAdmin } from './auth/roles';
+export { canEditEntity, canManageEntity, useCanEditEntity, useCanManageEntity, isAdmin, useIsAdmin } from './auth/roles';
 export type { EditableEntity } from './auth/roles';
 export { default as EntityImage } from './avatars/EntityImage';
 export type { EntityImageProps, EntityImageSize } from './avatars/EntityImage';
@@ -28,6 +28,8 @@ export { default as DeleteDialog } from './dialogs/DeleteDialog';
 export { default as ImportDialog } from './dialogs/ImportDialog';
 export type { ImportRequest } from './dialogs/ImportDialog';
 export { default as RmuDialog } from './dialogs/RmuDialog';
+export { default as ShareDialog } from './dialogs/ShareDialog';
+export type { ShareDialogProps } from './dialogs/ShareDialog';
 
 export { default as CategorySeparator } from './display/CategorySeparator';
 export { default as NotFound } from './display/NotFound';
@@ -121,6 +123,7 @@ export * from './api/race.api';
 export * from './api/race.dto';
 export * from './api/realm.api';
 export * from './api/realm.dto';
+export * from './api/friendship.api';
 export * from './api/resistance-roll.api';
 export * from './api/resistance-roll.dto';
 export * from './api/skill-category.api';
@@ -236,6 +239,8 @@ export { default as RollBreakdown, useModifierLabel } from './rmu/RollBreakdown'
 export type { RollContext, RollModifier, RollModifierGroup, SkippedRule } from './rmu/RollBreakdown';
 export { default as RuleHint, FieldHint } from './rmu/RuleHint';
 export { default as EntitySourceChip } from './rmu/entity-source/EntitySourceChip';
+export { default as EntityAccessChip, entityAccessChipKey } from './rmu/entity-access/EntityAccessChip';
+export type { EntityAccessChipProps } from './rmu/entity-access/EntityAccessChip';
 export type { EntitySourceChipProps } from './rmu/entity-source/EntitySourceChip';
 export { default as EntitySourceField } from './rmu/entity-source/EntitySourceField';
 export type { EntitySourceFieldProps } from './rmu/entity-source/EntitySourceField';

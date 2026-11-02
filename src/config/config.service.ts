@@ -10,6 +10,8 @@ export const apiAttackTablesUrl: string = process.env.RMU_API_ATTACK_TABLES_URI 
 export const apiNpcUrl: string = process.env.RMU_API_NPCS_URI ?? '';
 export const apiNpcNamesUrl: string = process.env.RMU_API_NPC_NAMES_URI ?? '';
 export const apiSpellsUrl: string = process.env.RMU_API_SPELLS_URI ?? '';
+/** users: the friends of the signed-in user, to share entities with them (spec 069). */
+export const apiUsersUrl: string = process.env.RMU_API_USERS_URI ?? '';
 export const mediaApiBaseUrl: string = process.env.RMU_API_MEDIA_URI ?? '';
 
 /** @deprecated Use assetsBaseUrl, or resolveAssetUrl for stored image paths. */
