@@ -2,6 +2,7 @@
 // their origin, treatments, recovery, conditions and the healing log of a character.
 import type { RollModifier } from '../rmu/RollBreakdown';
 import type { RuleParams } from '../rmu/RuleHint';
+import type { Pace } from './character.dto';
 import { InjuryPoison } from './poison.dto';
 import type { TreatmentHerb } from './treasure-goods.dto';
 
@@ -47,7 +48,35 @@ export type TreatmentProcedure =
   | 'salve'
   | 'surgery'
   | 'magic'
-  | 'herbs';
+  | 'herbs'
+  /** Workspace spec 068: a `medical` action of the tactical module on a dying effect (not an injury treatment). */
+  | 'stabilize';
+
+/** Workspace spec 068: what holds up a cast leg; the pace limit depends on it. */
+export type CastSupport = 'none' | 'cane' | 'crutches';
+
+export const CAST_SUPPORTS: CastSupport[] = ['none', 'cane', 'crutches'];
+
+/** Workspace spec 068: what reopens a treated wound (completed pressure: exertion; stitches: a failed roll). */
+export type InjuryReopenOn = 'exertion' | 'failed-roll';
+
+/**
+ * Workspace spec 068, decision 10: what a splint or a cast leaves on the injury, the fastest pace of a leg, a useless
+ * arm and the factor of the maneuver penalty (a cast halves it; the recovery penalty does not change).
+ */
+export interface InjuryLimits {
+  pace?: Pace | null;
+  limbUnusable?: boolean;
+  maneuverPenaltyFactor?: number | null;
+}
+
+/** Workspace spec 068: a tourniquet on the wound, by round numbers of the tactical game. */
+export interface InjuryTourniquet {
+  tightSince: number;
+  loosenedAt: number | null;
+  /** Tactical only: bleeding it stopped, which the wound bleeds the round it is loosened. */
+  bleeding?: number;
+}
 
 export type TreatmentResult = 'absolute-failure' | 'failure' | 'partial-success' | 'success' | 'absolute-success';
 
@@ -87,6 +116,41 @@ export interface InjuryTreatment {
   heatCritical?: string;
   /** Spec 062: the herb of the character it used (one dose spent) and the bonuses it gave. */
   herb?: TreatmentHerb;
+  /** Workspace spec 068: `completed-after-combat` for a tactical treatment the end of the game completed. */
+  note?: string;
+  /** Workspace spec 068: what holds up a cast leg. */
+  castSupport?: CastSupport;
+  /** Workspace spec 068: recovery modifier of a salve chosen by the game master. */
+  salveModifier?: number;
+  /** Workspace spec 068: d10 of hits of the heat of a cauterization, for the game master to roll. */
+  heatHitsDice?: number;
+  /** Workspace spec 068: the unmodified roll of a cauterization was its unusual event. */
+  unusualEvent?: boolean;
+}
+
+/**
+ * Workspace spec 068, §2: a treatment declared as a tactical `medical` action and not finished yet. The Medicine roll
+ * is made when the action is first resolved, and the treatment is applied when its rounds are done.
+ */
+export interface TreatmentInProgress {
+  /** The first action of the treatment (its continuations keep it). */
+  actionId: string;
+  healerActorId: string;
+  procedure: TreatmentProcedure;
+  startedRound: number;
+  rounds: number;
+  roll: number;
+  total: number;
+  result: TreatmentResult;
+  recoveryModifier?: number;
+  injuryPenalty?: number;
+  difficulty?: number;
+  healer?: InjuryTreatmentHealer;
+  unmodifiedRoll?: number;
+  castSupport?: CastSupport;
+  salveModifier?: number | null;
+  /** Bleeding before the procedure: pressure keeps it stopped while it is held. */
+  bleeding?: number;
 }
 
 export interface InjuryRecovery {
@@ -144,6 +208,16 @@ export interface Injury {
   gameDay?: number;
   /** A poisoning (spec 042): its stages, RR and antidotes. */
   poison?: InjuryPoison;
+  /** Workspace spec 068: limits of a splint or a cast; cleared when the injury heals or by the game master. */
+  limits?: InjuryLimits | null;
+  /** Workspace spec 068: what reopens the wound in a tactical game. */
+  reopenOn?: InjuryReopenOn | null;
+  /** Workspace spec 068, tactical only: the bleeding the wound takes again when it reopens. */
+  reopenBleeding?: number | null;
+  /** Workspace spec 068: a tourniquet on the wound. */
+  tourniquet?: InjuryTourniquet | null;
+  /** Workspace spec 068, tactical only: the treatment of a `medical` action in progress. */
+  treatmentInProgress?: TreatmentInProgress | null;
 }
 
 export type CharacterConditionStatus = 'unconscious' | 'permanent-unconscious' | 'dead';
@@ -211,6 +285,8 @@ export interface UpdateInjuryDto {
   description?: string;
   permanent?: InjuryPermanent | null;
   status?: InjuryStatus;
+  /** Workspace spec 068: limits of a splint or a cast; null removes them. */
+  limits?: InjuryLimits | null;
 }
 
 /** Healer given by hand (not a character of the campaign). */
@@ -238,6 +314,10 @@ export interface TreatInjuryDto {
    * magic; a mundane herb only +25). One dose is spent; a herb that does not treat it is a 400 `herb-not-applicable`.
    */
   herbItemId?: string;
+  /** Workspace spec 068: a cast on a leg, its fastest pace is that of the cast alone, with a cane or with crutches. */
+  castSupport?: CastSupport;
+  /** Workspace spec 068: salve, the recovery modifier the game master chooses within the range of the core tables. */
+  salveModifier?: number;
 }
 
 /** `POST v1/actor-rounds/:id/injuries/:injuryId/treatments` in the tactical module. */
@@ -250,6 +330,10 @@ export interface TreatActorInjuryDto {
   roll: number;
   /** Defaults to the difficulty of the procedure. */
   difficulty?: number;
+  /** Workspace spec 068: support of a cast leg. */
+  castSupport?: CastSupport;
+  /** Workspace spec 068: recovery modifier of a salve. */
+  salveModifier?: number;
 }
 
 /** `GET v1/characters/:id/injuries/:injuryId/treatment-difficulty?procedure=`: the difficulty the server uses. */

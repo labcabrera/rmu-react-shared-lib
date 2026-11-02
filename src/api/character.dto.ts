@@ -1,6 +1,7 @@
 import { NamedEntity } from './common.dto';
 import { CharacterCondition, Injury } from './health.dto';
 import type { Spell } from './spell.dto';
+import type { CharacterTemporaryModifier } from './temporary-modifier.dto';
 
 export type StatKey = 'ag' | 'co' | 'em' | 'in' | 'me' | 'pr' | 'qu' | 're' | 'sd' | 'st';
 export type Pace = 'creep' | 'walk' | 'jog' | 'run' | 'sprint' | 'dash';
@@ -36,6 +37,8 @@ export interface Character {
   injuries?: Injury[];
   conditions?: CharacterCondition[];
   healthSummary?: CharacterHealthSummary;
+  /** Lasting morale and fear modifiers (workspace spec 068); missing in older responses. */
+  temporaryModifiers?: CharacterTemporaryModifier[];
 }
 
 export interface CharacterHealthSummary {
