@@ -301,6 +301,10 @@ export { default as MagicItemInfo } from './rmu/magic/MagicItemInfo';
 export type { MagicItemInfoProps } from './rmu/magic/MagicItemInfo';
 export { default as GemTraits } from './rmu/magic/GemTraits';
 export type { GemTraitsProps } from './rmu/magic/GemTraits';
+export { default as MagicItemDialog, buildMagicItemRequest } from './rmu/magic/MagicItemDialog';
+export type { MagicItemDialogProps } from './rmu/magic/MagicItemDialog';
+export { default as TreasureDialog } from './rmu/treasure/TreasureDialog';
+export type { TreasureDialogProps } from './rmu/treasure/TreasureDialog';
 export {
   creatureTypeLabel,
   magicBonusText,
