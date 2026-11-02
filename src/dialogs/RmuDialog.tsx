@@ -41,6 +41,8 @@ const RmuDialog: FC<{
   onDelete?: () => void;
   onCancel?: () => void;
   onClose?: () => void;
+  /** Closes on Escape and on a click outside without adding a Close button (when `onClose` is not set). */
+  onDismiss?: () => void;
   onResolve?: () => void;
   onConfirm?: () => void;
 }> = ({
@@ -57,6 +59,7 @@ const RmuDialog: FC<{
   onDelete,
   onCancel,
   onClose,
+  onDismiss,
   onResolve,
   onConfirm,
 }) => {
@@ -79,7 +82,7 @@ const RmuDialog: FC<{
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={onClose ?? onDismiss}
       fullScreen={fullScreen ?? isPhone}
       maxWidth={maxWidth}
       fullWidth

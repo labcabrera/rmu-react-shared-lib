@@ -23,12 +23,6 @@ export type TacticalGame = {
   outcome?: TacticalGameOutcome;
 };
 
-/** @deprecated The API sends {@link TacticalGameActor}. */
-export type ActorRoundSelection = {
-  id: string;
-  actorId: string;
-};
-
 /** Reserved faction id of the environment of a tactical game (spec 055, decision 2). */
 export const ENVIRONMENT_FACTION_ID = 'environment';
 

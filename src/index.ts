@@ -1,32 +1,26 @@
-export { ADMIN_GROUP, canEditEntity, isAdmin, useCanEditEntity, useIsAdmin, userGroups } from './auth/roles';
+export { canEditEntity, useCanEditEntity, isAdmin, useIsAdmin } from './auth/roles';
 export type { EditableEntity } from './auth/roles';
 export { default as EntityImage } from './avatars/EntityImage';
 export type { EntityImageProps, EntityImageSize } from './avatars/EntityImage';
-export { avatarSize, default as EntityAvatar, initialsOf } from './avatars/EntityAvatar';
+export { avatarSize, default as EntityAvatar } from './avatars/EntityAvatar';
 export type { EntityAvatarProps } from './avatars/EntityAvatar';
 
 export { default as RmuBreadcrumbs } from './breadcrumbs/RmuBreadcrumbs';
 
 export { default as AddButton } from './buttons/AddButton';
-export { default as BackButton } from './buttons/BackButton';
 export { default as CancelButton } from './buttons/CancelButton';
-export { default as ClearButton } from './buttons/ClearButton';
 export { default as DeleteButton } from './buttons/DeleteButton';
 export { default as DownloadButton } from './buttons/DownloadButton';
 export { default as EditButton } from './buttons/EditButton';
 export { default as LevelUpButton } from './buttons/LevelUpButton';
-export { default as NextButton } from './buttons/NextButton';
 export { default as RefreshButton } from './buttons/RefreshButton';
 export { default as RmuIconButton } from './buttons/RmuIconButton';
-export { default as SaveButton } from './buttons/SaveButton';
 
 export * from './config/config.service';
 export * from './config/asset-url';
-export { defaultImages, entityImage, itemCategoryImage, ITEM_CATEGORIES_WITH_IMAGE } from './config/default-images';
+export { defaultImages, entityImage, itemCategoryImage } from './config/default-images';
 export type { EntityKind } from './config/default-images';
 
-export { default as RmuCard } from './cards/RmuCard';
-export { default as RmuTextCard } from './cards/RmuTextCard';
 export { default as EntityCard } from './cards/EntityCard';
 export type { EntityMetric } from './cards/EntityCard';
 
@@ -43,7 +37,7 @@ export { default as TechnicalInfo } from './display/TechnicalInfo';
 export { default as KeyValuePanel, KeyValueList } from './display/KeyValuePanel';
 export type { KeyValueRow } from './display/KeyValuePanel';
 
-export { canManageImage, default as ImageCategorySelector } from './images/ImageCategorySelector';
+export { default as ImageCategorySelector } from './images/ImageCategorySelector';
 export { default as ImageSelectorDialog } from './images/ImageSelectorDialog';
 export { default as ImageUploadEditor } from './images/ImageUploadEditor';
 
@@ -52,14 +46,13 @@ export { default as Section } from './layouts/Section';
 export { default as HeroHeader } from './layouts/HeroHeader';
 export type { HeroHeaderProps } from './layouts/HeroHeader';
 export { default as Panel } from './layouts/Panel';
-export { default as SidePanelLayout, useSidePanelMode } from './layouts/SidePanelLayout';
+export { default as SidePanelLayout } from './layouts/SidePanelLayout';
 export type { SidePanelMode } from './layouts/SidePanelLayout';
 export { default as SectionNav, useSectionParam } from './layouts/SectionNav';
 export type { SectionDef } from './layouts/SectionNav';
 
 export { default as ClearableTextField } from './inputs/ClearableTextField';
 export { default as NumericInput } from './inputs/NumericInput';
-export { default as NumericReadonlyInput } from './inputs/NumericReadonlyInput';
 export * from './rolls';
 
 export { default as DifficultyPicker } from './selectors/DifficultyPicker';
@@ -68,9 +61,6 @@ export {
   CharacterAvatar,
   CharacterCard,
   characterOption,
-  filterByRelation,
-  CHARACTER_PICKER_COMPACT_FROM,
-  CHARACTER_PICKER_SEARCH_FROM,
 } from './selectors/CharacterPicker';
 export type {
   CharacterOption,
@@ -78,10 +68,10 @@ export type {
   CharacterPickerVariant,
   CharacterRelation,
 } from './selectors/CharacterPicker';
-export { default as EntityPicker, ENTITY_PICKER_TILES_UP_TO } from './selectors/EntityPicker';
+export { default as EntityPicker } from './selectors/EntityPicker';
 export type { EntityOption, EntityPickerProps, EntityPickerVariant } from './selectors/EntityPicker';
 export * from './selectors/pickers';
-export { default as SkillSelector, SPELL_LIST_SPECIALIZATION } from './selectors/SkillSelector';
+export { default as SkillSelector } from './selectors/SkillSelector';
 export type { OwnedSkill } from './selectors/SkillSelector';
 export { default as TraitSelector } from './selectors/TraitSelector';
 
@@ -161,10 +151,9 @@ export * from './api/trait.api';
 export * from './api/trait.dto';
 
 // Theme
-export { createAppTheme, defaultThemeConfig, parseThemeConfig, presetSwatch } from './theme/createAppTheme';
+export { createAppTheme, parseThemeConfig, presetSwatch } from './theme/createAppTheme';
 export type { ThemeConfig, ThemeDensity, ThemeMode, ThemePreset } from './theme/createAppTheme';
 export { themePresetNames } from './theme/presets';
-export { baseColors } from './theme/tokens';
 
 // Motion
 export { enterSx, hoverLiftSx, useViewTransitionNavigate, viewTransitionName } from './motion/motion';
@@ -173,7 +162,7 @@ export { enterSx, hoverLiftSx, useViewTransitionNavigate, viewTransitionName } f
 export { default as MfeRoot } from './app/MfeRoot';
 export { bootstrapMfe } from './app/bootstrapMfe';
 export { ErrorBoundary } from './app/ErrorBoundary';
-export { NotificationProvider, useNotify, useError } from './app/NotificationProvider';
+export { NotificationProvider, useNotify } from './app/NotificationProvider';
 export type { Notify } from './app/NotificationProvider';
 
 // Data
@@ -209,8 +198,6 @@ export {
   cardGridContainerSx,
   cardGridSx,
   gridSizeCard,
-  gridSizeMain,
-  gridSizeResume,
   itemFilter,
   itemFilterDisabled,
 } from './layouts/grid';
@@ -233,7 +220,7 @@ export type { Breadcrumb } from './templates/types';
 export { bottomOffset, usePhone } from './templates/responsive';
 export { default as ConfirmDialog } from './ui/ConfirmDialog';
 export { default as DataTable } from './ui/DataTable';
-export type { DataTableColumn } from './ui/DataTable';
+export type { DataTableColumn, DataTablePagination } from './ui/DataTable';
 export { default as PreviewDrawer } from './ui/PreviewDrawer';
 export { default as FlowSteps } from './ui/FlowSteps';
 export type { FlowStep } from './ui/FlowSteps';
@@ -242,12 +229,12 @@ export { rsqlAnd } from './data/rsql';
 // Rolemaster-specific selects shared by several MFEs
 export { default as RollBreakdown, useModifierLabel } from './rmu/RollBreakdown';
 export type { RollContext, RollModifier, RollModifierGroup, SkippedRule } from './rmu/RollBreakdown';
-export { default as RuleHint, FieldHint, RuleParamList } from './rmu/RuleHint';
+export { default as RuleHint, FieldHint } from './rmu/RuleHint';
 export { default as EntitySourceChip } from './rmu/entity-source/EntitySourceChip';
 export type { EntitySourceChipProps } from './rmu/entity-source/EntitySourceChip';
 export { default as EntitySourceField } from './rmu/entity-source/EntitySourceField';
 export type { EntitySourceFieldProps } from './rmu/entity-source/EntitySourceField';
-export { ENTITY_SOURCES, entitySourceFilter, entitySourceOf } from './rmu/entity-source/entity-source';
+export { ENTITY_SOURCES, entitySourceFilter } from './rmu/entity-source/entity-source';
 export type { RuleParams } from './rmu/RuleHint';
 export { default as EffectList, effectColor, effectIcon, normalizeEffectStatus } from './rmu/EffectList';
 export { default as StatusBadge } from './rmu/StatusBadge';
@@ -258,25 +245,19 @@ export {
   creatureSizeLabel,
 } from './rmu/creature/CreatureStatBlock';
 export { environmentFactionName, npcImage, npcName, npcSummary } from './rmu/creature/npc-format';
-export { isValidNpcCount, NpcEntryDialog, NpcEntryList } from './rmu/creature/NpcEntries';
+export { NpcEntryDialog, NpcEntryList } from './rmu/creature/NpcEntries';
 export type { NpcEntry } from './rmu/creature/NpcEntries';
 export type { StatusBadgeColor, StatusBadgeProps } from './rmu/StatusBadge';
-export { default as SpellEffectList, spellEffectColor, spellEffectSummary } from './rmu/SpellEffectList';
+export { default as SpellEffectList } from './rmu/SpellEffectList';
 export type { SpellEffectColor } from './rmu/SpellEffectList';
-export {
-  spellAreaText,
-  spellDurationText,
-  spellPerLevelSuffix,
-  spellRangeText,
-  spellTargetTypesText,
-} from './rmu/spell/spell-format';
+export { spellAreaText, spellDurationText, spellPerLevelSuffix, spellRangeText } from './rmu/spell/spell-format';
 export type { SpellTranslate } from './rmu/spell/spell-format';
 export type { ActorEffect, ActorPenalty } from './rmu/EffectList';
 export { default as ActionTypeChip } from './rmu/combat/ActionTypeChip';
 export { default as ActionStateMarker } from './rmu/combat/ActionStateMarker';
-export { default as ApPips, apPhasePips } from './rmu/combat/ApPips';
+export { default as ApPips } from './rmu/combat/ApPips';
 export type { ApLedgerItem, ApPip, ApPipState } from './rmu/combat/ApPips';
-export { combatActionInfo, combatActionTypes, combatColors, factionColor } from './rmu/combat/actionTypes';
+export { combatActionInfo, combatColors, factionColor } from './rmu/combat/actionTypes';
 export type { CombatActionCategory, CombatActionState, CombatActionType } from './rmu/combat/actionTypes';
 export { default as AttackCard } from './rmu/character/AttackCard';
 export { default as ResistanceList } from './rmu/character/ResistanceList';
@@ -284,8 +265,6 @@ export { default as ResourceBar } from './rmu/character/ResourceBar';
 export type { ResourceKind } from './rmu/character/ResourceBar';
 export { default as SkillGroupList, skillCategoryOf, sortSkillsByName } from './rmu/character/SkillGroupList';
 export {
-  enumerationName,
-  loadEnumerationNames,
   resetEnumerationNames,
   specializationLabel,
   toKey,
@@ -294,11 +273,8 @@ export {
 export { default as StatBlock, statKeys } from './rmu/character/StatBlock';
 export { default as StatPill, bonusColor, formatBonus } from './rmu/character/StatPill';
 export { default as StatBonusGrid } from './rmu/character/StatBonusGrid';
-export {
-  default as BonusDevPointsSummary,
-  DEFAULT_RACE_DEV_POINTS_PER_LEVEL,
-} from './rmu/character/BonusDevPointsSummary';
-export { default as TraitTypeChip, traitTypeColor } from './rmu/trait/TraitTypeChip';
+export { default as BonusDevPointsSummary } from './rmu/character/BonusDevPointsSummary';
+export { default as TraitTypeChip } from './rmu/trait/TraitTypeChip';
 export { default as ManeuverProfilePanel } from './rmu/maneuver/ManeuverProfilePanel';
 export { default as ManeuverModifierList } from './rmu/maneuver/ManeuverModifierList';
 export type { ManeuverModifierWithOrigin } from './rmu/maneuver/ManeuverModifierList';
@@ -316,31 +292,18 @@ export { default as ItemConditionChip } from './rmu/item/ItemConditionChip';
 export { default as ItemModifierChips } from './rmu/item/ItemModifierChips';
 export { default as ItemEnchantmentInfo } from './rmu/alchemy/ItemEnchantmentInfo';
 export { default as SpellAlchemyInfo } from './rmu/alchemy/SpellAlchemyInfo';
-export { alchemyEffectText, alchemyEffectValue } from './rmu/alchemy/alchemy-format';
+export { alchemyEffectText } from './rmu/alchemy/alchemy-format';
 export { default as ItemFeatureChips, itemFeatureLines, moneyText } from './rmu/item/ItemFeatureChips';
-export { default as ItemFeaturesView, itemFeatureSections } from './rmu/item/ItemFeaturesView';
+export { default as ItemFeaturesView } from './rmu/item/ItemFeaturesView';
 export type { ItemFeatureSection } from './rmu/item/ItemFeaturesView';
-export {
-  catalogUnitValue,
-  DEFAULT_JEWELRY_CLASS,
-  ITEM_SIZE_STEPS,
-  itemSizeFactor,
-  itemSizeLengthFactor,
-  itemSizeWeight,
-  itemUnitValue,
-  JEWELRY_CLASS_FACTORS,
-  jewelryBaseAverage,
-  strategicItemUnitValue,
-} from './rmu/item/item-value';
+export { catalogUnitValue, strategicItemUnitValue } from './rmu/item/item-value';
 export type { UnitValueSource } from './rmu/item/item-value';
 export type { ItemFeatureLine, ItemFeatureSource, ItemFeatureTranslate } from './rmu/item/ItemFeatureChips';
 export { default as ItemThumb, itemImageUrl } from './rmu/item/ItemThumb';
 export {
   default as ItemCard,
-  itemCardImages,
   itemCatalogColumns,
   itemCategoryLabel,
-  itemMetrics,
   itemName,
   RARITY_COLORS,
 } from './rmu/item/ItemCard';
@@ -372,22 +335,43 @@ export {
 export type { ItemCatalogFilterOptions, ItemSort } from './rmu/item/item-catalog';
 export { default as MoneyDisplay } from './rmu/item/MoneyDisplay';
 export { default as PriceBreakdownView, formatPriceFactorValue } from './rmu/item/PriceBreakdownView';
-export {
-  default as ItemInventory,
-  itemInstanceLabels,
-  itemTotalValue,
-  itemTotalWeight,
-} from './rmu/item/ItemInventory';
+export { default as ItemInventory } from './rmu/item/ItemInventory';
 export type { ItemAction } from './rmu/item/ItemInventory';
-export { COINS, formatMoney, roundGold, toCoins } from './rmu/item/money';
+export { formatMoney, roundGold, toCoins } from './rmu/item/money';
 export type { Coin, CoinAmount } from './rmu/item/money';
 export { default as InjurySourceLine } from './rmu/health/InjurySourceLine';
-export { default as InjuryCard, recoveryProgress } from './rmu/health/InjuryCard';
-export { default as PoisonStageTimeline, poisonStageState, poisonTimeLabel } from './rmu/health/PoisonStageTimeline';
+export { default as InjuryCard } from './rmu/health/InjuryCard';
+export { default as PoisonStageTimeline } from './rmu/health/PoisonStageTimeline';
 export type { PoisonStageState } from './rmu/health/PoisonStageTimeline';
 export { default as PoisonDataFields, isPoisonDataValid } from './rmu/health/PoisonDataFields';
 export type { PoisonCatalogItem } from './rmu/health/PoisonDataFields';
-export { default as InjuryList, sortInjuries } from './rmu/health/InjuryList';
+export { default as InjuryList } from './rmu/health/InjuryList';
 export { default as HealerPicker, resolveHealer } from './rmu/health/HealerPicker';
 export { default as HpBreakdown, formatHpAmount, hpAmountColor } from './rmu/health/HpBreakdown';
 export type { HealerCandidate, HealerMode, HealerSelection } from './rmu/health/HealerPicker';
+
+// Spec 066: shared pieces for a consistent UI
+export { default as SectionLabel } from './layouts/SectionLabel';
+export { Bento, span } from './layouts/Bento';
+export type { PanelVariant } from './layouts/Panel';
+export { KeyValueLine, keyValueColor } from './display/KeyValuePanel';
+export type { KeyValueTone } from './display/KeyValuePanel';
+export { default as ChipRow } from './display/ChipRow';
+export { default as SelectableCard, selectableSx } from './ui/SelectableCard';
+export { default as MessageScreen } from './ui/MessageScreen';
+export { default as OptionsHelpDialog, OptionsHelpButton } from './ui/OptionsHelpDialog';
+export type { OptionHelp } from './ui/OptionsHelpDialog';
+export { default as AccessTypeChip } from './rmu/AccessTypeChip';
+export {
+  CRITICAL_SEVERITY_LEGEND,
+  CRITICAL_SEVERITY_COLORS,
+  criticalSeverityColor,
+  criticalSeverityTextColor,
+} from './rmu/combat/critical-severity';
+export { default as RollResultAlert } from './rolls/RollResultAlert';
+export { bindSingle, equalsFilter, FilterSearchField, realmName, regexFilter, useRealms } from './data/list-filters';
+export type { FilterAccess } from './data/list-filters';
+export { default as NumberPad, outOfRange, parsePadText } from './inputs/NumberPad';
+export type { NumberPadProps } from './inputs/NumberPad';
+export { default as NumberPadField } from './inputs/NumberPadField';
+export type { NumberPadFieldProps, NumberPadPresentation } from './inputs/NumberPadField';

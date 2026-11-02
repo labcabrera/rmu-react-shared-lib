@@ -83,9 +83,3 @@ export const useNotify = (): Notify => {
   if (!ctx) throw new Error('useNotify must be used within a NotificationProvider (MfeRoot provides one)');
   return ctx;
 };
-
-/** Same contract as the MFEs' former ErrorContext, so pages can switch imports one at a time. */
-export const useError = (): { showError: (message: string) => void } => {
-  const notify = useNotify();
-  return useMemo(() => ({ showError: (message: string) => notify.error(message) }), [notify]);
-};

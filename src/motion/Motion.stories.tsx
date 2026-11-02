@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Stack } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import RmuTextCard from '../cards/RmuTextCard';
+import EntityCard from '../cards/EntityCard';
 import CardGrid from '../templates/CardGrid';
 
 const items = Array.from({ length: 16 }, (_, index) => ({ id: `item-${index}`, name: `Item ${index + 1}` }));
@@ -19,7 +19,7 @@ const MotionDemo = () => {
         items={items}
         getKey={(item) => item.id}
         renderItem={(item) => (
-          <RmuTextCard value={item.name} subtitle="Weapon" image="images/items/arming-sword.png" onClick={() => {}} />
+          <EntityCard title={item.name} subtitle="Weapon" image="images/items/arming-sword.png" onClick={() => {}} />
         )}
       />
     </Stack>

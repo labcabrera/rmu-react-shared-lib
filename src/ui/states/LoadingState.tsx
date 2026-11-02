@@ -5,14 +5,18 @@ import { cardGridContainerSx, cardGridSx, gridSizeCard } from '../../layouts/gri
 
 /**
  * Placeholder while data loads. `cards` mimics a card list page, `showcase` a grid of EntityCard (image, title,
- * subtitle, chips and metrics, in the same grid), `detail` a view page with its side panel; the default is a
- * centered spinner.
+ * subtitle, chips and metrics, in the same grid), `detail` a view page with its side panel, `inline` a small
+ * spinner in a line of text or a button row (spec 066, decision 9); the default is a centered spinner.
  */
 const LoadingState: FC<{
-  variant?: 'spinner' | 'cards' | 'showcase' | 'detail';
+  variant?: 'spinner' | 'cards' | 'showcase' | 'detail' | 'inline';
   count?: number;
 }> = ({ variant = 'spinner', count = 8 }) => {
   const { t } = useTranslation();
+
+  if (variant === 'inline') {
+    return <CircularProgress size={20} aria-label={t('loading')} sx={{ verticalAlign: 'middle' }} />;
+  }
 
   if (variant === 'showcase') {
     return (

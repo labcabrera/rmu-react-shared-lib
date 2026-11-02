@@ -3,7 +3,7 @@ import { Grid, MenuItem, TextField } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 import { Page } from '../api/api';
-import RmuTextCard from '../cards/RmuTextCard';
+import EntityCard from '../cards/EntityCard';
 import { ApiError } from '../data/api-error';
 import { rsqlAnd } from '../data/rsql';
 import { useEntity } from '../data/useEntity';
@@ -78,7 +78,7 @@ const ListExample = ({ failing = false }: { failing?: boolean }) => {
           </TextField>
         </FilterBar>
       }
-      renderItem={(item) => <RmuTextCard value={item.name} subtitle={item.category} image={item.imageUrl} />}
+      renderItem={(item) => <EntityCard title={item.name} subtitle={item.category} image={item.imageUrl} />}
     />
   );
 };
@@ -95,7 +95,7 @@ const DetailExample = ({ id }: { id: string }) => {
       entity={entity}
       onEdit={fn()}
       onDelete={fn()}
-      leftPanel={(item) => <RmuTextCard value={item.name} subtitle={item.category} image={item.imageUrl} />}
+      leftPanel={(item) => <EntityCard title={item.name} subtitle={item.category} image={item.imageUrl} />}
     >
       {(item) => (
         <Grid container spacing={1}>

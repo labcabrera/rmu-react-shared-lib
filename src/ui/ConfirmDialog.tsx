@@ -20,6 +20,7 @@ const ConfirmDialog: FC<{
       title={title ?? t('confirm')}
       maxWidth="xs"
       fullScreen={false}
+      onDismiss={onClose}
       buttons={
         <>
           <Button onClick={onClose}>{t('cancel')}</Button>
