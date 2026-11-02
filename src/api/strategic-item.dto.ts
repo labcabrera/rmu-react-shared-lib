@@ -1,5 +1,6 @@
 import { ItemMaterial } from './crafting.dto';
 import type { ItemEnchantment } from './enchantment.dto';
+import type { ItemCharges, ItemGemSetting } from './magic-item.dto';
 import { ItemCondition, StrategicItemModifier } from './item-modifier.dto';
 import { ItemArmor, ItemCost, ItemFeatures, ItemInfo, ItemShield, ItemWeapon } from './item.dto';
 import { ItemCoating } from './poison.dto';
@@ -63,6 +64,10 @@ export type StrategicItem = {
   cutFactor?: number | null;
   /** Spec 064: the enchantment of the item. */
   enchantment?: ItemEnchantment | null;
+  /** Spec 067: charges of a charged item. */
+  charges?: ItemCharges | null;
+  /** Spec 067: gems set in the item; its value includes theirs. */
+  settings?: ItemGemSetting[];
   owner: string;
 };
 

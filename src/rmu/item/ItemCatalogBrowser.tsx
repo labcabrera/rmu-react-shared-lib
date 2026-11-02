@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { fetchItems } from '../../api/item.api';
 import { Item } from '../../api/item.dto';
+import { MAGIC_ITEM_KINDS } from '../../api/magic-item.dto';
 import { Realm } from '../../api/realm.dto';
 import { GEM_GRADES, HERB_BIOMES, HERB_GROUPS } from '../../api/treasure-goods.dto';
 import { ListFilters } from '../../data/useListFilters';
@@ -43,6 +44,7 @@ import {
   ITEM_FEATURE_FILTERS,
   ITEM_PAGE_SIZES,
   ITEM_SORTS,
+  MAGIC_LEVEL_FILTERS,
   sortItems,
   WEAPON_ATTACKS,
   WEAPON_HANDS,
@@ -168,6 +170,8 @@ export const ItemCatalogFilterSections: FC<{ filters: ListFilters<Item>; realms?
     herbGroup: multiple('herbGroup'),
     biome: multiple('biome'),
     gemGrade: single('gemGrade'),
+    magicKind: multiple('magicKind'),
+    magicLevel: single('magicLevel'),
     source: single('source'),
   };
   const armor = filters.isActive('at');
@@ -231,6 +235,16 @@ export const ItemCatalogFilterSections: FC<{ filters: ListFilters<Item>; realms?
           label={t('gem-grade')}
           values={GEM_GRADES}
           labelPrefix="gem-grade-"
+        />
+      </FilterSection>
+      <FilterSection title={t('item-magic')} defaultOpen={bind.magicKind.value.length > 0 || !!bind.magicLevel.value}>
+        <EnumPicker {...bind.magicKind} label={t('magic-kind')} values={MAGIC_ITEM_KINDS} labelPrefix="magic-kind-" />
+        <EnumPicker
+          {...bind.magicLevel}
+          variant="tiles"
+          label={t('magic-level-max')}
+          values={MAGIC_LEVEL_FILTERS}
+          formatLabel={(value) => t('magic-level-max-value', { level: value })}
         />
       </FilterSection>
       <FilterSection title={t('rarity')}>

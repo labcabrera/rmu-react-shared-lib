@@ -2,7 +2,10 @@ import { CraftingQualityDto } from './crafting.dto';
 import { ItemHolder, StrategicItem } from './strategic-item.dto';
 import type { ItemInstanceSpec, PurchaseItemOptions } from './treasure-goods.dto';
 
-/** Operations of the item ledger (spec 023); `import` (spec 024) and `found`, the doses of a herb search (spec 062). */
+/**
+ * Operations of the item ledger (spec 023); `import` (spec 024), `found`, the doses of a herb search (spec 062), and
+ * the treasure, magic item, recharge and gem operations of workspace spec 067.
+ */
 export type ItemLedgerKind =
   | 'purchase'
   | 'sale'
@@ -14,7 +17,13 @@ export type ItemLedgerKind =
   | 'import'
   | 'found'
   | 'enchant'
-  | 'enchant-refund';
+  | 'enchant-refund'
+  | 'treasure'
+  | 'magic-item'
+  | 'recharge'
+  | 'gem-cut'
+  | 'gem-set'
+  | 'gem-unset';
 
 /** Who pays a purchase of a character: its coins, its faction, or its coins and then the faction. */
 export type PayerMode = 'holder' | 'faction' | 'split';

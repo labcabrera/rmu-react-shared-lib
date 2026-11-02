@@ -143,6 +143,10 @@ export * from './api/crafting.api';
 export * from './api/crafting.dto';
 export * from './api/enchantment.api';
 export * from './api/enchantment.dto';
+export * from './api/magic-item.dto';
+export * from './api/treasure-tables.dto';
+export * from './api/treasure.dto';
+export * from './api/treasure.api';
 export * from './api/strategic-game.api';
 export * from './api/strategic-game.dto';
 export * from './api/tactical-game.api';
@@ -293,6 +297,22 @@ export { default as ItemModifierChips } from './rmu/item/ItemModifierChips';
 export { default as ItemEnchantmentInfo } from './rmu/alchemy/ItemEnchantmentInfo';
 export { default as SpellAlchemyInfo } from './rmu/alchemy/SpellAlchemyInfo';
 export { alchemyEffectText } from './rmu/alchemy/alchemy-format';
+export { default as MagicItemInfo } from './rmu/magic/MagicItemInfo';
+export type { MagicItemInfoProps } from './rmu/magic/MagicItemInfo';
+export { default as GemTraits } from './rmu/magic/GemTraits';
+export type { GemTraitsProps } from './rmu/magic/GemTraits';
+export { default as MagicItemDialog, buildMagicItemRequest } from './rmu/magic/MagicItemDialog';
+export type { MagicItemDialogProps } from './rmu/magic/MagicItemDialog';
+export { default as TreasureDialog } from './rmu/treasure/TreasureDialog';
+export type { TreasureDialogProps } from './rmu/treasure/TreasureDialog';
+export {
+  creatureTypeLabel,
+  magicBonusText,
+  magicItemSummary,
+  magicSpellName,
+  magicSpellUseText,
+} from './rmu/magic/magic-format';
+export type { MagicBonusLike } from './rmu/magic/magic-format';
 export { default as ItemFeatureChips, itemFeatureLines, moneyText } from './rmu/item/ItemFeatureChips';
 export { default as ItemFeaturesView } from './rmu/item/ItemFeaturesView';
 export type { ItemFeatureSection } from './rmu/item/ItemFeaturesView';
@@ -324,6 +344,7 @@ export {
   ITEM_PAGE_SIZES,
   ITEM_SORTS,
   itemCatalogFilters,
+  MAGIC_LEVEL_FILTERS,
   normalizeText,
   sortItems,
   WEAPON_ATTACKS,
