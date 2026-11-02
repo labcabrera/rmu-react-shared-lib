@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { renderHook, screen, within } from '@testing-library/react';
+import { act, renderHook, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { Item } from '../../api/item.dto';
@@ -16,8 +16,9 @@ const names: Record<string, string> = { 'battle-axe': 'Hacha de batalla', dagger
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const t = (key: string, options?: any) => names[key] ?? options?.defaultValue ?? key;
 
+// Without a default rarity, so each test sees the whole sample catalog.
 const filtered = (search: string, owner?: string) => {
-  const { result } = renderHook(() => useListFilters(itemCatalogFilters(t, { owner })), {
+  const { result } = renderHook(() => useListFilters(itemCatalogFilters(t, { owner, defaultRarities: [] })), {
     wrapper: ({ children }) => <MemoryRouter initialEntries={[`/items${search}`]}>{children}</MemoryRouter>,
   });
   return sampleCatalog.filter(result.current.match).map((item) => item.id);
@@ -59,6 +60,18 @@ describe('item catalog filters', () => {
     expect(filtered('?mine=true', 'user-1')).toEqual(['dagger']);
     // Without a user «only mine» does not apply.
     expect(filtered('?mine=true')).toHaveLength(sampleCatalog.length);
+  });
+
+  it('selects the common rarity when the URL has none, and shows every rarity once it is cleared', () => {
+    const { result } = renderHook(() => useListFilters(itemCatalogFilters(t)), {
+      wrapper: ({ children }) => <MemoryRouter initialEntries={['/items']}>{children}</MemoryRouter>,
+    });
+    const common = sampleCatalog.filter((item) => item.info.rarity === 'common').map((item) => item.id);
+    expect(result.current.getAll('rarity')).toEqual(['common']);
+    expect(sampleCatalog.filter(result.current.match).map((item) => item.id)).toEqual(common);
+    act(() => result.current.clear('rarity'));
+    expect(result.current.getAll('rarity')).toEqual([]);
+    expect(sampleCatalog.filter(result.current.match)).toHaveLength(sampleCatalog.length);
   });
 
   it('filters by source (spec 063)', () => {
@@ -111,7 +124,7 @@ describe('ItemCard', () => {
 
 describe('ItemCatalogBrowser', () => {
   const Browser = ({ items, mode }: { items: Item[] | undefined; mode?: 'cards' | 'table' }) => {
-    const filters = useListFilters(itemCatalogFilters(t));
+    const filters = useListFilters(itemCatalogFilters(t, { defaultRarities: [] }));
     return <ItemCatalogBrowser items={items} filters={filters} mode={mode} layout="drawer" />;
   };
 

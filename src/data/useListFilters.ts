@@ -28,7 +28,10 @@ export interface FilterDef<T = unknown> {
    * `false` for controls kept in the URL that are not filters (the sort): no chip, not counted, kept by `clearAll`.
    */
   chip?: boolean;
-  /** Value when the URL has none (a `single` only); it is never written to the URL. */
+  /**
+   * Value when the URL has none; it is never written to the URL. For a `multiple`, the default values separated by
+   * commas: clearing the filter writes `-` (no value selected), so the default does not come back.
+   */
   defaultValue?: string;
 }
 
@@ -78,12 +81,26 @@ const isEmpty = (value: FilterValue | undefined): value is undefined =>
 
 const paramOf = (key: string, def: FilterDef<never>) => def.param ?? key;
 
+/** URL value of a `multiple` with a default and no value selected. */
+const NO_VALUES = '-';
+
+const defaultList = (def: FilterDef<never>): string[] =>
+  (def.defaultValue ?? '').split(',').filter((value) => value && (!def.options || def.options.includes(value)));
+
+const sameValues = (a: readonly string[], b: readonly string[]) =>
+  a.length === b.length && a.every((value) => b.includes(value));
+
 const parse = (def: FilterDef<never>, raw: string | null): FilterValue | undefined => {
-  if (raw === null || raw === '') return def.defaultValue;
   if (def.kind === 'multiple') {
+    if (raw === null || raw === '') {
+      const defaults = defaultList(def);
+      return defaults.length > 0 ? defaults : undefined;
+    }
+    if (raw === NO_VALUES) return undefined;
     const list = [...new Set(raw.split(',').filter((value) => value && (!def.options || def.options.includes(value))))];
     return list.length > 0 ? list : undefined;
   }
+  if (raw === null || raw === '') return def.defaultValue;
   if (def.kind === 'single') return !def.options || def.options.includes(raw) ? raw : def.defaultValue;
   return raw;
 };
@@ -108,6 +125,12 @@ const write = <T>(
 ) => {
   const def = schema[key] as FilterDef<never>;
   const param = paramOf(key, def);
+  if (def.kind === 'multiple' && def.defaultValue !== undefined) {
+    const list = value === null || value === undefined ? [] : Array.isArray(value) ? value : [value];
+    if (sameValues(list, defaultList(def))) params.delete(param);
+    else params.set(param, list.length > 0 ? list.join(',') : NO_VALUES);
+    return;
+  }
   const empty = value === null || isEmpty(value) || (def.defaultValue !== undefined && value === def.defaultValue);
   if (empty) params.delete(param);
   else params.set(param, Array.isArray(value) ? value.join(',') : value);

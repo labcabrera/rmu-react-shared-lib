@@ -1,5 +1,5 @@
 import { ITEM_RARITIES } from '../../api/constants';
-import { ITEM_CATEGORIES, Item, ItemArmorClass, WeaponAttackType, WeaponModeType } from '../../api/item.dto';
+import { ITEM_CATEGORIES, Item, ItemRarity, ItemArmorClass, WeaponAttackType, WeaponModeType } from '../../api/item.dto';
 import { MAGIC_ITEM_KINDS } from '../../api/magic-item.dto';
 import { Realm } from '../../api/realm.dto';
 import { GEM_GRADES, HERB_BIOMES, HERB_GROUPS, HerbBiome } from '../../api/treasure-goods.dto';
@@ -71,6 +71,8 @@ export interface ItemCatalogFilterOptions {
   realms?: Realm[];
   /** Id of the user: enables «only mine» (items whose `owner` it is). */
   owner?: string;
+  /** Rarities selected when the URL has none; `common` by default, an empty list for none. */
+  defaultRarities?: readonly ItemRarity[];
 }
 
 /**
@@ -80,7 +82,7 @@ export interface ItemCatalogFilterOptions {
  */
 export const itemCatalogFilters = (
   t: ItemFeatureTranslate,
-  { realms, owner }: ItemCatalogFilterOptions = {}
+  { realms, owner, defaultRarities = ['common'] }: ItemCatalogFilterOptions = {}
 ): FilterSchema<Item> => {
   const isArmor = (values: Record<string, unknown>) => values.category === 'armor';
   const isWeapon = (values: Record<string, unknown>) => values.category === 'weapon';
@@ -108,6 +110,7 @@ export const itemCatalogFilters = (
       kind: 'multiple',
       label: t('rarity'),
       options: ITEM_RARITIES,
+      defaultValue: defaultRarities.length > 0 ? defaultRarities.join(',') : undefined,
       format: (value) => t(value),
       match: (item, value) => list(value).includes(item.info.rarity),
     },

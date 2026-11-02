@@ -115,6 +115,30 @@ describe('useListFilters', () => {
     expect(result.current.activeCount).toBe(0);
   });
 
+  it('keeps the default of a multiple filter out of the URL and writes «-» when it is cleared', () => {
+    const tags: FilterSchema<Thing> = {
+      rarity: {
+        kind: 'multiple',
+        label: 'Rarity',
+        options: ['common', 'rare'],
+        defaultValue: 'common',
+        match: (thing, value) => (value as string[]).includes(thing.rarity),
+      },
+    };
+    const { result } = renderHook(() => ({ filters: useListFilters(tags), location: useLocation() }), {
+      wrapper: ({ children }) => <MemoryRouter initialEntries={['/things']}>{children}</MemoryRouter>,
+    });
+    expect(result.current.filters.getAll('rarity')).toEqual(['common']);
+    act(() => result.current.filters.toggle('rarity', 'rare'));
+    expect(result.current.location.search).toBe('?rarity=common%2Crare');
+    act(() => result.current.filters.set('rarity', ['common']));
+    expect(result.current.location.search).toBe('');
+    act(() => result.current.filters.clear('rarity'));
+    expect(result.current.location.search).toBe('?rarity=-');
+    expect(result.current.filters.getAll('rarity')).toEqual([]);
+    expect(things.filter(result.current.filters.match)).toHaveLength(things.length);
+  });
+
   it('changes its key when the applied filters change', () => {
     const { result } = renderHook(() => useListFilters(schema), { wrapper: wrapper() });
     const before = result.current.key;
