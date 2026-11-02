@@ -62,7 +62,12 @@ const NO_QUALITIES: Qualities = { wealth: [], lifestyle: [], magic: [] };
 const errorText = (error: unknown, t: ItemFeatureTranslate): string =>
   isApiError(error) ? t(error.messageKey) : error instanceof Error ? error.message : String(error);
 
-const text = (value: string, t: ItemFeatureTranslate) => t(value, { defaultValue: value });
+/** A key, a key with a detail (`treasure-lifestyle: rich +15 / max +10`) or plain text from the API. */
+const text = (value: string, t: ItemFeatureTranslate) => {
+  const match = /^([a-z0-9]+(?:-[a-z0-9]+)+): (.*)$/.exec(value);
+  if (match) return `${t(match[1], { defaultValue: match[1] })}: ${match[2]}`;
+  return t(value, { defaultValue: value });
+};
 
 /** The rolls behind a line. */
 const TreasureDice: FC<{ dice: TreasureDie[] }> = ({ dice }) => {
