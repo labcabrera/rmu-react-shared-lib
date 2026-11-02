@@ -66,6 +66,8 @@ export default function ImageCategorySelector({
     'cultures',
     'generic',
     'items',
+    'weapons',
+    'armor',
     'npcs',
     'photos',
     'professions',

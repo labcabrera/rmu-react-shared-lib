@@ -73,6 +73,13 @@ export const itemCategoryImage = (category: string | null | undefined): string =
     ? `images/items/category-${category}.png`
     : defaultImages.item;
 
+/**
+ * Image folder (and gallery category) of the items of a category: weapons and armor/shields have their own folder of
+ * rmu-mfe-assets, every other item is in `items`. The `category-*` images stay in `items`.
+ */
+export const itemImageFolder = (category: string | null | undefined): 'weapons' | 'armor' | 'items' =>
+  category === 'weapon' ? 'weapons' : category === 'armor' || category === 'shield' ? 'armor' : 'items';
+
 /** URL of the image of an entity: its own (`url`), or the fallback of its kind. */
 export const entityImage = (kind: EntityKind, url?: string | null): string =>
   resolveAssetUrl(url || defaultImages[kind] || defaultImages.generic);

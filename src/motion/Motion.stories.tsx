@@ -19,7 +19,7 @@ const MotionDemo = () => {
         items={items}
         getKey={(item) => item.id}
         renderItem={(item) => (
-          <EntityCard title={item.name} subtitle="Weapon" image="images/items/arming-sword.png" onClick={() => {}} />
+          <EntityCard title={item.name} subtitle="Weapon" image="images/weapons/arming-sword.png" onClick={() => {}} />
         )}
       />
     </Stack>
