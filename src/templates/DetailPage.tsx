@@ -35,13 +35,16 @@ export interface DetailPageProps<T> {
   onDelete?: (entity: T) => void;
   /** Text of the delete confirmation; a function can include the entity name. */
   deleteMessage?: string | ((entity: T) => string);
-  /** Extra header actions, shown before refresh, edit and delete. */
+  /**
+   * Extra header actions: icon buttons with a tooltip (RmuIconButton and the like), like refresh and delete, so the
+   * icons read as one group. They come first; Edit, the only labelled button, closes the row.
+   */
   actions?: (entity: T) => ReactNode[];
   /** Shows the raw JSON in a collapsed TechnicalInfo panel (default true). */
   technicalInfo?: boolean;
 }
 
-/** Standard view page: header with refresh/edit/delete, side panel, content and its states. */
+/** Standard view page: header with the extra actions, refresh, delete and edit, side panel, content and its states. */
 export default function DetailPage<T>({
   breadcrumbs,
   entity: state,
@@ -72,6 +75,8 @@ export default function DetailPage<T>({
       <React.Fragment key={`action-${index}`}>{action}</React.Fragment>
     )),
     <RefreshButton key="refresh" onClick={state.refresh} />,
+    ...(onDelete ? [<DeleteButton key="delete" onClick={() => setDeleteOpen(true)} />] : []),
+    // The primary action goes last, with its label, after the group of icons.
     ...(onEdit
       ? [
           isPhone ? (
@@ -83,14 +88,13 @@ export default function DetailPage<T>({
               size="small"
               startIcon={<EditDocumentIcon />}
               onClick={() => onEdit(entity)}
-              sx={{ mx: 1 }}
+              sx={{ ml: 1 }}
             >
               {t('edit')}
             </Button>
           ),
         ]
       : []),
-    ...(onDelete ? [<DeleteButton key="delete" onClick={() => setDeleteOpen(true)} />] : []),
   ];
 
   const technical = technicalInfo && (
