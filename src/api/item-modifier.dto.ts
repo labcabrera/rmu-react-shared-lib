@@ -16,8 +16,19 @@ export const STRATEGIC_ITEM_MODIFIER_TARGETS: StrategicItemModifierTarget[] = [
   'maneuver',
 ];
 
-/** Where a modifier comes from; spec 023 adds the crafting and repair of the item and its catalog type. */
-export type StrategicItemModifierSourceKind = 'tactical' | 'manual' | 'crafting' | 'repair' | 'catalog' | 'enchantment';
+/**
+ * Where a modifier comes from; spec 023 adds the crafting and repair of the item and its catalog type, spec 067 the
+ * magic block of the catalog and the random treasure.
+ */
+export type StrategicItemModifierSourceKind =
+  | 'tactical'
+  | 'manual'
+  | 'crafting'
+  | 'repair'
+  | 'catalog'
+  | 'enchantment'
+  | 'catalog-magic'
+  | 'treasure';
 
 export type StrategicItemModifierSource = {
   kind: StrategicItemModifierSourceKind;

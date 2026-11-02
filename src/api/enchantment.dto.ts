@@ -1,3 +1,4 @@
+import type { MagicBonusKind, MagicItemKind } from './magic-item.dto';
 import type { ItemHolder, StrategicItem } from './strategic-item.dto';
 
 // Alchemy and enchantment of items (workspace spec 064): the alchemy tables of rmu-api-core, the alchemy data of a
@@ -190,15 +191,50 @@ export type UpdateEnchantmentDto = {
 
 export type CompleteEnchantmentResult = { project: EnchantmentProject; item: StrategicItem };
 
-/** The enchantment of an item (`StrategicItem.enchantment`). */
+/** Where the enchantment of an item comes from (spec 067); the ones without it are `alchemy`. */
+export const ITEM_ENCHANTMENT_SOURCES = ['alchemy', 'catalog', 'treasure', 'manual'] as const;
+export type ItemEnchantmentSource = (typeof ITEM_ENCHANTMENT_SOURCES)[number];
+
+/** Kinds of the descriptive properties of an enchantment; spec 067 adds pp-adder to spell. */
+export const ITEM_ENCHANTMENT_PROPERTY_KINDS = [
+  'spell-adder',
+  'pp-multiplier',
+  'skill',
+  'pp-adder',
+  'rr',
+  'stat',
+  'armor-penalty',
+  'charges',
+  'spell',
+] as const;
+export type ItemEnchantmentPropertyKind = (typeof ITEM_ENCHANTMENT_PROPERTY_KINDS)[number];
+
+/**
+ * A property kept as text: what no modifier applies. An OB, DB or shield bonus `against` a creature type stays a
+ * property too, so it may carry those bonus kinds.
+ */
+export type ItemEnchantmentProperty = {
+  kind: ItemEnchantmentPropertyKind | MagicBonusKind;
+  value: number;
+  target?: string | null;
+  against?: string | null;
+};
+
+/** The enchantment of an item (`StrategicItem.enchantment`): of an alchemy project (spec 064) or not (spec 067). */
 export type ItemEnchantment = {
-  projectId: string;
+  /** Spec 067: missing is `alchemy`. */
+  source?: ItemEnchantmentSource;
+  /** Null when it does not come from a project. */
+  projectId: string | null;
+  /** Spec 067. */
+  kind?: MagicItemKind | null;
+  attunement?: boolean;
   itemLevel: number;
-  alchemistId: string;
-  alchemistName: string;
-  spells: { spellId: string; name: string; level: number; listCode: string }[];
-  properties: { kind: 'spell-adder' | 'pp-multiplier' | 'skill'; value: number; target?: string | null }[];
-  completedAt: string;
+  alchemistId?: string | null;
+  alchemistName?: string | null;
+  spells: { spellId?: string | null; name: string; level: number; listCode?: string | null }[];
+  properties: ItemEnchantmentProperty[];
+  completedAt?: string | null;
 };
 
 /** Days left of a project, extra days included. */

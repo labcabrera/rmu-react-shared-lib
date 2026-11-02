@@ -1,4 +1,5 @@
 import { EntityType } from './common.dto';
+import type { MagicItemFeature } from './magic-item.dto';
 import { ItemAntidote, ItemPoison } from './poison.dto';
 import type {
   ItemAcid,
@@ -20,7 +21,7 @@ export type ItemArmorClass = 'light' | 'medium' | 'heavy';
 
 /**
  * Categories of the item catalog; spec 041 adds the general equipment ones (container to instrument), spec 062 the
- * Treasure Law goods (acid to property).
+ * Treasure Law goods (acid to property), spec 067 the potions and the spell items (wands, rods, staves, rune paper…).
  */
 export const ITEM_CATEGORIES = [
   'weapon',
@@ -45,6 +46,8 @@ export const ITEM_CATEGORIES = [
   'jewelry',
   'animal',
   'property',
+  'potion',
+  'spell-item',
   'other',
 ] as const;
 export type ItemCategory = (typeof ITEM_CATEGORIES)[number];
@@ -71,6 +74,8 @@ export type ItemFeatures = {
   /** Animals and mounts. */
   animal?: ItemAnimal | null;
   property?: ItemProperty | null;
+  /** Spec 067: a magic item of Treasure Law chapter 6, in any category. */
+  magic?: MagicItemFeature | null;
 };
 
 export type Item = {
