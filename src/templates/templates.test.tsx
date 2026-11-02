@@ -91,6 +91,24 @@ describe('DetailPage', () => {
     expect(onDelete).toHaveBeenCalledWith({ id: '1', name: 'Arming sword' });
   });
 
+  it('groups the icons first and closes the header with the labelled Edit', () => {
+    const extra = <button key="share">share</button>;
+    renderWithProviders(
+      <DetailPage
+        breadcrumbs={[]}
+        entity={entityState()}
+        onDelete={vi.fn()}
+        onEdit={vi.fn()}
+        actions={() => [extra]}
+      >
+        {() => null}
+      </DetailPage>
+    );
+    const names = screen.getAllByRole('button').map((button) => button.getAttribute('aria-label') ?? button.textContent);
+    const header = ['share', 'refresh', 'delete', 'edit'];
+    expect(names.filter((name) => header.includes(name ?? ''))).toEqual(header);
+  });
+
   it('shows not found for a 404', () => {
     renderWithProviders(
       <DetailPage breadcrumbs={[]} entity={entityState({ entity: undefined, notFound: true })}>
