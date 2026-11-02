@@ -331,6 +331,7 @@ export {
 export {
   default as ItemCatalogBrowser,
   ITEM_CATALOG_MAX,
+  ITEM_CATALOG_PAGE,
   ItemCatalogFilterSections,
   ItemSortControl,
   useItemCatalog,
