@@ -342,6 +342,8 @@ export interface Npc {
   level: number;
   levelSpread: NpcLevelSpread | null;
   outlookType: NpcOutlookType | null;
+  /** Fright level (0-30): the base of the fear check the creature causes (spec 068); absent on old NPCs. */
+  frightLevel?: number | null;
   archetype: NpcArchetype | null;
   movement: NpcMovement[];
   endurance: number | null;
