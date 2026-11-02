@@ -35,7 +35,7 @@ export const ListPage: Story = {
       <Grid container spacing={1}>
         {['Arming sword', 'Broadsword', 'Battle axe', 'Arrow', 'Boots', 'Bucket'].map((name) => (
           <Grid key={name} size={gridSizeCard}>
-            <EntityCard title={name} subtitle="Weapon" image="images/items/arming-sword.png" />
+            <EntityCard title={name} subtitle="Weapon" image="images/weapons/arming-sword.png" />
           </Grid>
         ))}
       </Grid>
@@ -53,7 +53,7 @@ export const DetailPage: Story = {
     ],
     leftPanel: (
       <>
-        <EntityImage image="images/items/arming-sword.png" onImageChange={fn()} />
+        <EntityImage image="images/weapons/arming-sword.png" onImageChange={fn()} />
         <Typography variant="h6">Arming sword</Typography>
         <Typography>Weapon</Typography>
       </>

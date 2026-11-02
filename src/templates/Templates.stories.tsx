@@ -37,7 +37,7 @@ const allItems: Item[] = Array.from({ length: 50 }, (_, index) => ({
   id: `item-${index}`,
   name: `${names[index % names.length]} ${Math.floor(index / names.length) + 1}`,
   category: index % 3 === 0 ? 'weapon' : 'tools',
-  imageUrl: 'images/items/arming-sword.png',
+  imageUrl: 'images/weapons/arming-sword.png',
 }));
 
 // In-memory stand-in for an API list endpoint that understands `name=re=` and `category==`.

@@ -18,7 +18,7 @@ export { default as RmuIconButton } from './buttons/RmuIconButton';
 
 export * from './config/config.service';
 export * from './config/asset-url';
-export { defaultImages, entityImage, itemCategoryImage } from './config/default-images';
+export { defaultImages, entityImage, itemCategoryImage, itemImageFolder } from './config/default-images';
 export type { EntityKind } from './config/default-images';
 
 export { default as EntityCard } from './cards/EntityCard';

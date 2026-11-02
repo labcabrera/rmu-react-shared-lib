@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react';
 import { Box } from '@mui/material';
 import { resolveAssetUrl } from '../../config/asset-url';
 import { imageBaseUrl } from '../../config/config.service';
+import { itemImageFolder } from '../../config/default-images';
 import { itemFilter, itemFilterDisabled } from '../../layouts/grid';
 
 type ItemImageSource = {
@@ -13,10 +14,13 @@ type ItemImageSource = {
   category?: string;
 };
 
-/** The image of an item: its own, the one of its catalog type, or `images/items/<type>.png` (spec 023). */
+/**
+ * The image of an item: its own, the one of its catalog type, or `images/<folder>/<type>.png` (spec 023), in the
+ * folder of its category (`weapons`, `armor` or `items`).
+ */
 export const itemImageUrl = (item: ItemImageSource): string => {
   const own = resolveAssetUrl(item.imageUrl ?? item.catalog?.imageUrl ?? undefined);
-  return own || `${imageBaseUrl}images/items/${item.itemTypeId ?? item.id}.png`;
+  return own || `${imageBaseUrl}images/${itemImageFolder(item.category)}/${item.itemTypeId ?? item.id}.png`;
 };
 
 /** Square thumbnail of an item, with the sepia filter of the item illustrations and a fallback to an empty slot. */
