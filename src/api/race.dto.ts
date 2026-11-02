@@ -1,5 +1,5 @@
 import { StatKey } from './character.dto';
-import { AccessType, EntityType } from './common.dto';
+import { AccessType, EntityType, EntityAccess } from './common.dto';
 
 export const resistances = ['channeling', 'mentalism', 'essence', 'physical', 'poison', 'disease', 'fear'];
 
@@ -28,6 +28,8 @@ export type Race = {
   description: string | undefined;
   imageUrl: string | undefined;
   owner?: string;
+  /** What the signed-in user can do with it: follows its realm (spec 069). */
+  access?: EntityAccess;
   accessType: AccessType;
   /** Rulebook (`system`, admin only) or user content (spec 063). */
   entitySource: EntityType;

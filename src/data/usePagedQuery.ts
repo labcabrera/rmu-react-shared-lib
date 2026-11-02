@@ -9,6 +9,11 @@ export interface PagedQueryOptions<T> {
   rsql?: string;
   /** Sort expression passed to the fetcher as is (e.g. `name` or `-createdAt`). Changing it goes back to the first page. */
   sort?: string;
+  /**
+   * Other state of the query that the fetcher reads (such as a scope the API takes outside the RSQL): changing it
+   * fetches again from the first page.
+   */
+  key?: string;
   pageSize?: number;
   /** Skip fetching while false (for example until a required filter is known). */
   enabled?: boolean;
@@ -33,6 +38,7 @@ export function usePagedQuery<T>({
   fetcher,
   rsql = '',
   sort,
+  key,
   pageSize: initialPageSize = 24,
   enabled = true,
   onError,
@@ -45,6 +51,7 @@ export function usePagedQuery<T>({
   const [reloads, setReloads] = useState(0);
   const [appliedRsql, setAppliedRsql] = useState(rsql);
   const [appliedSort, setAppliedSort] = useState(sort);
+  const [appliedKey, setAppliedKey] = useState(key);
   // Callers usually pass inline functions: keep the latest ones without refetching on every render.
   const fetcherRef = useRef(fetcher);
   const onErrorRef = useRef(onError);
@@ -57,6 +64,10 @@ export function usePagedQuery<T>({
   }
   if (sort !== appliedSort) {
     setAppliedSort(sort);
+    setPage(0);
+  }
+  if (key !== appliedKey) {
+    setAppliedKey(key);
     setPage(0);
   }
 
@@ -80,7 +91,7 @@ export function usePagedQuery<T>({
     return () => {
       cancelled = true;
     };
-  }, [appliedRsql, appliedSort, page, pageSize, enabled, reloads]);
+  }, [appliedRsql, appliedSort, appliedKey, page, pageSize, enabled, reloads]);
 
   const setPageSize = useCallback((size: number) => {
     setPageSizeState(size);
