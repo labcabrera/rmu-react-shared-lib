@@ -19,7 +19,7 @@ export const criticalSeverityColor = (severity: string | null | undefined): stri
   CRITICAL_SEVERITY_COLORS[severity ?? 'none'] ?? CRITICAL_SEVERITY_COLORS.none;
 
 /** Severities of the legend, in order. */
-export const CRITICAL_SEVERITIES = ['none', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+export const CRITICAL_SEVERITY_LEGEND = ['none', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
 
 /** Text colour readable on a severity background. */
 export const criticalSeverityTextColor = (severity: string | null | undefined): string =>

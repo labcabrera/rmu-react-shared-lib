@@ -363,7 +363,7 @@ export { default as OptionsHelpDialog, OptionsHelpButton } from './ui/OptionsHel
 export type { OptionHelp } from './ui/OptionsHelpDialog';
 export { default as AccessTypeChip } from './rmu/AccessTypeChip';
 export {
-  CRITICAL_SEVERITIES,
+  CRITICAL_SEVERITY_LEGEND,
   CRITICAL_SEVERITY_COLORS,
   criticalSeverityColor,
   criticalSeverityTextColor,
