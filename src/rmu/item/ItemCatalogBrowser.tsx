@@ -53,12 +53,29 @@ import {
   weaponSkillLabel,
 } from './item-catalog';
 
-/** Largest page of rmu-api-items (`CatalogPagedQueryDto`): the catalog is loaded whole (decision 12). */
-export const ITEM_CATALOG_MAX = 1000;
+/** Largest page of rmu-api-items (`CatalogPagedQueryDto`): the catalog is loaded whole, page by page (decision 12). */
+export const ITEM_CATALOG_PAGE = 1000;
+/** Safety cap of the whole catalog load: past it the list is marked `truncated`. */
+export const ITEM_CATALOG_MAX = 20 * ITEM_CATALOG_PAGE;
+
+/** Every catalog item: the first page tells how many there are, the remaining pages are fetched in parallel. */
+async function fetchWholeCatalog(auth: ReturnType<typeof useAuth>): Promise<{ items: Item[]; truncated: boolean }> {
+  const first = await fetchItems('', 0, ITEM_CATALOG_PAGE, auth);
+  const total = first.pagination.totalElements;
+  const pages = Math.min(Math.ceil(total / ITEM_CATALOG_PAGE), ITEM_CATALOG_MAX / ITEM_CATALOG_PAGE);
+  const rest = await Promise.all(
+    Array.from({ length: Math.max(pages - 1, 0) }, (_, index) => fetchItems('', index + 1, ITEM_CATALOG_PAGE, auth))
+  );
+  const seen = new Set<string>();
+  const items = [first, ...rest]
+    .flatMap((page) => page.content)
+    .filter((item) => !seen.has(item.id) && seen.add(item.id));
+  return { items, truncated: total > items.length };
+}
 
 /**
- * The item catalog loaded whole once (decision 4); `truncated` when it reached the API limit. `exclude` leaves out
- * some ids (the gold coin of the market). Requires an auth provider.
+ * The item catalog loaded whole once (decision 4), across as many pages as it takes; `truncated` only past
+ * ITEM_CATALOG_MAX. `exclude` leaves out some ids (the gold coin of the market). Requires an auth provider.
  */
 export function useItemCatalog({ exclude = [] }: { exclude?: string[] } = {}) {
   const auth = useAuth();
@@ -69,12 +86,12 @@ export function useItemCatalog({ exclude = [] }: { exclude?: string[] } = {}) {
   const excluded = exclude.join(',');
   useEffect(() => {
     let cancelled = false;
-    fetchItems('', 0, ITEM_CATALOG_MAX, auth)
-      .then((page) => {
+    fetchWholeCatalog(auth)
+      .then((catalog) => {
         if (cancelled) return;
         const skip = excluded.split(',');
-        setItems(page.content.filter((item) => !skip.includes(item.id)));
-        setTruncated(page.pagination.totalElements > page.content.length);
+        setItems(catalog.items.filter((item) => !skip.includes(item.id)));
+        setTruncated(catalog.truncated);
         setError(undefined);
       })
       .catch((err) => !cancelled && setError(err));
