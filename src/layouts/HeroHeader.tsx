@@ -131,7 +131,11 @@ const HeroHeader: FC<HeroHeaderProps> = ({
           <Box sx={{ flex: '1 1 0', minWidth: 0 }}>
             {/* The overline and the title take the whole width over the chips, resources and key numbers, so a long
                 name is not cut by the columns next to it. */}
-            <Stack direction="row" sx={{ alignItems: 'flex-start', gap: 2 }}>
+            {/* On phones the actions take their own line over the title, which keeps the whole width. */}
+            <Stack
+              direction={{ xs: 'column-reverse', sm: 'row' }}
+              sx={{ alignItems: { xs: 'stretch', sm: 'flex-start' }, gap: { xs: 0.5, sm: 2 } }}
+            >
               <Box sx={{ flex: '1 1 auto', minWidth: 0 }}>
                 {overline && (
                   <Typography variant="overline" color="text.secondary" component="div" sx={{ lineHeight: 1.6 }}>
@@ -147,7 +151,7 @@ const HeroHeader: FC<HeroHeaderProps> = ({
                     WebkitLineClamp: 2,
                     WebkitBoxOrient: 'vertical',
                     overflow: 'hidden',
-                    overflowWrap: 'anywhere',
+                    overflowWrap: 'break-word',
                   }}
                 >
                   {title}
