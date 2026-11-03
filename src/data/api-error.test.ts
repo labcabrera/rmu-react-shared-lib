@@ -46,4 +46,9 @@ describe('ApiError', () => {
     );
     expect(new ApiError(500, '', 'not json', '/x').detail).toBeUndefined();
   });
+  it('names the errors of the members of a strategic game (spec 071)', () => {
+    expect(new ApiError(400, '', '{"code":"not-a-friend"}', '/x').messageKey).toBe('error-not-a-friend');
+    expect(new ApiError(403, '', '{"code":"not-a-player"}', '/x').messageKey).toBe('error-not-a-player');
+    expect(new ApiError(409, '', '{"code":"member-limit"}', '/x').messageKey).toBe('error-member-limit');
+  });
 });

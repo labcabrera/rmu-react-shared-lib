@@ -1,3 +1,34 @@
+/** What the user can do with a strategic game (spec 071), from less to more. */
+export const GAME_ACCESS_LEVELS = ['none', 'cover', 'spectator', 'player', 'master', 'owner'] as const;
+export type GameAccessLevel = (typeof GAME_ACCESS_LEVELS)[number];
+
+export const gameAccessAtLeast = (level: GameAccessLevel | undefined, required: GameAccessLevel): boolean =>
+  GAME_ACCESS_LEVELS.indexOf(level ?? 'none') >= GAME_ACCESS_LEVELS.indexOf(required);
+
+/** Roles of the members of a game (spec 071); the owner of the game is not a member. */
+export const GAME_MEMBER_ROLES = ['master', 'player', 'spectator'] as const;
+export type GameMemberRole = (typeof GAME_MEMBER_ROLES)[number];
+
+export interface GameMember {
+  userId: string;
+  userName: string;
+  role: GameMemberRole;
+  joinedAt: string;
+}
+
+export interface GameJoinRequest {
+  userId: string;
+  userName: string;
+  message: string | null;
+  requestedAt: string;
+}
+
+export interface GameMembers {
+  members: GameMember[];
+  /** Only for the masters, or the own request of a user who is not a member. */
+  joinRequests: GameJoinRequest[] | null;
+}
+
 export interface StrategicGame {
   id: string;
   name: string;
@@ -14,6 +45,16 @@ export interface StrategicGame {
   calendar: GameCalendar;
   /** Optimistic concurrency: send it back to detect a concurrent change. */
   version?: number;
+  /** Private: only its members read it. Public: anybody reads its cover and can ask to join (spec 071). */
+  accessType?: 'public' | 'private';
+  /** What the user can do with the game (spec 071). */
+  access?: GameAccessLevel;
+  /** For the members of the game. */
+  members?: GameMember[];
+  /** For the masters. */
+  joinRequests?: GameJoinRequest[];
+  /** Whether the owner still reads the realm (GET by id, for the masters). */
+  realmReadable?: boolean;
 }
 
 /** Calendar of a campaign (spec 065): a free text start date and the days elapsed since then. */
@@ -143,14 +184,17 @@ export interface StrategicGamePowerLevel {
 
 export type CreateStrategicGameDto = Omit<
   StrategicGame,
-  'id' | 'realmName' | 'status' | 'owner' | 'calendar' | 'version'
+  'id' | 'realmName' | 'status' | 'owner' | 'calendar' | 'version' | 'access' | 'members' | 'joinRequests' | 'realmReadable'
 > & {
   /** A new game always starts at day 1 (spec 065). */
   calendar?: { startDate?: string };
 };
 
 export type UpdateStrategicGameDto = Partial<
-  Omit<StrategicGame, 'id' | 'realmId' | 'realmName' | 'status' | 'owner' | 'calendar'>
+  Omit<
+    StrategicGame,
+    'id' | 'realmId' | 'realmName' | 'status' | 'owner' | 'calendar' | 'access' | 'members' | 'joinRequests' | 'realmReadable'
+  >
 > & {
   /** Start date and a correction of the elapsed days, which applies no effects (spec 065). */
   calendar?: { startDate?: string; elapsedDays?: number };
