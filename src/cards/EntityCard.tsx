@@ -41,7 +41,8 @@ const EntityCard: FC<{
   imageFilter?: string;
   chips?: ReactNode;
   metrics?: EntityMetric[];
-  description?: string;
+  /** Text, or a node such as the players of a faction with a tooltip (spec 072). */
+  description?: ReactNode;
   /** Lines of the description before it is clamped (default 2). */
   descriptionLines?: number;
   /** Shows a lock badge (private entities). */
