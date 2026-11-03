@@ -63,3 +63,23 @@ export async function addFactionGold(factionId: string, amount: number, auth: Au
     body: JSON.stringify(body),
   });
 }
+
+/**
+ * Adds a player to a faction (spec 072): a master adds a player of the game; a player of the faction adds a friend,
+ * who joins the game as a player.
+ */
+export async function addFactionPlayer(factionId: string, userId: string, auth: AuthContextProps): Promise<Faction> {
+  const url = `${apiStrategicGameUrl}/factions/${factionId}/players/${encodeURIComponent(userId)}`;
+  return await callApi(auth, url, { method: 'PUT' });
+}
+
+/** Takes a player out of a faction (spec 072): a master takes anybody out; `me` leaves it. */
+export async function removeFactionPlayer(factionId: string, userId: string, auth: AuthContextProps): Promise<Faction> {
+  const url = `${apiStrategicGameUrl}/factions/${factionId}/players/${encodeURIComponent(userId)}`;
+  return await callApi(auth, url, { method: 'DELETE' });
+}
+
+/** Replaces the players of a faction (spec 072, masters only). */
+export async function setFactionPlayers(factionId: string, players: string[], auth: AuthContextProps): Promise<Faction> {
+  return updateFaction(factionId, { players }, auth);
+}

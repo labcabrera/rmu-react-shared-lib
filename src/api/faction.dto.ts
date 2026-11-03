@@ -9,13 +9,28 @@ export interface Faction {
   owner?: string;
   /** NPCs of the faction (spec 055): guards, mercenaries, mounts… Missing in older factions. */
   npcs?: FactionNpc[];
-  /** The player who spends the gold of the faction (spec 071). */
-  leaderId?: string | null;
-  /** In the GETs (spec 071): `cover` for a reader who is not a member of the faction. */
-  access?: 'full' | 'cover';
-  /** True for the cover: no management, NPCs or armory (spec 071). */
-  summary?: boolean;
+  /** The players of the game who change the faction and what hangs from it (spec 072). Missing in older factions. */
+  players?: string[];
+  /** The names of its players, by user id (spec 072). */
+  playerNames?: Record<string, string>;
+  /** What the user can do with it (spec 072): `manage` for the masters, `write` for its players, `read` for the rest. */
+  access?: StrategicAccess;
 }
+
+/** What a user can do with a faction, a character or an item of a strategic game (spec 072). */
+export type StrategicAccess = 'manage' | 'write' | 'read';
+
+/** The masters, and the players of the faction (spec 072): they change it and what hangs from it. */
+export const canWriteStrategic = (entity: { access?: StrategicAccess } | null | undefined): boolean =>
+  entity?.access === 'manage' || entity?.access === 'write';
+
+/** The masters of the game (spec 072). */
+export const canManageStrategic = (entity: { access?: StrategicAccess } | null | undefined): boolean =>
+  entity?.access === 'manage';
+
+/** The names of the players of a faction, in their order (spec 072): their id when the name is unknown. */
+export const factionPlayerNames = (faction: Pick<Faction, 'players' | 'playerNames'>): string[] =>
+  (faction.players ?? []).map((id) => faction.playerNames?.[id] ?? id);
 
 /** NPCs of one kind in a faction: `count` specimens of an NPC of rmu-api-npcs, under an alias. */
 export interface FactionNpc {
@@ -45,5 +60,3 @@ export type UpdateFactionDto = Partial<Omit<Faction, 'id' | 'npcs'>> & {
   npcs?: FactionNpcInput[];
 };
 
-/** A faction the user only sees as a cover (spec 071): no gold, NPCs or armory. */
-export const isFactionCover = (faction: Pick<Faction, 'summary'> | undefined): boolean => !!faction?.summary;

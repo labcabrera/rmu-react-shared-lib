@@ -4,6 +4,9 @@ import type { ItemConsumed, TemporaryModifier } from './temporary-modifier.dto';
 
 export type TacticalGameStatus = 'created' | 'in_progress' | 'finished';
 
+/** Spec 072. */
+export type TacticalGameAccess = 'manage' | 'act' | 'read';
+
 export type TacticalGame = {
   id: string;
   strategicGameId: string;
@@ -19,6 +22,11 @@ export type TacticalGame = {
   environmentFaction?: TacticalGameEnvironmentFaction | null;
   description: string;
   owner: string;
+  /**
+   * What the user can do with it (spec 072): `manage` for its owner and the masters of the campaign, `act` for who plays
+   * an actor or a faction in it, `read` for the other members of the campaign.
+   */
+  access?: TacticalGameAccess;
   imageUrl?: string;
   /** Result of the game, set when it is finished. */
   outcome?: TacticalGameOutcome;
