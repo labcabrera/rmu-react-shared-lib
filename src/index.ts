@@ -205,6 +205,8 @@ export {
   cardColumns,
   cardGridContainerSx,
   cardGridSx,
+  CARD_COLUMNS_VAR,
+  sideFilterGridSx,
   gridSizeCard,
   itemFilter,
   itemFilterDisabled,

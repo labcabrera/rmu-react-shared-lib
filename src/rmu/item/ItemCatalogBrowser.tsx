@@ -26,6 +26,7 @@ import RmuPagination from '../../display/RmuPagination';
 import ClearableTextField from '../../inputs/ClearableTextField';
 import EntityPicker from '../../selectors/EntityPicker';
 import { EnumPicker, ItemCategoryPicker, RarityPicker, RealmPicker } from '../../selectors/pickers';
+import { cardGridContainerSx, sideFilterGridSx } from '../../layouts/grid';
 import CardGrid from '../../templates/CardGrid';
 import { CollectionMode } from '../../templates/CollectionView';
 import FilterBar from '../../templates/FilterBar';
@@ -325,7 +326,7 @@ export interface ItemCatalogBrowserProps {
    * market). Only in the side layout: below `lg` the caller places it.
    */
   panelHeader?: ReactNode;
-  /** Width of the side panel in px. */
+  /** @deprecated Ignored: the side panel takes one column of the card grid, so the cards keep their size. */
   panelWidth?: number;
   /** The catalog reached the API limit: a warning says some items may be missing. */
   truncated?: boolean;
@@ -352,7 +353,6 @@ const ItemCatalogBrowser: FC<ItemCatalogBrowserProps> = ({
   price,
   renderItem,
   panelHeader,
-  panelWidth = 280,
   truncated = false,
   error,
   refresh,
@@ -431,26 +431,22 @@ const ItemCatalogBrowser: FC<ItemCatalogBrowserProps> = ({
     );
   }
   const column = panelOpen || !!panelHeader;
+  if (!column) return results;
+  // The panel takes one column of the card grid, so the cards keep their size with it shown or hidden.
+  const sideGrid = sideFilterGridSx();
   return (
-    <Box
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: column ? `${panelWidth}px minmax(0, 1fr)` : 'minmax(0, 1fr)',
-        gap: 2,
-        alignItems: 'start',
-      }}
-    >
-      {column && (
+    <Box sx={cardGridContainerSx}>
+      <Box sx={sideGrid.grid}>
         <Box
           component="aside"
           aria-label={t('filters')}
-          sx={{ position: 'sticky', top: 16, maxHeight: 'calc(100vh - 32px)', overflowY: 'auto', pr: 1 }}
+          sx={{ ...sideGrid.panel, position: 'sticky', top: 16, maxHeight: 'calc(100vh - 32px)', overflowY: 'auto', pr: 1 }}
         >
           {panelHeader && <Box sx={{ mb: panelOpen ? 2 : 0 }}>{panelHeader}</Box>}
           {panelOpen && <FilterPanel>{sections}</FilterPanel>}
         </Box>
-      )}
-      {results}
+        <Box sx={sideGrid.results}>{results}</Box>
+      </Box>
     </Box>
   );
 };

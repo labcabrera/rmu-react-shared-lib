@@ -8,6 +8,7 @@ import RefreshButton from '../buttons/RefreshButton';
 import { ListFilters } from '../data/useListFilters';
 import { PagedQuery } from '../data/usePagedQuery';
 import RmuPagination from '../display/RmuPagination';
+import { cardGridContainerSx, sideFilterGridSx } from '../layouts/grid';
 import LayoutBase from '../layouts/LayoutBase';
 import EmptyState from '../ui/states/EmptyState';
 import ErrorState from '../ui/states/ErrorState';
@@ -36,8 +37,8 @@ export interface ListPageProps<T> {
    */
   filters?: ReactNode;
   /**
-   * `top` (default): the filters above the results. `side` (spec 046, decision 6): a sticky 280 px column from `lg`
-   * that can be hidden, and the filters drawer below it.
+   * `top` (default): the filters above the results. `side` (spec 046, decision 6): from `lg`, a sticky panel that
+   * takes one column of the card grid (the cards keep their size) and can be hidden, and the filters drawer below it.
    */
   filtersLayout?: 'top' | 'side';
   /** State of useListFilters: adds the results bar (count, chips of the active filters, "clear") and the counters. */
@@ -235,20 +236,16 @@ export default function ListPage<T>({
       </>
     );
   } else if (isWide) {
-    body = (
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: panelOpen ? '280px minmax(0, 1fr)' : 'minmax(0, 1fr)',
-          gap: 2,
-          alignItems: 'start',
-        }}
-      >
-        {panelOpen && (
+    // The panel takes one column of the card grid, so the cards keep their size with it shown or hidden.
+    const layout = sideFilterGridSx();
+    body = panelOpen ? (
+      <Box sx={cardGridContainerSx}>
+        <Box sx={layout.grid}>
           <Box
             component="aside"
             aria-label={t('filters')}
             sx={{
+              ...layout.panel,
               position: 'sticky',
               top: 16,
               maxHeight: 'calc(100vh - 32px)',
@@ -258,9 +255,11 @@ export default function ListPage<T>({
           >
             <FilterPanel>{filters}</FilterPanel>
           </Box>
-        )}
-        <Box sx={{ minWidth: 0 }}>{results}</Box>
+          <Box sx={layout.results}>{results}</Box>
+        </Box>
       </Box>
+    ) : (
+      <Box sx={{ minWidth: 0 }}>{results}</Box>
     );
   } else {
     body = (
