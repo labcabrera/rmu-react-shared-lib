@@ -1,4 +1,4 @@
-import { AccessType } from './common.dto';
+import { AccessType, EntityAccess } from './common.dto';
 
 // The NPC of rmu-api-npcs (workspace spec 054): the Combat Stat Block of a creature plus ownership. The constants
 // mirror the enums of the API (`npc-types.vo.ts`).
@@ -372,6 +372,8 @@ export interface Npc {
   description: string | null;
   imageUrl: string | null;
   owner: string;
+  /** What the signed-in user can do (spec 073): it follows the access to its realm. Absent from APIs before spec 073. */
+  access?: EntityAccess;
   createdAt: string;
   updatedAt: string | null;
 }
