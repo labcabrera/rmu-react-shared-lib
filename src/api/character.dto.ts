@@ -1,3 +1,4 @@
+import type { StrategicAccess } from './faction.dto';
 import { NamedEntity } from './common.dto';
 import { CharacterCondition, Injury } from './health.dto';
 import type { Spell } from './spell.dto';
@@ -11,12 +12,8 @@ export type CharacterStatus = 'partially_created' | 'created' | 'dead';
 export interface Character {
   id: string;
   gameId: string;
-  /**
-   * In the GETs (spec 071): `summary` for a member of the game outside the faction of the character, who only gets
-   * id, gameId, faction, name, imageUrl, owner, info.race, info.professionId and experience.level.
-   */
-  access?: 'full' | 'summary';
-  summary?: boolean;
+  /** What the user can do with it (spec 072): `manage` for the masters, `write` for the players of its faction. */
+  access?: StrategicAccess;
   faction: NamedEntity;
   /** Id of the user that owns the character. */
   owner?: string;
@@ -450,5 +447,3 @@ export interface KnownSpellList {
   spells: KnownSpell[];
 }
 
-/** A character the user only sees in summary (spec 071): render a card, not the sheet. */
-export const isCharacterSummary = (character: Pick<Character, 'summary'> | undefined): boolean => !!character?.summary;
