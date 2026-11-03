@@ -3,6 +3,18 @@
  * ("API request failed: <status> ..."), so code that shows `err.message` keeps working; new code
  * should show `messageKey` (translated) through useNotify().error(err).
  */
+/** Error codes of spec 071 with a message of their own. */
+const STRATEGIC_ACCESS_CODES = [
+  'not-a-friend',
+  'member-limit',
+  'join-request-limit',
+  'not-a-player',
+  'realm-not-readable',
+  'leader-not-a-player',
+  'game-not-public',
+  'already-member',
+];
+
 export class ApiError extends Error {
   readonly status: number;
   readonly statusText: string;
@@ -26,6 +38,8 @@ export class ApiError extends Error {
     if (this.code === 'share-not-friend' || this.code === 'share-self' || this.code === 'share-limit-reached') {
       return `error-${this.code}`;
     }
+    // Spec 071: members of a strategic game.
+    if (this.code && STRATEGIC_ACCESS_CODES.includes(this.code)) return `error-${this.code}`;
     if (this.status === 0) return 'error-network';
     if (this.status === 400 || this.status === 422) return 'error-bad-request';
     if (this.status === 401) return 'error-unauthorized';

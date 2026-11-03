@@ -9,6 +9,12 @@ export interface Faction {
   owner?: string;
   /** NPCs of the faction (spec 055): guards, mercenaries, mounts… Missing in older factions. */
   npcs?: FactionNpc[];
+  /** The player who spends the gold of the faction (spec 071). */
+  leaderId?: string | null;
+  /** In the GETs (spec 071): `cover` for a reader who is not a member of the faction. */
+  access?: 'full' | 'cover';
+  /** True for the cover: no management, NPCs or armory (spec 071). */
+  summary?: boolean;
 }
 
 /** NPCs of one kind in a faction: `count` specimens of an NPC of rmu-api-npcs, under an alias. */
@@ -38,3 +44,6 @@ export type UpdateFactionDto = Partial<Omit<Faction, 'id' | 'npcs'>> & {
   /** Replaces the whole list. */
   npcs?: FactionNpcInput[];
 };
+
+/** A faction the user only sees as a cover (spec 071): no gold, NPCs or armory. */
+export const isFactionCover = (faction: Pick<Faction, 'summary'> | undefined): boolean => !!faction?.summary;
