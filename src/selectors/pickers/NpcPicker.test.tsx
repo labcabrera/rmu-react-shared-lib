@@ -44,7 +44,7 @@ describe('NpcPicker (spec 055)', () => {
     expect(fetchNpcs).not.toHaveBeenCalled();
   });
 
-  it('loads the NPCs of the campaign realm and of the generic realms', async () => {
+  it('loads the NPCs of the campaign realm, of the generic realms and the global ones', async () => {
     fetchNpcs.mockResolvedValue({ content: npcs });
     renderWithProviders(
       <NotificationProvider>
@@ -52,6 +52,6 @@ describe('NpcPicker (spec 055)', () => {
       </NotificationProvider>
     );
     await waitFor(() => expect(screen.getByRole('combobox', { name: 'npc' })).toHaveValue('Stone guard'));
-    expect(fetchNpcs).toHaveBeenCalledWith('realmId=in=(middle-earth,core)', 0, 1000, auth);
+    expect(fetchNpcs).toHaveBeenCalledWith('realmId=in=(middle-earth,core),realmId==null', 0, 1000, auth);
   });
 });

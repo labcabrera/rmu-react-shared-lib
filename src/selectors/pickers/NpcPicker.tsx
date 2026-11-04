@@ -10,12 +10,12 @@ import { npcImage, npcName, npcSummary } from '../../rmu/creature/npc-format';
 import { EntityOption } from '../EntityPicker';
 import { PickerProps, PresetPicker } from './preset';
 
-/** RSQL of the NPCs of some realms. */
-export const npcRealmsRsql = (realmIds: string[]): string => `realmId=in=(${realmIds.join(',')})`;
+/** RSQL of the NPCs of some realms and the global ones (no realm, spec 073); `,` is an OR in the npcs RSQL. */
+export const npcRealmsRsql = (realmIds: string[]): string => `realmId=in=(${realmIds.join(',')}),realmId==null`;
 
 /**
- * The NPCs a campaign of `realmId` can use (spec 055, decision 6): those of its realm and of the generic realms (RMU
- * Core). The npcs API already leaves out the private NPCs of other users.
+ * The NPCs a campaign of `realmId` can use (spec 055, decision 6; spec 073): those of its realm, of the generic realms
+ * (RMU Core) and the global ones (no realm). The npcs API already leaves out the private NPCs of other users.
  */
 export async function fetchCampaignNpcs(realmId: string, auth: AuthContextProps): Promise<Npc[]> {
   const generic = await fetchGenericRealms(auth);
@@ -57,8 +57,9 @@ export const npcOptions = (npcs: Npc[], t: (key: string) => string): EntityOptio
     .sort((a, b) => a.group.localeCompare(b.group) || a.label.localeCompare(b.label));
 
 /**
- * NPC of a campaign (spec 055): a searchable select of the NPCs of the campaign's realm and of the generic realms,
- * found by their translated name. Pass `npcs` when the caller already has them, or `realmId` to load them.
+ * NPC of a campaign (spec 055): a searchable select of the NPCs of the campaign's realm, of the generic realms and the
+ * global ones (spec 073), found by their translated name. Pass `npcs` when the caller already has them, or `realmId` to
+ * load them.
  */
 export const NpcPicker: FC<PickerProps<Npc> & { realmId?: string | null; npcs?: Npc[] }> = ({
   realmId,

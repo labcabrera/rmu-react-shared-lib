@@ -11,6 +11,7 @@ const STRATEGIC_ACCESS_CODES = [
   'not-a-player',
   'realm-not-readable',
   'realm-not-writable',
+  'global-entity-admin-only',
   'faction-player-not-a-player',
   'faction-player-limit',
   'not-a-faction-player',

@@ -330,7 +330,8 @@ export interface Npc {
   id: string;
   /** Version of optimistic concurrency: send it back in the PATCH. */
   version: number;
-  realmId: string;
+  /** Realm of the NPC; `null` for a global NPC (spec 073), seen from every realm and changed only by admins. */
+  realmId: string | null;
   /** Public NPCs are the catalog (admin only); the rest are private to their owner. */
   accessType: AccessType;
   name: string;
