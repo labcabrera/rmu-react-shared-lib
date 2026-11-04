@@ -3,13 +3,15 @@
  * ("API request failed: <status> ..."), so code that shows `err.message` keeps working; new code
  * should show `messageKey` (translated) through useNotify().error(err).
  */
-/** Error codes of specs 071 and 072 with a message of their own. */
+/** Error codes of specs 071, 072 and 073 with a message of their own. */
 const STRATEGIC_ACCESS_CODES = [
   'not-a-friend',
   'member-limit',
   'join-request-limit',
   'not-a-player',
   'realm-not-readable',
+  'realm-not-writable',
+  'global-entity-admin-only',
   'faction-player-not-a-player',
   'faction-player-limit',
   'not-a-faction-player',

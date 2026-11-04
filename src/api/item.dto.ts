@@ -1,4 +1,4 @@
-import { EntityType } from './common.dto';
+import { EntityAccess, EntityType } from './common.dto';
 import type { MagicItemFeature } from './magic-item.dto';
 import { ItemAntidote, ItemPoison } from './poison.dto';
 import type {
@@ -95,6 +95,11 @@ export type Item = {
   owner: string;
   /** Rulebook (`system`, admin only) or user content (spec 063). */
   entitySource: EntityType;
+  /**
+   * What the signed-in user can do (spec 073): an item of a realm follows the access to the realm; a global one its
+   * owner. Absent from APIs before spec 073.
+   */
+  access?: EntityAccess;
 };
 
 export type ItemWeapon = {
