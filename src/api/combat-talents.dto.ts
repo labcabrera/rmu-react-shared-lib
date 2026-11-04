@@ -68,16 +68,11 @@ export interface ReactionAlertData {
 export type ForceReason = 'withdrawal' | 'pass-through' | 'effect' | 'gm' | 'reaction';
 export const FORCE_REASONS: ForceReason[] = ['withdrawal', 'pass-through', 'effect', 'gm', 'reaction'];
 
-/**
- * `forced` of a new attack declared as a reaction: from its alert (`alertId`), or forced by the game master without
- * one (`traitId` and `triggerActionId`).
- */
+/** `forced` of a new attack declared as a reaction: always from its `reaction-available` alert. */
 export interface ReactionForcedRequest {
   reason: 'reaction';
   note?: string;
-  alertId?: string;
-  traitId?: ReactionTraitId;
-  triggerActionId?: string;
+  alertId: string;
 }
 
 /** `ActionDto.reaction`: the reaction of an attack forced as `reaction`. */
