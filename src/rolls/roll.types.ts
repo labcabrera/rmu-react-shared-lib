@@ -2,6 +2,16 @@
 export type OpenEnded = 'none' | 'high' | 'low' | 'both';
 
 /**
+ * Where an open-ended d100 opens (workspace spec 076): a first die from `highFrom` rolls again and adds, one up to
+ * `lowTo` rolls again and subtracts, and every extra die from `highFrom` asks for another one. 96 and 5 without luck
+ * talents; the tactical API sends an actor's own in `rollProfile`.
+ */
+export interface OpenEndedThresholds {
+  highFrom: number;
+  lowTo: number;
+}
+
+/**
  * How a roll is made (spec 025): `dice` dice of `sides` sides, summed, plus `modifier`. Open-ended rolls are a single
  * d100.
  */

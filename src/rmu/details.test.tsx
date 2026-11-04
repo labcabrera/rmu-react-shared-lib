@@ -5,6 +5,7 @@ import KeyValuePanel from '../display/KeyValuePanel';
 import { sampleCharacter } from '../test/fixtures/character';
 import { renderWithProviders } from '../test/render';
 import BonusDevPointsSummary from './character/BonusDevPointsSummary';
+import SituationalSenseTraits, { senseTraitsOf } from './character/SituationalSenseTraits';
 import StatBonusGrid from './character/StatBonusGrid';
 import TraitTypeChip from './trait/TraitTypeChip';
 
@@ -81,5 +82,47 @@ describe('BonusDevPointsSummary', () => {
     expect(screen.getByText('6')).toBeInTheDocument();
     rerender(<BonusDevPointsSummary character={character} limit={10} />);
     expect(screen.getByText(/\/ 10/)).toBeInTheDocument();
+    expect(screen.queryByText(/saved-dev-points/)).not.toBeInTheDocument();
+  });
+
+  it('shows the points saved at the last level up (spec 076)', () => {
+    const character = { ...sampleCharacter, experience: { ...sampleCharacter.experience, savedDevPoints: 7 } };
+    renderWithProviders(<BonusDevPointsSummary character={character} />);
+    expect(screen.getByText(/saved-dev-points:/)).toBeInTheDocument();
+    expect(screen.getByText('7')).toBeInTheDocument();
+  });
+});
+
+describe('SituationalSenseTraits (spec 076)', () => {
+  const trait = (traitId: string, tier?: number) => ({
+    traitId,
+    traitName: traitId,
+    isTalent: true,
+    tier,
+    cost: 0,
+    specialization: undefined,
+  });
+  const traits = [trait('acute-hearing', 2), trait('nightvision'), trait('lucky', 1)];
+
+  it('keeps only the sense traits', () => {
+    expect(senseTraitsOf(traits).map((t) => t.traitId)).toEqual(['acute-hearing', 'nightvision']);
+    expect(senseTraitsOf(undefined)).toEqual([]);
+  });
+
+  it('lists them on Perception as situational', () => {
+    renderWithProviders(<SituationalSenseTraits skill={{ skillId: 'perception' }} traits={traits} />);
+    expect(screen.getByText('situational-sense-traits')).toBeInTheDocument();
+    expect(screen.getByText('acute-hearing II')).toBeInTheDocument();
+    expect(screen.getByText('nightvision')).toBeInTheDocument();
+    expect(screen.queryByText(/lucky/)).not.toBeInTheDocument();
+  });
+
+  it('renders nothing on other skills or without sense traits', () => {
+    const { container, rerender } = renderWithProviders(
+      <SituationalSenseTraits skill={{ skillId: 'jump' }} traits={traits} />
+    );
+    expect(container).toBeEmptyDOMElement();
+    rerender(<SituationalSenseTraits skill={{ skillId: 'perception' }} traits={[trait('lucky', 1)]} />);
+    expect(container).toBeEmptyDOMElement();
   });
 });

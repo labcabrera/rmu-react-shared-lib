@@ -5,8 +5,17 @@ import BackspaceIcon from '@mui/icons-material/Backspace';
 import CasinoIcon from '@mui/icons-material/Casino';
 import CheckIcon from '@mui/icons-material/Check';
 import { alpha, Box, Button, Chip, Stack, Typography } from '@mui/material';
-import { RollSpec, RollValue } from './roll.types';
-import { dieDigits, formatRoll, randomDie, readDie, resolveChain, rollDice, toRollValue } from './roll-logic';
+import { OpenEndedThresholds, RollSpec, RollValue } from './roll.types';
+import {
+  DEFAULT_OPEN_ENDED,
+  dieDigits,
+  formatRoll,
+  randomDie,
+  readDie,
+  resolveChain,
+  rollDice,
+  toRollValue,
+} from './roll-logic';
 
 const DIGITS = ['7', '8', '9', '4', '5', '6', '1', '2', '3'];
 const ZERO = '0';
@@ -33,7 +42,9 @@ const RollPad: FC<{
   onCancel: () => void;
   /** Die used by the random button, for tests. */
   random?: (sides: number) => number;
-}> = ({ spec, initial, onConfirm, onCancel, random = randomDie }) => {
+  /** Thresholds of an open-ended roll (spec 076); 96 and 5 by default. */
+  openEnded?: OpenEndedThresholds;
+}> = ({ spec, initial, onConfirm, onCancel, random = randomDie, openEnded = DEFAULT_OPEN_ENDED }) => {
   const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
   const [rolls, setRolls] = useState<number[]>(initial?.rolls ?? []);
@@ -43,10 +54,10 @@ const RollPad: FC<{
     ref.current?.focus();
   }, []);
 
-  const chain = resolveChain(spec, rolls);
+  const chain = resolveChain(spec, rolls, openEnded);
   const digits = dieDigits(spec.sides);
   const candidate = withTyped(spec, rolls, text);
-  const candidateValue = candidate ? toRollValue(spec, candidate) : undefined;
+  const candidateValue = candidate ? toRollValue(spec, candidate, openEnded) : undefined;
 
   const typeDigit = (digit: string) => {
     // A digit after a complete roll starts a new one.
@@ -74,7 +85,7 @@ const RollPad: FC<{
   };
 
   const randomize = () => {
-    setRolls(rollDice(spec, random).rolls);
+    setRolls(rollDice(spec, random, openEnded).rolls);
     setText('');
   };
 
@@ -102,7 +113,7 @@ const RollPad: FC<{
 
   const needsMore = !chain.complete && rolls.length > 0;
   const status = chain.complete
-    ? t('roll-pad-total', { total: formatRoll(toRollValue(spec, rolls)!, spec) })
+    ? t('roll-pad-total', { total: formatRoll(toRollValue(spec, rolls, openEnded)!, spec, openEnded) })
     : needsMore
       ? t(chain.nextSign > 0 ? 'roll-pad-next-die-adds' : 'roll-pad-next-die-subtracts')
       : t('roll-pad-enter-die');

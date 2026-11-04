@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { D10, D100, HIGH_OPEN_D100, LOW_OPEN_D100, OPEN_D100, TWO_D10 } from './presets';
-import { dieDigits, formatRoll, fromNumber, readDie, resolveChain, rollDice, toRollValue } from './roll-logic';
+import {
+  DEFAULT_OPEN_ENDED,
+  dieDigits,
+  formatRoll,
+  fromNumber,
+  readDie,
+  resolveChain,
+  rollDice,
+  toRollValue,
+} from './roll-logic';
 
 const dice = (...values: number[]) => {
   const queue = [...values];
@@ -126,5 +135,39 @@ describe('fromNumber', () => {
     expect(fromNumber(OPEN_D100, 142)).toBeUndefined();
     expect(fromNumber(OPEN_D100, 98)).toBeUndefined();
     expect(fromNumber(TWO_D10, 13)).toBeUndefined();
+  });
+});
+
+describe('open-ended thresholds (spec 076)', () => {
+  // Lucky II: opens high from 94; Dramatic Luck I would also open low up to 6.
+  const lucky = { highFrom: 94, lowTo: 5 };
+  const dramatic = { highFrom: 95, lowTo: 6 };
+
+  it('defaults to 96 and 5', () => {
+    expect(DEFAULT_OPEN_ENDED).toEqual({ highFrom: 96, lowTo: 5 });
+    expect(resolveChain(OPEN_D100, [95]).complete).toBe(true);
+    expect(resolveChain(OPEN_D100, [95], DEFAULT_OPEN_ENDED).complete).toBe(true);
+  });
+
+  it('opens from highFrom and keeps going while the extra dice reach it', () => {
+    expect(resolveChain(OPEN_D100, [94], lucky)).toEqual({ complete: false, nextSign: 1 });
+    expect(resolveChain(OPEN_D100, [94, 95], lucky)).toEqual({ complete: false, nextSign: 1 });
+    expect(resolveChain(OPEN_D100, [94, 95, 10], lucky)).toEqual({ complete: true, total: 199, nextSign: 1 });
+    expect(resolveChain(OPEN_D100, [93], lucky).complete).toBe(true);
+  });
+
+  it('opens low up to lowTo', () => {
+    expect(resolveChain(OPEN_D100, [6], dramatic)).toEqual({ complete: false, nextSign: -1 });
+    expect(resolveChain(OPEN_D100, [6, 40], dramatic)).toEqual({ complete: true, total: -34, nextSign: -1 });
+    expect(resolveChain(OPEN_D100, [7], dramatic).complete).toBe(true);
+    expect(resolveChain(HIGH_OPEN_D100, [6], dramatic).complete).toBe(true);
+  });
+
+  it('rolls, formats and reads stored totals with the thresholds', () => {
+    expect(rollDice(OPEN_D100, dice(95, 20), dramatic)).toEqual({ total: 115, rolls: [95, 20], unmodified: 95 });
+    expect(formatRoll({ total: -34, rolls: [6, 40], unmodified: 6 }, OPEN_D100, dramatic)).toBe('-34 (06−40)');
+    expect(fromNumber(OPEN_D100, 95)).toEqual({ total: 95, rolls: [95], unmodified: 95 });
+    expect(fromNumber(OPEN_D100, 95, dramatic)).toBeUndefined();
+    expect(toRollValue(OPEN_D100, [94, 30], lucky)).toEqual({ total: 124, rolls: [94, 30], unmodified: 94 });
   });
 });

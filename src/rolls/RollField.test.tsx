@@ -157,4 +157,39 @@ describe('RollField', () => {
     rerender(<RollField spec={D100} value={45} onChange={vi.fn()} fullWidth />);
     expect(getComputedStyle(field()).width).not.toBe('220px');
   });
+
+  it('opens the roll with the thresholds of the actor (spec 076)', async () => {
+    const onChange = vi.fn();
+    renderWithProviders(
+      <RollField
+        spec={OPEN_D100}
+        value={null}
+        onChange={onChange}
+        label="attack-roll"
+        presentation="popover"
+        openEnded={{ highFrom: 94, lowTo: 5 }}
+      />
+    );
+    const pad = await openPad();
+    await press(pad, '9', '4');
+    expect(within(pad).getByText('roll-pad-next-die-adds')).toBeInTheDocument();
+    await press(pad, '3', '0', 'confirm');
+    expect(onChange).toHaveBeenCalledWith({ total: 124, rolls: [94, 30], unmodified: 94 });
+  });
+
+  it('rolls with the thresholds of the actor from the dice button', async () => {
+    const onChange = vi.fn();
+    renderWithProviders(
+      <RollField
+        spec={OPEN_D100}
+        value={null}
+        onChange={onChange}
+        label="attack-roll"
+        random={dice(95, 20)}
+        openEnded={{ highFrom: 95, lowTo: 6 }}
+      />
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'roll-dice' }));
+    expect(onChange).toHaveBeenCalledWith({ total: 115, rolls: [95, 20], unmodified: 95 });
+  });
 });

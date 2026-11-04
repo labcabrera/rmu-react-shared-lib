@@ -46,6 +46,9 @@ export const OpenEndedHighOnly: Story = { args: { spec: HIGH_OPEN_D100 } };
 
 export const OpenEndedLowOnly: Story = { args: { spec: LOW_OPEN_D100 } };
 
+/** Workspace spec 076: an actor with luck talents opens the roll from 94 and up to 6 (its `rollProfile`). */
+export const OpenEndedLuckyThresholds: Story = { args: { openEnded: { highFrom: 94, lowTo: 6 } } };
+
 export const Closed: Story = { args: { spec: D100, label: 'Critical roll' } };
 
 export const SingleD10: Story = { args: { spec: D10, label: 'd10' } };
