@@ -401,6 +401,14 @@ export interface CharacterAttack {
   weaponTags?: string[];
   /** Times St enters the skill bonus of the attack (spec 040). */
   strengthWeight?: number;
+  /** The attack uses a two-handed weapon mode (one size bigger, §10). */
+  twoHanded?: boolean;
+  /** Weapon category used by the multiple attack rules. */
+  weaponCategory?: 'dagger' | 'light' | 'natural' | 'standard';
+  /** The weapon is made for another size than the wielder: it attacks with its own size and -20 (workspace spec 075). */
+  wrongSize?: boolean;
+  /** Strategic item of the attack (spec 019). */
+  itemId?: string | null;
 }
 
 export interface AddSkill {

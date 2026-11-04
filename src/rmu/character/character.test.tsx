@@ -37,6 +37,18 @@ describe('AttackCard', () => {
     expect(screen.getByText('+96')).toBeInTheDocument();
     expect(screen.getByText('maneuver-penalty -10')).toBeInTheDocument();
   });
+
+  it('shows a size other than Medium and a weapon of another size, also dense (spec 075)', () => {
+    const attack = { ...sampleCharacter.attacks[0], sizeAdjustment: -1, wrongSize: true };
+    renderWithProviders(<AttackCard attack={attack} dense />);
+    expect(screen.getByText('size-small (-1)')).toBeInTheDocument();
+    expect(screen.getByText('wrong-size')).toBeInTheDocument();
+  });
+
+  it('hides the size chip of a Medium attack', () => {
+    renderWithProviders(<AttackCard attack={sampleCharacter.attacks[0]} dense />);
+    expect(screen.queryByText(/size-medium/)).not.toBeInTheDocument();
+  });
 });
 
 describe('SkillGroupList', () => {

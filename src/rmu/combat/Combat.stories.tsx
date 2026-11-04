@@ -8,6 +8,8 @@ import FlowSteps from '../../ui/FlowSteps';
 import ActionStateMarker from './ActionStateMarker';
 import ActionTypeChip from './ActionTypeChip';
 import ApPips from './ApPips';
+import AttackSizeChip from './AttackSizeChip';
+import { ATTACK_SIZE_SCALE } from './attack-size';
 import { CombatActionState, combatActionTypes, CombatActionType } from './actionTypes';
 
 // Building blocks of the combat dashboard of spec 005: action type chips, state markers, the side panel
@@ -148,5 +150,22 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const TypesAndStates: Story = {};
+
+// Attack sizes of spec 075: Medium shows nothing unless forced; the last row compares a Big attack with a Large target.
+const AttackSizes = () => (
+  <Stack spacing={2}>
+    <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1 }}>
+      {ATTACK_SIZE_SCALE.map((step) => (
+        <AttackSizeChip key={step.sizeId} steps={step.steps} showMedium />
+      ))}
+    </Stack>
+    <Stack direction="row" sx={{ gap: 1 }}>
+      <AttackSizeChip steps={1} targetSteps={2} />
+      <AttackSizeChip steps={-1} targetSteps={0} />
+    </Stack>
+  </Stack>
+);
+
+export const AttackSize: Story = { render: () => <AttackSizes /> };
 
 export const PanelWithFlow: Story = { render: () => <PanelDemo />, parameters: { layout: 'fullscreen' } };
