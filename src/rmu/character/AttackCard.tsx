@@ -1,8 +1,10 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import StarIcon from '@mui/icons-material/Star';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Box, Card, CardContent, Chip, Stack, Tooltip, Typography } from '@mui/material';
 import { CharacterAttack } from '../../api/character.dto';
+import AttackSizeChip from '../combat/AttackSizeChip';
 import { formatBonus } from './StatPill';
 
 const Detail = ({ label, value }: { label: string; value: string | number }) => (
@@ -16,7 +18,10 @@ const Detail = ({ label, value }: { label: string; value: string | number }) => 
   </Box>
 );
 
-/** One attack: offensive bonus first, then its tables and modifiers. `dense` hides the details. */
+/**
+ * One attack: offensive bonus first, then its tables and modifiers. `dense` hides the details, but not a size other
+ * than Medium nor a weapon of another size (workspace spec 075).
+ */
 const AttackCard: FC<{
   attack: CharacterAttack;
   dense?: boolean;
@@ -42,7 +47,21 @@ const AttackCard: FC<{
                 </Tooltip>
               )}
             </Stack>
-            <Chip label={t(attack.type)} size="small" variant="outlined" sx={{ mt: 0.5 }} />
+            <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 0.5, mt: 0.5, alignItems: 'center' }}>
+              <Chip label={t(attack.type)} size="small" variant="outlined" />
+              <AttackSizeChip steps={attack.sizeAdjustment} />
+              {attack.wrongSize && (
+                <Tooltip title={t('wrong-size-hint')}>
+                  <Chip
+                    size="small"
+                    color="warning"
+                    icon={<WarningAmberIcon />}
+                    label={t('wrong-size')}
+                    aria-label={t('wrong-size-hint')}
+                  />
+                </Tooltip>
+              )}
+            </Stack>
           </Box>
           <Tooltip title={t('offensive-bonus')}>
             <Box sx={{ textAlign: 'right', flexShrink: 0 }}>

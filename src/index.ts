@@ -272,6 +272,16 @@ export type { ApLedgerItem, ApPip, ApPipState } from './rmu/combat/ApPips';
 export { combatActionInfo, combatColors, factionColor } from './rmu/combat/actionTypes';
 export type { CombatActionCategory, CombatActionState, CombatActionType } from './rmu/combat/actionTypes';
 export { default as AttackCard } from './rmu/character/AttackCard';
+export { default as AttackSizeChip } from './rmu/combat/AttackSizeChip';
+export {
+  ATTACK_SIZE_SCALE,
+  MEDIUM_SIZE_CLASS,
+  attackSizeEffect,
+  clampSizeSteps,
+  expectedCriticalShift,
+  formatMultiplier,
+} from './rmu/combat/attack-size';
+export type { AttackSizeEffect, AttackSizeStep } from './rmu/combat/attack-size';
 export { default as ResistanceList } from './rmu/character/ResistanceList';
 export { default as ResourceBar } from './rmu/character/ResourceBar';
 export type { ResourceKind } from './rmu/character/ResourceBar';
