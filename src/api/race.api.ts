@@ -1,7 +1,7 @@
 import { AuthContextProps } from 'react-oidc-context';
 import { apiCoreUrl } from '../config/config.service';
 import callApi, { Page } from './api';
-import { AddRaceTraitDto, CreateRaceDto, Race, RaceSkillBonus, UpdateRaceDto } from './race.dto';
+import { AddRaceTraitDto, CopyRaceDto, CreateRaceDto, Race, RaceSkillBonus, UpdateRaceDto } from './race.dto';
 
 export async function fetchRace(raceId: string, auth: AuthContextProps): Promise<Race> {
   const url = `${apiCoreUrl}/races/${raceId}`;
@@ -20,6 +20,16 @@ export async function fetchRaces(
 
 export async function createRace(data: CreateRaceDto, auth: AuthContextProps): Promise<Race> {
   const url = `${apiCoreUrl}/races`;
+  return await callApi(auth, url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+}
+
+/** Copies a race into a realm the user can change, with all its data (spec 074); answers the new race. */
+export async function copyRace(raceId: string, data: CopyRaceDto, auth: AuthContextProps): Promise<Race> {
+  const url = `${apiCoreUrl}/races/${raceId}/copy`;
   return await callApi(auth, url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

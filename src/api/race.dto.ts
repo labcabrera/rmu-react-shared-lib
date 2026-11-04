@@ -64,6 +64,12 @@ export type RaceSkillBonus = {
   bonus: number;
 };
 
+/** Body of `POST /races/:id/copy` (spec 074): the new name and a realm the user can change. */
+export type CopyRaceDto = {
+  name: string;
+  realmId: string;
+};
+
 export type CreateRaceDto = {
   name: string;
   realmId: string;
