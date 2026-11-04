@@ -1,7 +1,7 @@
 import { AuthContextProps } from 'react-oidc-context';
 import { apiStrategicGameUrl } from './../config/config.service';
 import callApi, { Page } from './api';
-import { AddTraitDto, Character, KnownSpellList, UpdateTemporaryStatDto } from './character.dto';
+import { AddTraitDto, Character, DevPointsPool, KnownSpellList, UpdateTemporaryStatDto } from './character.dto';
 import { AddSkill, DeleteTraitDto } from './character.dto';
 
 // error handling is done inside callApi
@@ -72,14 +72,24 @@ export async function deleteCharacterSkill(
   return await callApi(auth, url, { method: 'DELETE' });
 }
 
+/**
+ * Develops a rank of the skill. `pool` picks the points that pay it (spec 076, default `auto`): `normal` without
+ * enough normal points is a 400 `err-dev-points-insufficient`. A third rank needs the game's `intenseTraining`
+ * (`err-skill-max-ranks-per-level`), only one skill per level (`err-skill-intense-training-taken`) and, but for lores
+ * and languages, at most twice the level in ranks (`err-skill-intense-training-limit`).
+ */
 export async function levelUpSkill(
   characterId: string,
   skillId: string,
   specialization: string | undefined,
-  auth: AuthContextProps
+  auth: AuthContextProps,
+  pool?: DevPointsPool
 ): Promise<Character> {
-  const specializationQuery = specialization ? `?specialization=${specialization}` : '';
-  const url = `${apiStrategicGameUrl}/characters/${characterId}/skills/${skillId}/level-up${specializationQuery}`;
+  const params = new URLSearchParams();
+  if (specialization) params.set('specialization', specialization);
+  if (pool && pool !== 'auto') params.set('pool', pool);
+  const query = params.toString() ? `?${params.toString()}` : '';
+  const url = `${apiStrategicGameUrl}/characters/${characterId}/skills/${skillId}/level-up${query}`;
   return await callApi(auth, url, { method: 'PATCH' });
 }
 
@@ -153,12 +163,18 @@ export async function transferFactionGold(
   });
 }
 
+/**
+ * Levels the character up. Unspent development points are a 400 `err-level-up-unspent-dev-points` with
+ * `details.unspent`, unless `force` (they are lost) or `save` (spec 076: kept for the next level; needs the game's
+ * `allowSavingDevPoints`, otherwise `err-dev-points-saving-not-allowed`).
+ */
 export async function levelUpCharacter(
   characterId: string,
   force: boolean,
-  auth: AuthContextProps
+  auth: AuthContextProps,
+  save = false
 ): Promise<Character> {
-  const url = `${apiStrategicGameUrl}/characters/${characterId}/level-up?force=${force}`;
+  const url = `${apiStrategicGameUrl}/characters/${characterId}/level-up?force=${force}${save ? '&save=true' : ''}`;
   return await callApi(auth, url, { method: 'POST' });
 }
 

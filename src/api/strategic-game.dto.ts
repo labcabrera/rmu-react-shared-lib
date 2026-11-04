@@ -143,8 +143,13 @@ export interface StrategicGameOptions {
   fatigueMultiplier: number;
   boardScaleMultiplier: number;
   letality: number;
-  /** Allows a third rank of the same skill in a level, at the cost of the second one (default false). */
-  allowThirdRank?: boolean;
+  /**
+   * Intense training (workspace spec 076): one skill per level may take more than two ranks, the extra ones at the cost
+   * of the second (default false). Replaces `allowThirdRank`, which the API still accepts on input but never returns.
+   */
+  intenseTraining?: boolean;
+  /** The game master allows keeping the unspent normal development points for the next level (spec 076, default false). */
+  allowSavingDevPoints?: boolean;
   /** How talents can be bought at creation (default 'free'). */
   talentPolicy?: TalentPolicy;
   /** When true, the bonus points per level limit also applies to talents bought at creation (default false). */

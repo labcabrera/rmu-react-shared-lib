@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import AdjustIcon from '@mui/icons-material/Adjust';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import BoltIcon from '@mui/icons-material/Bolt';
@@ -25,6 +26,8 @@ export type CombatActionType =
   | 'dodge'
   | 'stand_up'
   | 'draw_and_load'
+  /** Sharpshooter (workspace spec 076): a full round aiming a ranged weapon at a foe. */
+  | 'aim'
   | 'perception'
   | 'medical'
   | 'other';
@@ -63,6 +66,7 @@ export const combatActionTypes: Record<CombatActionType, ActionTypeInfo> = {
   dodge: { category: 'maneuver', labelKey: 'dodge', icon: () => <SwapHorizIcon /> },
   stand_up: { category: 'movement', labelKey: 'stand-up', icon: () => <ArrowUpwardIcon /> },
   draw_and_load: { category: 'other', labelKey: 'draw-and-load', icon: () => <PanToolIcon /> },
+  aim: { category: 'ranged', labelKey: 'aim', icon: () => <AdjustIcon /> },
   perception: { category: 'maneuver', labelKey: 'perception', icon: () => <VisibilityIcon /> },
   medical: { category: 'maneuver', labelKey: 'medical', icon: () => <MedicalServicesIcon /> },
   other: { category: 'other', labelKey: 'other', icon: () => <MoreHorizIcon /> },

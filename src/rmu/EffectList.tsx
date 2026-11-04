@@ -27,6 +27,8 @@ const SEVERITY: Record<string, Severity> = {
   prone: 'incapacitating',
   grappled: 'incapacitating',
   staggered: 'incapacitating',
+  // Workspace spec 076: a stun of -50 with 2 AP less
+  spasm: 'incapacitating',
   bleeding: 'ongoing',
   fatigue: 'ongoing',
 };
