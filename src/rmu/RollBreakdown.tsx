@@ -6,7 +6,8 @@ import RuleHint, { RuleParams } from './RuleHint';
 
 /**
  * Group of a modifier in the breakdown: the attacker's side, the target's, the situation or the critical; outside
- * combat (spec 052) the skill, the penalties, the casting conditions and the target's.
+ * combat (spec 052) the skill, the penalties, the casting conditions and the target's; `senses` holds the sense
+ * talents and Light Sensitivity of a Perception or Tracking roll (workspace spec 076).
  */
 export type RollModifierGroup =
   | 'skill'
@@ -15,6 +16,7 @@ export type RollModifierGroup =
   | 'defense'
   | 'target'
   | 'situation'
+  | 'senses'
   | 'penalty'
   | 'critical'
   | 'resolution';
@@ -48,6 +50,7 @@ const GROUP_ORDER: (RollModifierGroup | 'other')[] = [
   'defense',
   'target',
   'situation',
+  'senses',
   'penalty',
   'critical',
   'resolution',

@@ -21,6 +21,21 @@ describe('RollBreakdown', () => {
     expect(screen.getAllByText('-24')).toHaveLength(2);
   });
 
+  it('shows the senses in their own group, after the situation (spec 076)', () => {
+    renderWithProviders(
+      <RollBreakdown
+        modifiers={[
+          { key: 'acute-hearing', value: 10, group: 'senses' },
+          { key: 'light', value: -10, group: 'situation' },
+          { key: 'perception', value: 40, group: 'skill' },
+        ]}
+      />
+    );
+
+    const groups = screen.getAllByText(/^modifier-group-/).map((element) => element.textContent);
+    expect(groups).toEqual(['modifier-group-skill', 'modifier-group-situation', 'modifier-group-senses']);
+  });
+
   it('adds the roll to the total', () => {
     renderWithProviders(<RollBreakdown modifiers={modifiers} roll={80} />);
 
