@@ -117,9 +117,12 @@ export type MentalFocusOutcome = (typeof MENTAL_FOCUS_OUTCOMES)[number];
 export const CONCENTRATION_ALERT_TYPES = ['mental-focus'] as const;
 export type ConcentrationAlertType = (typeof CONCENTRATION_ALERT_TYPES)[number];
 
-/** Body of `POST /actor-rounds/:id/alerts/:alertId/resolve`: the outcome of a Mental Focus maneuver. */
+/**
+ * Body of `POST /actor-rounds/:id/alerts/:alertId/resolve`: the outcome of a Mental Focus maneuver, or `confirmed` for a
+ * `death-threshold` alert (spec 079).
+ */
 export interface ResolveAlertDto {
-  outcome?: MentalFocusOutcome;
+  outcome?: MentalFocusOutcome | 'confirmed';
 }
 
 // ---------------------------------------------------------------------------------------------------------------
