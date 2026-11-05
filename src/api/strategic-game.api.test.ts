@@ -2,6 +2,7 @@ import type { AuthContextProps } from 'react-oidc-context';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   approveJoinRequest,
+  awardGroupXp,
   fetchGameMembers,
   fetchGameTimeLog,
   passTime,
@@ -22,6 +23,18 @@ const mockFetch = () => {
 
 afterEach(() => {
   vi.unstubAllGlobals();
+});
+
+describe('group experience api (spec 079)', () => {
+  it('posts the experience of the group', async () => {
+    const fetchMock = mockFetch();
+    const body = { xp: 500, characterIds: ['c1'], eventType: 'session' as const };
+    await awardGroupXp('g1', body, auth);
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(String(url)).toMatch(/\/strategic-games\/g1\/xp$/);
+    expect(init.method).toBe('POST');
+    expect(JSON.parse(String(init.body))).toEqual(body);
+  });
 });
 
 describe('strategic game time api (spec 065)', () => {

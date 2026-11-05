@@ -169,7 +169,24 @@ export interface StrategicGameOptions {
    * hinder, linked flaws and one loose flaw up to -20.
    */
   talentPurchaseRules?: boolean;
+  /**
+   * Starting wealth of the new characters (workspace spec 079, Core Law table 6-0b, default 'none'): a character
+   * created in the game gets the silver pieces of its category per level as gold coins.
+   */
+  startingWealth?: StartingWealth;
 }
+
+/** Wealth categories of the starting money and their silver pieces per level (Core Law table 6-0b, spec 079). */
+export const STARTING_WEALTH_SP_PER_LEVEL = {
+  none: 0,
+  'very-poor': 2,
+  poor: 10,
+  modest: 20,
+  rich: 30,
+  'very-rich': 50,
+} as const;
+export type StartingWealth = keyof typeof STARTING_WEALTH_SP_PER_LEVEL;
+export const STARTING_WEALTHS = Object.keys(STARTING_WEALTH_SP_PER_LEVEL) as StartingWealth[];
 
 export const TALENT_POLICIES = ['free', 'race-points-at-creation', 'flaw-points-at-creation'] as const;
 export type TalentPolicy = (typeof TALENT_POLICIES)[number];
@@ -196,6 +213,44 @@ export interface StrategicGamePowerLevel {
   knackCount?: number;
   /** Bonus of each knack (default 5). */
   knackBonus?: number;
+  /** Power level preset the values came from (Core Law table 12-1, spec 079): informative, the values stay editable. */
+  preset?: PowerLevelPreset | null;
+  /** Percent of the power points recovered every rest period of 2 hours (spec 079, default 10). */
+  ppRecoveryPercent?: number;
+}
+
+/** Power levels of a campaign (Core Law §12.1, workspace spec 079). */
+export const POWER_LEVEL_PRESETS = ['average', 'superior', 'heroic', 'legendary', 'epic'] as const;
+export type PowerLevelPreset = (typeof POWER_LEVEL_PRESETS)[number];
+
+/** Kinds of event an award of experience is for (Core Law §12.4, spec 079); informative. */
+export const XP_EVENT_TYPES = ['personal', 'session', 'story', 'other'] as const;
+export type XpEventType = (typeof XP_EVENT_TYPES)[number];
+
+/** Body of POST /v1/strategic-games/:id/xp (spec 079): the whole amount for each character, all of them by default. */
+export interface GroupXpRequest {
+  xp: number;
+  characterIds?: string[];
+  eventType?: XpEventType;
+}
+
+export interface GroupXpCharacterResult {
+  characterId: string;
+  name: string;
+  xpBefore?: number;
+  xpAfter?: number;
+  level?: number;
+  /** Level the experience allows. */
+  availableLevel?: number;
+  /** Why the character did not get the experience. */
+  error?: { code: string; message: string };
+}
+
+export interface GroupXpResult {
+  gameId: string;
+  xp: number;
+  eventType: XpEventType | null;
+  characters: GroupXpCharacterResult[];
 }
 
 export type CreateStrategicGameDto = Omit<
