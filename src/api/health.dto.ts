@@ -20,7 +20,8 @@ export type InjuryFlag = 'permanent-risk' | 'limb-loss' | 'blinding' | 'paralysi
 
 export type BleedingControl = 'pressure' | 'stitches' | 'tourniquet' | 'cauterized' | 'magic';
 
-export type InjurySourceKind = 'critical' | 'fumble' | 'fatigue' | 'manual' | 'poison';
+/** `hazard`: a fall or a falling object (workspace spec 077). */
+export type InjurySourceKind = 'critical' | 'fumble' | 'fatigue' | 'manual' | 'poison' | 'hazard';
 
 /** Where an injury, an effect or a condition comes from. */
 export interface InjurySource {
@@ -375,7 +376,18 @@ export interface RestDto {
 }
 
 /** Where a change of hits of a tactical game comes from (spec 013, §1.1). */
-export type HpLogKind = 'attack' | 'critical' | 'fumble' | 'bleeding' | 'endurance' | 'treatment' | 'manual' | 'poison';
+/** `spasm`: an upkeep spasm (workspace spec 076). `hazard`: a fall or a falling object (workspace spec 077). */
+export type HpLogKind =
+  | 'attack'
+  | 'critical'
+  | 'fumble'
+  | 'bleeding'
+  | 'endurance'
+  | 'treatment'
+  | 'manual'
+  | 'poison'
+  | 'spasm'
+  | 'hazard';
 
 export const HP_LOG_KINDS: HpLogKind[] = [
   'attack',
@@ -386,6 +398,8 @@ export const HP_LOG_KINDS: HpLogKind[] = [
   'treatment',
   'manual',
   'poison',
+  'spasm',
+  'hazard',
 ];
 
 /** A change of the hits of an actor round: negative is damage, positive healing. */

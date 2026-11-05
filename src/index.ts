@@ -289,6 +289,7 @@ export {
   clampSizeSteps,
   expectedCriticalShift,
   formatMultiplier,
+  signedSteps,
 } from './rmu/combat/attack-size';
 export type { AttackSizeEffect, AttackSizeStep } from './rmu/combat/attack-size';
 export { default as ResistanceList } from './rmu/character/ResistanceList';

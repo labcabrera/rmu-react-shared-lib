@@ -260,6 +260,186 @@ export const SPELL_TALENT_GROUP = 'talent';
 export const IRON_WILL_RR_KEY = 'iron-will';
 
 // ---------------------------------------------------------------------------------------------------------------
+// Hazards: falls and falling objects (D1, D2)
+// ---------------------------------------------------------------------------------------------------------------
+
+/** What hits the actor: it falls, or something falls on it. */
+export const HAZARD_KINDS = ['fall', 'falling-object'] as const;
+export type HazardKind = (typeof HAZARD_KINDS)[number];
+
+/** Attack table of a hazard: Crush, or Rock for an object smaller than the actor. */
+export type HazardAttackTable = 'crush' | 'rock';
+
+/** Most critical rolls a hazard takes in its request. */
+export const HAZARD_MAX_CRITICAL_ROLLS = 3;
+
+/**
+ * Body of `POST /v1/actor-rounds/:id/hazards` (game master only). `roll` is open-ended upwards only, without fumble.
+ * The criticals without a roll become `critical` alerts with origin `hazard`.
+ */
+export interface ResolveHazardDto {
+  kind: HazardKind;
+  /** Feet fallen, more than 0. */
+  distanceFeet: number;
+  roll: number;
+  /** Rolls (1-100) of the criticals, in order, at most 3. */
+  criticalRolls?: number[] | null;
+  /** Fall: only magical DB (0 by default). Falling object: the DB of the actor by default. */
+  db?: number | null;
+  note?: string | null;
+  /** Fall: jumped on purpose, its height comes off the distance. */
+  deliberate?: boolean;
+  /** Fall: height of the actor in feet; the one of the actor round by default. */
+  heightFeet?: number | null;
+  /** Fall: a resolved `fall-control` maneuver of the actor. */
+  fallControlActionId?: string | null;
+  /** Falling object: its size id (Table 9-4a). */
+  objectSize?: string | null;
+  /** Falling object: its weight, gives its size without `objectSize`. */
+  weightLbs?: number | null;
+  /** Falling object on the Rock table: the shield of the actor counts (true by default). */
+  shield?: boolean;
+}
+
+/** A critical of a hazard: rolled, or left as an alert (`alertId`) until it is. */
+export interface HazardCritical {
+  criticalType: string;
+  criticalSeverity: string;
+  roll: number | null;
+  damage: number | null;
+  text: string | null;
+  location: string | null;
+  alertId: string | null;
+}
+
+/** A step of the critical severity: `attack-size`, `fall-control`... */
+export interface SeverityStep {
+  key: string;
+  value: number;
+}
+
+/** A hazard resolved on the actor (`ActorRound.hazards[]`, those of the round). */
+export interface ActorRoundHazard {
+  id: string;
+  kind: HazardKind;
+  round: number;
+  phase: number | null;
+  distanceFeet: number;
+  deliberate: boolean;
+  heightFeet: number | null;
+  fallControlActionId: string | null;
+  /** +1, 0, -1 or -2. */
+  fallControlSteps: number;
+  objectSize: string | null;
+  weightLbs: number | null;
+  shield: boolean;
+  attackTable: HazardAttackTable;
+  /** Steps from medium of the attack size. */
+  attackSize: number;
+  ob: number;
+  db: number;
+  roll: number;
+  total: number;
+  armor: number;
+  text: string;
+  /** Damage of the table, before the Hit Multiplier. */
+  baseDamage: number;
+  multiplier: number;
+  /** Hits taken. */
+  damage: number;
+  originalSeverity: string | null;
+  severity: string | null;
+  severitySteps: SeverityStep[];
+  criticals: HazardCritical[];
+  note: string | null;
+  createdAt: string;
+}
+
+/** Fields `ActorRound` gains: its height in feet (null for NPCs until given) and the hazards of the round. */
+export interface ActorRoundHazardFields {
+  height?: number | null;
+  hazards?: ActorRoundHazard[];
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Fall control (D4, D5)
+// ---------------------------------------------------------------------------------------------------------------
+
+/** Maneuver purpose of controlling a fall: Acrobatics, absolute, instantaneous (or forced), 0 AP. */
+export const FALL_CONTROL_PURPOSE = 'fall-control';
+
+/** Skill of a fall-control maneuver. */
+export const FALL_CONTROL_SKILL = 'acrobatics';
+
+/** Field `ActionManeuverResult` gains: severity steps of the fall, +1 absolute failure, -1 success, -2 absolute success. */
+export interface FallControlResultFields {
+  fallControlSteps?: number;
+}
+
+/** `details.reason` of `err-fall-control-invalid`. */
+export const FALL_CONTROL_INVALID_REASONS = [
+  'skill',
+  'maneuver-type',
+  'not-instantaneous',
+  'not-found',
+  'purpose',
+  'not-resolved',
+] as const;
+export type FallControlInvalidReason = (typeof FALL_CONTROL_INVALID_REASONS)[number];
+
+/**
+ * Alert of an absolute failure of a climbing or jumping maneuver or movement: the game master may resolve a fall.
+ * Modifiers `origin` (maneuver | movement), `actionId`, `skillId` and `kind` (fall). Resolved by hand.
+ */
+export const FALL_SUGGESTED_ALERT = 'fall-suggested';
+
+// ---------------------------------------------------------------------------------------------------------------
+// Resolvable critical alerts (D3)
+// ---------------------------------------------------------------------------------------------------------------
+
+/**
+ * Body of `POST /v1/actor-rounds/:id/alerts/:alertId/critical-roll`: the roll (1-100) of a pending `critical` alert
+ * (fumble, movement, heat, hazard, percent maneuver). `criticalType` is required for the critical of a fumble.
+ */
+export interface ResolveCriticalAlertDto {
+  roll: number;
+  criticalType?: string;
+}
+
+/** Origins of a `critical` alert in its `origin` modifier; null for movement, percent maneuvers and heat. */
+export type CriticalAlertOrigin = 'fumble' | 'hazard' | 'movement' | 'heat' | 'percent' | null;
+
+/** `ActorRound.lastCriticalRoll`: only in the answer of a critical roll, the critical rolled and applied. */
+export interface CriticalAlertRoll {
+  alertId?: string;
+  origin: string | null;
+  criticalType: string;
+  criticalSeverity: string;
+  roll: number;
+  /** "K-B-45". */
+  criticalKey: string;
+  damage: number;
+  text: string;
+  location: string | null;
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Fatigue (D6-D10)
+// ---------------------------------------------------------------------------------------------------------------
+
+/** Fields `ActorRound.fatigue` gains: rounds in a row without exertion, and whether it exerted itself this round. */
+export interface FatigueRecoveryFields {
+  restRounds?: number;
+  exerted?: boolean;
+}
+
+/** Rounds of rest that recover one fatigue point (24 at altitude), and clear the accumulator. */
+export const FATIGUE_REST_ROUNDS = 12;
+
+/** Penalty source of the fatigue of the criticals: outside the -50 cap. */
+export const FATIGUE_CRITICAL_PENALTY_SOURCE = 'fatigue-critical';
+
+// ---------------------------------------------------------------------------------------------------------------
 // Errors
 // ---------------------------------------------------------------------------------------------------------------
 
@@ -281,4 +461,11 @@ export const COMBAT_CORE_LAW_BC_ERRORS = [
   'err-critical-roll-location-fixed',
   'err-spell-ob-split-invalid',
   'err-spell-bolt-single-target',
+] as const;
+
+/** Error codes of block D. Other invalid hazards come as the generic `validation`. */
+export const COMBAT_CORE_LAW_D_ERRORS = [
+  'err-hazard-invalid-distance',
+  'err-alert-not-resolvable',
+  'err-fall-control-invalid',
 ] as const;
