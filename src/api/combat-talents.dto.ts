@@ -64,9 +64,12 @@ export interface ReactionAlertData {
   phase: string;
 }
 
-/** Why an action is resolved out of its turn; `reaction` is new in spec 076 (0 AP, no AP penalty). */
-export type ForceReason = 'withdrawal' | 'pass-through' | 'effect' | 'gm' | 'reaction';
-export const FORCE_REASONS: ForceReason[] = ['withdrawal', 'pass-through', 'effect', 'gm', 'reaction'];
+/**
+ * Why an action is resolved out of its turn; `reaction` is new in spec 076 and `stray-shot` in spec 079 (both 0 AP, no AP
+ * penalty, only declared as a new attack from their alert).
+ */
+export type ForceReason = 'withdrawal' | 'pass-through' | 'effect' | 'gm' | 'reaction' | 'stray-shot';
+export const FORCE_REASONS: ForceReason[] = ['withdrawal', 'pass-through', 'effect', 'gm', 'reaction', 'stray-shot'];
 
 /** `forced` of a new attack declared as a reaction: always from its `reaction-available` alert. */
 export interface ReactionForcedRequest {

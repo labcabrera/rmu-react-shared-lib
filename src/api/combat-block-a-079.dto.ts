@@ -40,7 +40,13 @@ export interface ActionParryBlockAFields {
 }
 
 /** Results an absolute maneuver can give, worst first. */
-export const ABSOLUTE_MANEUVER_RESULTS = ['absolute-failure', 'failure', 'partial-success', 'success', 'absolute-success'] as const;
+export const ABSOLUTE_MANEUVER_RESULTS = [
+  'absolute-failure',
+  'failure',
+  'partial-success',
+  'success',
+  'absolute-success',
+] as const;
 export type AbsoluteResultKey = (typeof ABSOLUTE_MANEUVER_RESULTS)[number];
 
 /** Results of the parry maneuver that let the parry count. */
@@ -84,7 +90,7 @@ export type PenaltyEnduranceReason = (typeof PENALTY_ENDURANCE_REASONS)[number];
  * `confirmed` (the actor dies) or without one (dismissed). `knocked-back` has `feet`, `severityCap` and `criticalKey`;
  * it is resolved by hand, or by a hazard with `knockedBackAlertId`.
  */
-export const BLOCK_A_ALERT_TYPES = ['death-threshold', 'knocked-back'] as const;
+export const BLOCK_A_ALERT_TYPES = ['death-threshold', 'knocked-back', 'stray-shot'] as const;
 export type BlockAAlertType = (typeof BLOCK_A_ALERT_TYPES)[number];
 
 /** Outcomes of `POST /actor-rounds/:id/alerts/:alertId/resolve` since spec 079. */
@@ -161,7 +167,144 @@ export const otherActionAp = (kind: OtherActionKind, heavyCrossbow = false): num
   kind === 'load-crossbow' && heavyCrossbow ? HEAVY_CROSSBOW_LOAD_AP : OTHER_ACTION_AP[kind];
 
 /** `details.reason` of `err-other-action-invalid`. */
-export const OTHER_ACTION_INVALID_REASONS = ['not-other', 'unknown-kind', 'free', 'attack-not-found', 'not-crossbow'] as const;
+export const OTHER_ACTION_INVALID_REASONS = [
+  'not-other',
+  'unknown-kind',
+  'free',
+  'attack-not-found',
+  'not-crossbow',
+] as const;
+
+// ---------------------------------------------------------------------------------------------------------------
+// A6: firing into melee (§9.7)
+// ---------------------------------------------------------------------------------------------------------------
+
+/**
+ * Partial hard cover the combatants in the way give to the target of a ranged attack (`melee-cover`), unless the game
+ * master declared the cover (the plugin is then skipped with `cover-declared`).
+ */
+export const MELEE_COVER_DEFAULT = -40;
+export const MELEE_COVER_DECLARED_SKIP = 'cover-declared';
+
+/**
+ * `stray-shot` alert of the attacker: modifiers `actionId`, `attackName`, `targetActorId` (chosen at random), one
+ * `candidate` per combatant in the way and `round`. Confirmed by declaring a forced `stray-shot` ranged attack with its
+ * `alertId`; dismissed with the resolve endpoint.
+ */
+export const STRAY_SHOT_ALERT_TYPE = 'stray-shot';
+
+/** `forced` of the second attack of a stray shot. */
+export interface StrayShotForcedRequest {
+  reason: 'stray-shot';
+  note?: string;
+  alertId: string;
+}
+
+/** `Action.strayShot`: the stray shot an attack forced as `stray-shot` comes from; it is prepared at OB 0, without cover. */
+export interface ActionStrayShot {
+  alertId: string;
+  triggerActionId: string;
+  attackName: string;
+  targetActorId: string;
+}
+
+/** Data of a `stray-shot` alert, read from its modifiers. */
+export interface StrayShotAlertData {
+  actionId: string | null;
+  attackName: string | null;
+  targetActorId: string | null;
+  candidates: string[];
+}
+
+/** The data of a `stray-shot` alert from its modifiers. */
+export const strayShotAlertData = (
+  modifiers: { key: string; modifier?: string | null }[] | null | undefined
+): StrayShotAlertData => {
+  const text = (key: string) => modifiers?.find((m) => m.key === key)?.modifier ?? null;
+  return {
+    actionId: text('actionId'),
+    attackName: text('attackName'),
+    targetActorId: text('targetActorId'),
+    candidates: (modifiers ?? []).filter((m) => m.key === 'candidate' && !!m.modifier).map((m) => m.modifier as string),
+  };
+};
+
+// ---------------------------------------------------------------------------------------------------------------
+// A7: disarm (Table 9-7a) and subdual (Table 9-7e)
+// ---------------------------------------------------------------------------------------------------------------
+
+export const ATTACK_MODES = ['normal', 'disarm', 'subdual'] as const;
+export type AttackMode = (typeof ATTACK_MODES)[number];
+
+/** Fields the attack modifiers of `PATCH /actions/:id/attack/prepare` (and of the attack DTO) gain. */
+export interface AttackModifiersBlockAFields {
+  attackMode?: AttackMode;
+  /** Disarm: total of the defender's roll, required. */
+  disarmDefenseRoll?: number | null;
+  /** Disarm: the foe wields a two-handed weapon (-25). */
+  disarmTwoHanded?: boolean;
+  /** Subdual: skill bonus the game master enters (not a Core Law skill). */
+  subdualBonus?: number | null;
+  /** Subdual: unfamiliar anatomy (-50). */
+  unfamiliarAnatomy?: boolean;
+  /** Ranged attack: other combatants engaged with the target. */
+  meleeCoverActorIds?: string[];
+}
+
+export const DISARM_TWO_HANDED_PENALTY = -25;
+export const SUBDUAL_UNFAMILIAR_ANATOMY_PENALTY = -50;
+export const SUBDUAL_MAX_SEVERITY = 'E';
+export const SUBDUAL_CRITICAL_TYPE = 'subdual';
+
+/** Bands of Table 9-7a. */
+export const DISARM_RESULTS = ['absolute-failure', 'failure', 'partial', 'success', 'absolute-success'] as const;
+export type DisarmResult = (typeof DISARM_RESULTS)[number];
+
+/** `ActionAttack.disarm`: the band, the disarm total, the total of the normal attack of a partial, and an unmodified 66. */
+export interface ActionAttackDisarm {
+  result: DisarmResult;
+  total: number;
+  attackTotal: number | null;
+  unusual: boolean;
+}
+
+/** `ActionAttackResults.subdualAdjustment`: the hits and critical of the table before the subdual. */
+export interface SubdualAdjustment {
+  baseDamage: number;
+  criticalType: string | null;
+  criticalSeverity: string | null;
+}
+
+/** The band of Table 9-7a of a disarm total. */
+export const disarmResult = (total: number): DisarmResult => {
+  if (total < 1) return 'absolute-failure';
+  if (total <= 75) return 'failure';
+  if (total <= 100) return 'partial';
+  if (total <= 175) return 'success';
+  return 'absolute-success';
+};
+
+/** Modifier of the defender's roll to a disarm: 100 less its total (a bonus below 100, a penalty above). */
+export const disarmDefenseModifier = (defenseRoll: number): number => 100 - defenseRoll;
+
+/** `GET /attack-tables/:id/modifiers` of rmu-api-attack-tables: null when the maneuver does not apply to the table. */
+export interface AttackTableModifiers {
+  id: string;
+  disarm: { melee: number; ranged: number | null } | null;
+  subdual: { melee: number; ranged: number | null } | null;
+}
+
+/** Roll modifier keys added by A6-A7, all with a rule reference. */
+export const SPECIAL_MANEUVER_MODIFIER_KEYS = [
+  'melee-cover',
+  'disarm',
+  'disarm-two-handed',
+  'disarm-skill',
+  'disarm-defense',
+  'subdual',
+  'subdual-anatomy',
+  'subdual-skill',
+] as const;
 
 // ---------------------------------------------------------------------------------------------------------------
 // Errors
@@ -172,4 +315,9 @@ export const COMBAT_BLOCK_A_ERRORS = [
   'err-parry-maneuver-required',
   'err-parry-maneuver-not-needed',
   'err-other-action-invalid',
+  'err-attack-mode-invalid',
+  'err-disarm-defense-roll-required',
+  'err-melee-cover-invalid',
+  'err-stray-shot-invalid',
+  'err-stray-shot-not-available',
 ] as const;
