@@ -64,6 +64,8 @@ export interface CharacterEndurance {
   accumulator: number;
   /** Accumulated fatigue penalty, 0-50, shown as a negative modifier; one point recovers per minute of rest (spec 077). */
   fatiguePenalty: number;
+  /** Vigorous/Feeble share of the Endurance bonus (workspace spec 079, D2). */
+  traitBonus?: number;
 }
 
 /** Most fatigue penalty a character accumulates (§5.5, workspace spec 077). */
@@ -390,6 +392,8 @@ export interface CharacterEquipment {
   weight: number;
   weightAllowance: number;
   encumbrancePenalty: number;
+  /** Encumbrance penalty of the dodge: Beast of Burden does not lower it (workspace spec 079, D2). */
+  dodgeEncumbrancePenalty?: number;
   baseManeuverPenalty: number;
   maneuverPenalty: number;
   rangedPenalty: number;

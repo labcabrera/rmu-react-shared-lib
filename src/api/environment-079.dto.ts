@@ -2,6 +2,8 @@
  * Environment contracts of workspace spec 079, block C: extreme temperatures (C3, §15.3), drowning and suffocation (C4,
  * §15.2), and fog, light sources and magical darkness (C5, §15.7). Only numbers of the tables: no rule text.
  */
+
+import type { BreathHoldingLimit } from './talents-079.dto';
 import type { LightType } from './combat-talents.dto';
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -159,6 +161,8 @@ export interface ActorRoundBreath {
   /** Round of the failed check; null while it holds it. */
   failedRound: number | null;
   note: string | null;
+  /** Workspace spec 079, D5: the limit of Breath Holding, used when longer than the base one; null without it. */
+  breathHolding?: BreathHoldingLimit | null;
 }
 
 /** Fields `ActorRound` gains. */
@@ -175,6 +179,9 @@ export interface StartBreathDto {
   /** The one of the sheet by default; give it for an NPC. */
   constitutionBonus?: number;
   note?: string | null;
+  /** Workspace spec 079, D5 (Breath Holding): the actor stays inactive, or meditates (a successful Meditation). */
+  inactive?: boolean;
+  meditation?: boolean;
 }
 
 /** Rounds left before the checks start (0: they are due). */
