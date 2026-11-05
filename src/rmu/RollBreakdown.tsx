@@ -7,7 +7,8 @@ import RuleHint, { RuleParams } from './RuleHint';
 /**
  * Group of a modifier in the breakdown: the attacker's side, the target's, the situation or the critical; outside
  * combat (spec 052) the skill, the penalties, the casting conditions and the target's; `senses` holds the sense
- * talents and Light Sensitivity of a Perception or Tracking roll (workspace spec 076).
+ * talents and Light Sensitivity of a Perception or Tracking roll (workspace spec 076), `talent` the magical talents of
+ * a spell roll and Iron Will against a mental attack (workspace spec 077).
  */
 export type RollModifierGroup =
   | 'skill'
@@ -17,6 +18,7 @@ export type RollModifierGroup =
   | 'target'
   | 'situation'
   | 'senses'
+  | 'talent'
   | 'penalty'
   | 'critical'
   | 'resolution';
@@ -51,6 +53,7 @@ const GROUP_ORDER: (RollModifierGroup | 'other')[] = [
   'target',
   'situation',
   'senses',
+  'talent',
   'penalty',
   'critical',
   'resolution',
@@ -214,9 +217,12 @@ const RollBreakdown: FC<{
   const { t } = useTranslation();
   const sum = modifiers.reduce((acc, modifier) => acc + modifier.value, 0);
   const computedTotal = total ?? sum + (roll ?? 0);
+  // A group this version does not know yet is shown with the other entries, never left out of the list.
+  const groupOf = (modifier: RollModifier) =>
+    modifier.group && GROUP_ORDER.includes(modifier.group) ? modifier.group : 'other';
   const groups = GROUP_ORDER.map((group) => ({
     group,
-    items: modifiers.filter((modifier) => (modifier.group ?? 'other') === group),
+    items: modifiers.filter((modifier) => groupOf(modifier) === group),
   })).filter(({ items }) => items.length > 0);
 
   return (

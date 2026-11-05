@@ -264,7 +264,14 @@ export type { NpcEntry } from './rmu/creature/NpcEntries';
 export type { StatusBadgeColor, StatusBadgeProps } from './rmu/StatusBadge';
 export { default as SpellEffectList } from './rmu/SpellEffectList';
 export type { SpellEffectColor } from './rmu/SpellEffectList';
-export { spellAreaText, spellDurationText, spellPerLevelSuffix, spellRangeText } from './rmu/spell/spell-format';
+export {
+  spellAreaText,
+  spellDurationText,
+  spellPerLevelSuffix,
+  spellRangeText,
+  spellSpecsRows,
+} from './rmu/spell/spell-format';
+export type { SpellSpecsKind, SpellSpecsRow } from './rmu/spell/spell-format';
 export type { SpellTranslate } from './rmu/spell/spell-format';
 export type { ActorEffect, ActorNameResolver, ActorPenalty } from './rmu/EffectList';
 export { default as ActionTypeChip } from './rmu/combat/ActionTypeChip';

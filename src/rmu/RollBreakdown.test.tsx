@@ -36,6 +36,22 @@ describe('RollBreakdown', () => {
     expect(groups).toEqual(['modifier-group-skill', 'modifier-group-situation', 'modifier-group-senses']);
   });
 
+  it('shows the magical talents in their own group, and an unknown group with the others (spec 077)', () => {
+    renderWithProviders(
+      <RollBreakdown
+        modifiers={[
+          { key: 'eloquence', value: 10, group: 'talent' },
+          { key: 'ranks', value: 30, group: 'skill' },
+          { key: 'future', value: 5, group: 'not-yet-known' as never },
+        ]}
+      />
+    );
+
+    const groups = screen.getAllByText(/^modifier-group-/).map((element) => element.textContent);
+    expect(groups).toEqual(['modifier-group-skill', 'modifier-group-talent', 'modifier-group-other']);
+    expect(screen.getAllByText('+5').length).toBeGreaterThan(0);
+  });
+
   it('adds the roll to the total', () => {
     renderWithProviders(<RollBreakdown modifiers={modifiers} roll={80} />);
 

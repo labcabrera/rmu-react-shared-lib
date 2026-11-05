@@ -122,3 +122,39 @@ export const spellAreaText = (area: SpellArea | null | undefined, t: SpellTransl
   }
   return text || raw || '-';
 };
+
+/** Range, area or duration of a spell, as rmu-api-spells sends them (spec 028). */
+export type SpellSpecsKind = 'range' | 'area' | 'duration';
+
+/** One row of the specs of a cast: the book text, and the one with the caster's talents when they change it. */
+export type SpellSpecsRow = { kind: SpellSpecsKind; original: string; adjusted: string | null };
+
+type SpellSpecs = {
+  range?: Record<string, unknown> | null;
+  area?: Record<string, unknown> | null;
+  duration?: Record<string, unknown> | null;
+};
+
+/**
+ * Range, area and duration of a cast (workspace spec 077, decision C5): the text of the spell and, when the caster's
+ * magical talents change it (`adjusted` of the action), the adjusted text. Rows without a value in the spell are left
+ * out; `adjusted` is null when the talents leave that one as it is.
+ */
+export const spellSpecsRows = (
+  spell: SpellSpecs,
+  adjusted: SpellSpecs | null | undefined,
+  t: SpellTranslate
+): SpellSpecsRow[] => {
+  const text = (kind: SpellSpecsKind, value: Record<string, unknown> | null | undefined): string => {
+    if (kind === 'range') return spellRangeText(value as SpellRange | null | undefined, t);
+    if (kind === 'area') return spellAreaText(value as SpellArea | null | undefined, t);
+    return spellDurationText(value as SpellDuration | null | undefined, t);
+  };
+  return (['range', 'area', 'duration'] as SpellSpecsKind[])
+    .filter((kind) => !!spell[kind] || !!adjusted?.[kind])
+    .map((kind) => {
+      const original = text(kind, spell[kind]);
+      const changed = adjusted?.[kind] ? text(kind, adjusted[kind]) : null;
+      return { kind, original, adjusted: changed && changed !== original ? changed : null };
+    });
+};

@@ -1,5 +1,6 @@
 /**
- * Tactical contracts of workspace spec 077, block A (Shield maneuver, concentration and grapple), shared by the MFEs
+ * Tactical contracts of workspace spec 077, blocks A (Shield maneuver, concentration and grapple), B (armor by location)
+ * and C (magical talents in spell casting), shared by the MFEs
  * that read actor rounds and actions. Like `combat-talents.dto`, these are the pieces spec 077 adds to the actor round
  * and action DTOs that live in rmu-mfe-tactical.
  */
@@ -186,6 +187,79 @@ export interface BmrMultiplier {
 }
 
 // ---------------------------------------------------------------------------------------------------------------
+// Armor by location (B2)
+// ---------------------------------------------------------------------------------------------------------------
+
+/**
+ * Field `PATCH /actions/:id/attack/roll` gains: the unmodified critical roll (1-100), rolled with the attack. Required
+ * against a target with armor by location (`defense.at` null) without a called shot; its location decides the AT, and
+ * the criticals of the attack are rolled with it.
+ */
+export interface AttackLocationRollFields {
+  criticalRoll?: number;
+}
+
+/** Fields `ActionAttack.calculated` gains: the critical roll that fixed the location (`location` is the zone). */
+export interface AttackLocationCalculatedFields {
+  locationRoll?: number;
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Magical talents (C)
+// ---------------------------------------------------------------------------------------------------------------
+
+/** What a magical talent changes in a spell. */
+export const SPELL_ADJUSTMENT_TARGETS = ['range', 'area', 'targets', 'duration'] as const;
+export type SpellAdjustmentTarget = (typeof SPELL_ADJUSTMENT_TARGETS)[number];
+
+/** A talent of the caster that changed the spell: Spatial, Temporal or Scope Skills, Extended Reach, Lack of... */
+export interface SpellAdjustmentSource {
+  traitId: string;
+  tier: number;
+  applies: SpellAdjustmentTarget;
+}
+
+/**
+ * `ActionSpell.spell.adjusted`: range, area and duration with the caster's magical talents, in the shape of
+ * rmu-api-spells (`SpellRange`, `SpellArea`, `SpellDuration`); missing or null when no talent changes them.
+ */
+export interface ActionSpellAdjusted {
+  range: Record<string, unknown> | null;
+  area: Record<string, unknown> | null;
+  duration: Record<string, unknown> | null;
+  sources: SpellAdjustmentSource[];
+}
+
+/** Fields `ActionSpell.failure` gains: +5 per tier of Inglorious Failure, -5 of Graceful Recovery (total from 1). */
+export interface SpellFailureTalentFields {
+  talentModifier?: number;
+}
+
+/** Fields `ActionSpell` gains: the power points Power Recycling saved from a failed cast (null without it). */
+export interface SpellRecyclingFields {
+  powerPointsRecycled?: number | null;
+}
+
+/** Fields `ActionSpell.attack` gains: the targets a bolt strikes, 1 + the tier of Scope Skills (1 when missing). */
+export interface SpellAttackScopeFields {
+  maxTargets?: number;
+}
+
+/**
+ * Field `PATCH /actions/:id/attack/prepare` gains for a bolt with several targets: the OB of each attack, in order
+ * (whole numbers from 0, adding up to the OB of the bolt at most); equal parts when left out.
+ */
+export interface PrepareAttackObSplitFields {
+  obSplit?: number[];
+}
+
+/** Breakdown group of the magical talents of the SCR and of Iron Will in a resistance roll. */
+export const SPELL_TALENT_GROUP = 'talent';
+
+/** Resistance roll entry of Iron Will against a mental attack. */
+export const IRON_WILL_RR_KEY = 'iron-will';
+
+// ---------------------------------------------------------------------------------------------------------------
 // Errors
 // ---------------------------------------------------------------------------------------------------------------
 
@@ -199,4 +273,12 @@ export const COMBAT_CORE_LAW_ERRORS = [
   'err-grapple-escape-blocked',
   'err-movement-grappled',
   'err-grapple-escape-required',
+] as const;
+
+/** Error codes of blocks B and C. */
+export const COMBAT_CORE_LAW_BC_ERRORS = [
+  'err-attack-location-roll-required',
+  'err-critical-roll-location-fixed',
+  'err-spell-ob-split-invalid',
+  'err-spell-bolt-single-target',
 ] as const;
