@@ -156,6 +156,7 @@ export * from './api/strategic-game.dto';
 export * from './api/tactical-game.api';
 export * from './api/tactical-game.dto';
 export * from './api/combat-talents.dto';
+export * from './api/combat-core-law.dto';
 export * from './api/trait.api';
 export * from './api/trait.dto';
 
@@ -263,9 +264,16 @@ export type { NpcEntry } from './rmu/creature/NpcEntries';
 export type { StatusBadgeColor, StatusBadgeProps } from './rmu/StatusBadge';
 export { default as SpellEffectList } from './rmu/SpellEffectList';
 export type { SpellEffectColor } from './rmu/SpellEffectList';
-export { spellAreaText, spellDurationText, spellPerLevelSuffix, spellRangeText } from './rmu/spell/spell-format';
+export {
+  spellAreaText,
+  spellDurationText,
+  spellPerLevelSuffix,
+  spellRangeText,
+  spellSpecsRows,
+} from './rmu/spell/spell-format';
+export type { SpellSpecsKind, SpellSpecsRow } from './rmu/spell/spell-format';
 export type { SpellTranslate } from './rmu/spell/spell-format';
-export type { ActorEffect, ActorPenalty } from './rmu/EffectList';
+export type { ActorEffect, ActorNameResolver, ActorPenalty } from './rmu/EffectList';
 export { default as ActionTypeChip } from './rmu/combat/ActionTypeChip';
 export { default as ActionStateMarker } from './rmu/combat/ActionStateMarker';
 export { default as ApPips } from './rmu/combat/ApPips';
@@ -281,6 +289,7 @@ export {
   clampSizeSteps,
   expectedCriticalShift,
   formatMultiplier,
+  signedSteps,
 } from './rmu/combat/attack-size';
 export type { AttackSizeEffect, AttackSizeStep } from './rmu/combat/attack-size';
 export { default as ResistanceList } from './rmu/character/ResistanceList';

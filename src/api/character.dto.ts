@@ -59,8 +59,12 @@ export interface CharacterEndurance {
   max: number;
   current: number;
   accumulator: number;
+  /** Accumulated fatigue penalty, 0-50, shown as a negative modifier; one point recovers per minute of rest (spec 077). */
   fatiguePenalty: number;
 }
+
+/** Most fatigue penalty a character accumulates (§5.5, workspace spec 077). */
+export const MAX_FATIGUE_PENALTY = 50;
 
 export interface CreateCharacterDto {
   id: string;
@@ -170,6 +174,12 @@ export interface AddTraitDto {
   pool?: DevPointsPool;
   /** Multilingual only: how its 10 ranks are split, at most two languages (spec 076). */
   languageRanks?: LanguageRanks[];
+  /** Game option `talentPurchaseRules` (spec 077): prerequisite the new tiers meet; training and milestone, master only. */
+  prerequisite?: { type: TraitAcquisitionType; note?: string };
+  /** Flaws only (spec 077): the talent it is taken with, among its `possibleFlaws`. */
+  linkedTo?: TraitLink;
+  /** Game master only (spec 077): it costs half and its sheet effects do not apply. */
+  restricted?: TraitRestriction;
 }
 
 export interface UpdateCharacterDto {
@@ -194,6 +204,8 @@ export interface CharacterInfo {
   race: NamedEntity;
   professionId: string;
   sizeId: string;
+  /** Size of the race changed by Increased or Decreased Size (workspace spec 077); `sizeId` stays the race one. */
+  effectiveSizeId?: string;
   /** Realms of the character: two for a hybrid (spec 029). */
   realmTypes: string[];
   /** @deprecated The first realm: use realmTypes. */
@@ -259,6 +271,42 @@ export interface CharacterTrait {
   missingReference?: boolean;
   /** Skill ranks granted by the talent, removed with it (workspace spec 076: Multilingual). */
   grantedRanks?: TraitGrantedRanks[];
+  /** How each tier was acquired (workspace spec 077, game option `talentPurchaseRules`). */
+  acquiredBy?: TraitAcquisition[];
+  /** Flaws only: the talent it was taken with, among its Possible Flaws (spec 077). */
+  linkedTo?: TraitLink;
+  /** Only acts in some situations: it cost half and its sheet effects are situational (spec 077). */
+  restricted?: TraitRestriction;
+  /** A flaw that waits for the approval of the game master (spec 077). */
+  pendingApproval?: boolean;
+}
+
+/** Prerequisite types a tier of a talent is acquired by (spec 077); same values as `TraitPrerequisiteType`. */
+export const TRAIT_ACQUISITION_TYPES = ['natural', 'training', 'milestone', 'profession', 'skill', 'race'] as const;
+export type TraitAcquisitionType = (typeof TRAIT_ACQUISITION_TYPES)[number];
+
+/** Prerequisites only the game master grants (`prerequisite` of `AddTraitDto`). */
+export const GM_TRAIT_ACQUISITION_TYPES: TraitAcquisitionType[] = ['training', 'milestone'];
+
+/** How one tier of a talent was acquired (spec 077). */
+export interface TraitAcquisition {
+  tier: number;
+  type: TraitAcquisitionType;
+  /** The skill, profession or race it met, when the prerequisite names one. */
+  value?: string;
+  /** Training and milestone: what the game master wrote. */
+  note?: string;
+}
+
+/** The talent of the character a flaw is taken with (spec 077). */
+export interface TraitLink {
+  traitId: string;
+  specialization?: string;
+}
+
+/** A restricted trait: the situations it acts in (spec 077). */
+export interface TraitRestriction {
+  note: string;
 }
 
 /** Ranks a talent granted in a skill (workspace spec 076). */
@@ -344,6 +392,20 @@ export interface CharacterEquipment {
   rangedPenalty: number;
   perceptionPenalty?: number;
   movementBaseDifficulty?: string | undefined;
+  /** Sum of the Enc % of the worn armor pieces that still protect (spec 077). */
+  armorEncumbrance?: number;
+  /** Load breakdown (spec 077). */
+  load?: CharacterLoad;
+}
+
+/** Load of a character (spec 077): worn armor scales to the body it was made for. */
+export interface CharacterLoad {
+  /** Weight (lb) of the equipped items. */
+  worn: number;
+  /** Weight (lb) of the carried items that are not equipped. */
+  carried: number;
+  /** Worn plus carried, in % of the body weight (0 without body weight). */
+  percent: number;
 }
 
 export interface CharacterItemInfo {

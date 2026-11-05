@@ -1,5 +1,7 @@
 import React from 'react';
+import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { screen } from '@testing-library/react';
+import i18next from 'i18next';
 import { describe, expect, it } from 'vitest';
 import { renderWithProviders } from '../test/render';
 import EffectList from './EffectList';
@@ -70,5 +72,84 @@ describe('EffectList legacy status', () => {
     const chips = screen.getAllByText('unconscious');
     expect(chips).toHaveLength(2);
     chips.forEach((chip) => expect(chip.closest('.MuiChip-root')).toHaveClass('MuiChip-colorError'));
+  });
+});
+
+describe('EffectList grapple and concentration (spec 077)', () => {
+  const withTexts = async () => {
+    const i18n = i18next.createInstance();
+    await i18n.use(initReactI18next).init({
+      lng: 'en',
+      resources: {
+        en: {
+          translation: {
+            grappled: 'Grappled',
+            concentrating: 'Concentrating',
+            'effect-grappled-by': 'By {{name}}',
+            'effect-grappled-object': 'By an object',
+            'effect-grappled-tightened': 'Tightened',
+            'concentration-kind-spell-preparation': 'Preparing a spell',
+          },
+        },
+      },
+    });
+    return i18n;
+  };
+
+  it('shows a grapple as a percent and names its grappler in the tooltip', async () => {
+    const i18n = await withTexts();
+    renderWithProviders(
+      <I18nextProvider i18n={i18n}>
+        <EffectList
+          effects={[{ status: 'grappled', value: 30, targetActorId: 'a2', data: { tightened: true } }]}
+          actorName={(id) => (id === 'a2' ? 'Orc' : undefined)}
+        />
+      </I18nextProvider>
+    );
+
+    const chip = screen.getByText('Grappled 30 %').closest('.MuiChip-root')!;
+    expect(chip).toHaveAttribute('aria-label', 'By Orc · Tightened');
+  });
+
+  it('keeps working without a name resolver and tells an object apart', async () => {
+    const i18n = await withTexts();
+    renderWithProviders(
+      <I18nextProvider i18n={i18n}>
+        <EffectList
+          effects={[
+            { status: 'grappled', value: 20, targetActorId: 'a2' },
+            { status: 'grappled', value: 10, data: { object: true } },
+          ]}
+        />
+      </I18nextProvider>
+    );
+
+    expect(screen.getByText('Grappled 20 %').closest('.MuiChip-root')).not.toHaveAttribute('aria-label');
+    expect(screen.getByText('Grappled 10 %').closest('.MuiChip-root')).toHaveAttribute('aria-label', 'By an object');
+  });
+
+  it('shows concentration amber with an icon and its kind and note', async () => {
+    const i18n = await withTexts();
+    renderWithProviders(
+      <I18nextProvider i18n={i18n}>
+        <EffectList effects={[{ status: 'concentrating', data: { kind: 'spell-preparation', note: 'Fire Bolt' } }]} />
+      </I18nextProvider>
+    );
+
+    const chip = screen.getByText('Concentrating').closest('.MuiChip-root')!;
+    expect(chip).toHaveClass('MuiChip-colorWarning');
+    expect(chip).toHaveAttribute('aria-label', 'Preparing a spell · Fire Bolt');
+    expect(chip.querySelector('svg')).not.toBeNull();
+  });
+
+  it('shows the grapple percent in the compact variant', async () => {
+    const i18n = await withTexts();
+    renderWithProviders(
+      <I18nextProvider i18n={i18n}>
+        <EffectList variant="compact" effects={[{ status: 'grappled', value: 30 }]} />
+      </I18nextProvider>
+    );
+
+    expect(screen.getByRole('button', { name: /^Grappled 30 %/ })).toBeInTheDocument();
   });
 });

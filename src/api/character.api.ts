@@ -178,6 +178,12 @@ export async function levelUpCharacter(
   return await callApi(auth, url, { method: 'POST' });
 }
 
+/** Runs the character processor again and stores the sheet (admin only, spec 077). */
+export async function recalculateCharacter(characterId: string, auth: AuthContextProps): Promise<Character> {
+  const url = `${apiStrategicGameUrl}/characters/${characterId}/recalculate`;
+  return await callApi(auth, url, { method: 'POST' });
+}
+
 /** Spell lists of the character and the spells it knows up to its ranks (spec 029). */
 export async function fetchCharacterSpells(characterId: string, auth: AuthContextProps): Promise<KnownSpellList[]> {
   const url = `${apiStrategicGameUrl}/characters/${characterId}/spells`;

@@ -122,6 +122,8 @@ export type ItemArmor = {
   coverage?: ItemArmorSlot[];
   /** Spec 041: light, medium or heavy helmet, vambraces or greaves. */
   class?: ItemArmorClass;
+  /** Spec 077 (strategic items): body weight (lb) it was made for; worn by another body it weighs weight × wearer / fittedWeight. */
+  fittedWeight?: number;
 };
 
 export type WeaponMode = {

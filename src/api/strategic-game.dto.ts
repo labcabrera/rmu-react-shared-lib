@@ -98,6 +98,9 @@ export interface PassTimeRestResult {
   powerBefore: number | null;
   powerAfter: number | null;
   poisonings?: { injuryId: string; elapsedRounds: number; penalty: number; status: string }[];
+  /** Fatigue penalty before and after the rest (spec 077): one point per minute. */
+  fatigueBefore?: number;
+  fatigueAfter?: number;
 }
 
 export interface GameTimeLogCharacter {
@@ -158,6 +161,11 @@ export interface StrategicGameOptions {
   statGeneration?: StatGeneration;
   /** Open rounds: an action unresolved at the end of a round carries over to the next one, keeping its action points (default true). */
   openRounds?: boolean;
+  /**
+   * Optional purchase rules of talents and flaws (workspace spec 077, default false): prerequisites per tier, flaws that
+   * hinder, linked flaws and one loose flaw up to -20.
+   */
+  talentPurchaseRules?: boolean;
 }
 
 export const TALENT_POLICIES = ['free', 'race-points-at-creation', 'flaw-points-at-creation'] as const;

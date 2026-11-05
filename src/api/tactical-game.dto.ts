@@ -147,6 +147,11 @@ export type TacticalGameCharacterOutcome = {
   itemsConsumed?: ItemConsumed[];
   /** Workspace spec 068: temporary modifiers created in the game. */
   temporaryModifiers?: TemporaryModifier[];
+  /**
+   * Workspace spec 077: fatigue penalty points (0-50) at the start and end of the game, without the temporary fatigue
+   * of the criticals. Strategic sets `fatiguePenalty` to clamp(current + delta, 0, 50); missing keeps it.
+   */
+  fatigue?: { start: number; end: number; delta: number };
   /** Set once the result has been applied to the strategic character. */
   appliedAt?: string;
   /** Error of the last attempt to apply it. */
