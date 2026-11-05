@@ -1,11 +1,25 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import PsychologyIcon from '@mui/icons-material/Psychology';
 import { Avatar, Chip, Stack, Tooltip } from '@mui/material';
 import { resolveAssetUrl } from '../config/asset-url';
 import StatusBadge from './StatusBadge';
 
-/** An effect on an actor: a status with an optional value and duration. */
-export type ActorEffect = { status: string; value?: number | null; rounds?: number | null; delay?: number | null };
+/**
+ * An effect on an actor: a status with an optional value and duration. `targetActorId` and `data` say more about some
+ * of them: the grappler of `grappled` (spec 077, `data.object` / `data.tightened`), the `data.kind` and `data.note` of
+ * `concentrating`.
+ */
+export type ActorEffect = {
+  status: string;
+  value?: number | null;
+  rounds?: number | null;
+  delay?: number | null;
+  targetActorId?: string | null;
+  data?: Record<string, unknown> | null;
+};
+/** Name of an actor of the game by its id, for the effects that name another actor (the grappler). */
+export type ActorNameResolver = (actorId: string) => string | undefined;
 /** A penalty and where it comes from (hit points, effects, armour…). */
 export type ActorPenalty = { source: string; value: number };
 
@@ -31,7 +45,12 @@ const SEVERITY: Record<string, Severity> = {
   spasm: 'incapacitating',
   bleeding: 'ongoing',
   fatigue: 'ongoing',
+  // Workspace spec 077: concentrating doubles the AP of the other actions
+  concentrating: 'ongoing',
 };
+
+/** Statuses whose value is a percent (spec 077: the grapple). */
+const PERCENT_STATUSES = new Set(['grappled']);
 
 // Icons in rmu-mfe-assets/images/icons, by status (some files do not follow the status name).
 const ICONS: Record<string, string> = {
@@ -62,7 +81,15 @@ const STATUS_COLORS: Record<string, 'error' | 'warning' | 'default'> = { bleedin
 
 /** Image of a status (images/icons), as a chip avatar; undefined when there is none. */
 export const effectIcon = (status: string) => {
-  const file = ICONS[normalizeEffectStatus(status)];
+  const normalized = normalizeEffectStatus(status);
+  if (normalized === 'concentrating') {
+    return (
+      <Avatar variant="rounded" alt="" sx={{ borderRadius: '4px', bgcolor: 'transparent', color: 'inherit' }}>
+        <PsychologyIcon fontSize="small" />
+      </Avatar>
+    );
+  }
+  const file = ICONS[normalized];
   return file ? (
     <Avatar variant="rounded" alt="" src={resolveAssetUrl(`images/icons/${file}.png`)} sx={{ borderRadius: '4px' }} />
   ) : undefined;
@@ -79,18 +106,28 @@ export const effectColor = (status: string): 'error' | 'warning' | 'default' => 
 
 const icon = effectIcon;
 
+/** Value of an effect as shown: a percent for the grapple. */
+const effectValue = (effect: ActorEffect): string =>
+  effect.value ? (PERCENT_STATUSES.has(effect.status) ? `${effect.value} %` : `${effect.value}`) : '';
+
+const dataText = (effect: ActorEffect, key: string): string | undefined => {
+  const value = effect.data?.[key];
+  return typeof value === 'string' && value ? value : undefined;
+};
+
 /**
  * Effects of an actor as solid chips, most severe first: incapacitating (red), ongoing (amber, bleeding red), the
  * rest, and one chip with the total penalty (its sources in the tooltip). Penalties of 0 are not shown.
  * `variant="compact"` shows them as `StatusBadge`s (icon, abbreviation and value; full text on hover or tap) for
- * dense places.
+ * dense places. `actorName` names the grappler of a `grappled` effect in its tooltip (spec 077).
  */
 const EffectList: FC<{
   effects: ActorEffect[];
   penalties?: ActorPenalty[];
   size?: 'small' | 'medium';
   variant?: 'full' | 'compact';
-}> = ({ effects, penalties = [], size = 'small', variant = 'full' }) => {
+  actorName?: ActorNameResolver;
+}> = ({ effects, penalties = [], size = 'small', variant = 'full', actorName }) => {
   const { t } = useTranslation();
   const ordered = effects
     .map((effect) => ({ ...effect, status: normalizeEffectStatus(effect.status) }))
@@ -100,9 +137,31 @@ const EffectList: FC<{
 
   const label = (effect: ActorEffect) => {
     const parts = [t(effect.status)];
-    if (effect.value) parts.push(`${effect.value}`);
+    if (effect.value) parts.push(effectValue(effect));
     if (effect.rounds) parts.push(t('rounds-short', { count: effect.rounds }));
     return parts.join(' ');
+  };
+
+  /** Help of the status plus what its target and data tell: the grappler, an object, a tightened grapple, a focus. */
+  const detailOf = (effect: ActorEffect): string => {
+    const parts: string[] = [];
+    const help = t(`effect-${effect.status}-help`, { defaultValue: '' });
+    if (help) parts.push(help);
+    if (effect.status === 'grappled') {
+      if (effect.data?.object) parts.push(t('effect-grappled-object'));
+      else if (effect.targetActorId) {
+        const name = actorName?.(effect.targetActorId);
+        if (name) parts.push(t('effect-grappled-by', { name }));
+      }
+      if (effect.data?.tightened) parts.push(t('effect-grappled-tightened'));
+    }
+    if (effect.status === 'concentrating') {
+      const kind = dataText(effect, 'kind');
+      if (kind) parts.push(t(`concentration-kind-${kind}`));
+      const note = dataText(effect, 'note');
+      if (note) parts.push(note);
+    }
+    return parts.join(' · ');
   };
 
   const penaltySources = penalties
@@ -121,11 +180,11 @@ const EffectList: FC<{
             status={effect.status}
             label={t(effect.status)}
             value={
-              [effect.value || '', effect.rounds ? t('rounds-abbr', { count: effect.rounds }) : '']
+              [effectValue(effect), effect.rounds ? t('rounds-abbr', { count: effect.rounds }) : '']
                 .filter(Boolean)
                 .join(' ') || undefined
             }
-            detail={t(`effect-${effect.status}-help`, { defaultValue: '' }) || undefined}
+            detail={detailOf(effect) || undefined}
             color={effectColor(effect.status)}
             avatar={icon(effect.status)}
             size={size}
@@ -148,7 +207,7 @@ const EffectList: FC<{
   return (
     <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 0.75 }}>
       {ordered.map((effect, index) => {
-        const help = t(`effect-${effect.status}-help`, { defaultValue: '' });
+        const help = detailOf(effect);
         const chip = (
           <Chip size={size} avatar={icon(effect.status)} label={label(effect)} color={effectColor(effect.status)} />
         );

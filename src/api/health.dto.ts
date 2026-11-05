@@ -367,6 +367,8 @@ export interface PermanentRollDto {
 
 /** `POST v1/characters/:id/rest`. */
 export interface RestDto {
+  /** Minutes of rest (spec 077): fatigue recovers one point per minute of the whole rest. */
+  minutes?: number;
   hours?: number;
   days?: number;
   fullRest?: boolean;
