@@ -68,6 +68,8 @@ export const CONCENTRATION_KINDS = [
   'spell-preparation',
   'hold-position',
   'manual',
+  // Workspace spec 079, B3: a full dodge granted by Adrenal Defense, kept as concentration.
+  'full-dodge',
 ] as const;
 export type ConcentrationKind = (typeof CONCENTRATION_KINDS)[number];
 
