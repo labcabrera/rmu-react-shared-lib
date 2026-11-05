@@ -270,8 +270,8 @@ export const IRON_WILL_RR_KEY = 'iron-will';
 // Hazards: falls and falling objects (D1, D2)
 // ---------------------------------------------------------------------------------------------------------------
 
-/** What hits the actor: it falls, or something falls on it. */
-export const HAZARD_KINDS = ['fall', 'falling-object'] as const;
+/** What hits the actor: it falls, something falls on it, or an extreme temperature (spec 079, C3; no attack roll). */
+export const HAZARD_KINDS = ['fall', 'falling-object', 'extreme-temperature'] as const;
 export type HazardKind = (typeof HAZARD_KINDS)[number];
 
 /** Attack table of a hazard: Crush, or Rock for an object smaller than the actor. */
@@ -340,7 +340,8 @@ export interface ActorRoundHazard {
   objectSize: string | null;
   weightLbs: number | null;
   shield: boolean;
-  attackTable: HazardAttackTable;
+  /** Null for an extreme temperature (spec 079). */
+  attackTable: HazardAttackTable | null;
   /** Steps from medium of the attack size. */
   attackSize: number;
   ob: number;

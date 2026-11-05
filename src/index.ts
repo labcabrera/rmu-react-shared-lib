@@ -160,6 +160,7 @@ export * from './api/combat-core-law.dto';
 export * from './api/combat-block-a-079.dto';
 export * from './api/combat-block-b-079.dto';
 export * from './api/health-079.dto';
+export * from './api/environment-079.dto';
 export * from './api/trait.api';
 export * from './api/trait.dto';
 

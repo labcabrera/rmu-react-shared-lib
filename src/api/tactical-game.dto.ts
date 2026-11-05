@@ -1,4 +1,5 @@
 import type { LightType } from './combat-talents.dto';
+import type { GameEnvironment079Fields } from './environment-079.dto';
 import { CharacterCondition, CharacterFate, HpBySource, HpLogEntry, Injury } from './health.dto';
 import { StrategicItemModifier } from './item-modifier.dto';
 import type { ItemConsumed, TemporaryModifier } from './temporary-modifier.dto';
@@ -89,7 +90,7 @@ export type TacticalGameEnvironment = {
    * reads in combat. Null: none. In a PATCH, left out keeps it and null clears it.
    */
   light?: LightType | null;
-};
+} & GameEnvironment079Fields;
 
 export type CreateTacticalGameDto = Omit<
   TacticalGame,

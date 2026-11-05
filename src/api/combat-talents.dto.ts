@@ -208,7 +208,14 @@ export const SENSE_USAGES = ['required', 'helpful'] as const;
 export type SenseUsage = (typeof SENSE_USAGES)[number];
 
 /** Situations the game master marks for the sense talents. */
-export const SENSE_SELECTIONS = ['locate-sound', 'warm-target', 'hidden-target', 'within-darkvision'] as const;
+/** `beyond-visual-range`: a sound beyond the visual range in fog (spec 079, C5). */
+export const SENSE_SELECTIONS = [
+  'locate-sound',
+  'warm-target',
+  'hidden-target',
+  'within-darkvision',
+  'beyond-visual-range',
+] as const;
 export type SenseSelection = (typeof SENSE_SELECTIONS)[number];
 
 /** Skills a sense can be chosen for (`err-maneuver-sense-not-allowed` for the others). */
