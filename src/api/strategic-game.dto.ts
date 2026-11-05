@@ -68,8 +68,11 @@ export interface GameCalendar {
   currentDay: number;
 }
 
-/** What a character does while the time passes (spec 065): `rest` by default. */
-export const PASS_TIME_ACTIVITIES = ['full-rest', 'rest', 'excluded'] as const;
+/**
+ * What a character does while the time passes (spec 065): `rest` by default. `active` (workspace spec 079, C2): heals
+ * without rest, hits only in 8 sleep hours a day and untreated injuries frozen.
+ */
+export const PASS_TIME_ACTIVITIES = ['full-rest', 'rest', 'active', 'excluded'] as const;
 export type PassTimeActivity = (typeof PASS_TIME_ACTIVITIES)[number];
 
 /** Most days of one step of time. */

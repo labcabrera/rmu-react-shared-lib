@@ -7,6 +7,8 @@ import {
   removeCharacterTemporaryModifier,
   resolveCharacterCondition,
   restCharacter,
+  amputateCharacterLimb,
+  failCharacterInjuryStrenuous,
   rollCharacterInjuryPermanent,
   rollCharacterInjuryRecovery,
   treatCharacterInjury,
@@ -71,6 +73,18 @@ describe('character health api', () => {
       /\/injuries\/i1\/permanent$/,
     ],
     ['rest', () => restCharacter('c1', { days: 2, fullRest: true }, auth), 'POST', /\/characters\/c1\/rest$/],
+    [
+      'amputation',
+      () => amputateCharacterLimb('c1', { method: 'surgical', location: 'arm', side: 'left', roll: 60 }, auth),
+      'POST',
+      /\/characters\/c1\/amputations$/,
+    ],
+    [
+      'strenuous failure',
+      () => failCharacterInjuryStrenuous('c1', 'i1', { absolute: true }, auth),
+      'POST',
+      /\/injuries\/i1\/strenuous-failure$/,
+    ],
     [
       'resolve condition',
       () => resolveCharacterCondition('c1', 'k1', auth),

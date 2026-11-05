@@ -125,6 +125,8 @@ export type ConcentrationAlertType = (typeof CONCENTRATION_ALERT_TYPES)[number];
  */
 export interface ResolveAlertDto {
   outcome?: MentalFocusOutcome | 'confirmed';
+  /** Workspace spec 079, C1: the side of a confirmed limb-loss alert whose injury has none. */
+  side?: 'left' | 'right';
 }
 
 // ---------------------------------------------------------------------------------------------------------------

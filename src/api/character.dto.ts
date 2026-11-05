@@ -1,3 +1,4 @@
+import type { LostLimb } from './health-079.dto';
 import type { StrategicAccess } from './faction.dto';
 import { NamedEntity } from './common.dto';
 import { CharacterCondition, Injury } from './health.dto';
@@ -42,6 +43,8 @@ export interface Character {
   healthSummary?: CharacterHealthSummary;
   /** Lasting morale and fear modifiers (workspace spec 068); missing in older responses. */
   temporaryModifiers?: CharacterTemporaryModifier[];
+  /** Workspace spec 079, C1: limbs lost for good. */
+  lostLimbs?: LostLimb[];
 }
 
 export interface CharacterHealthSummary {

@@ -2,6 +2,7 @@ import { AuthContextProps } from 'react-oidc-context';
 import { apiStrategicGameUrl } from '../config/config.service';
 import callApi, { Page } from './api';
 import { Character } from './character.dto';
+import { AmputateLimbDto, AmputationResult, StrenuousFailureDto } from './health-079.dto';
 import {
   AddInjuryDto,
   HealingLogEntry,
@@ -92,6 +93,25 @@ export async function rollCharacterInjuryPermanent(
 
 export async function restCharacter(characterId: string, dto: RestDto, auth: AuthContextProps): Promise<Character> {
   return await callApi(auth, `${characterUrl(characterId)}/rest`, jsonPost(dto));
+}
+
+/** Workspace spec 079, C1: a surgical (-50) or emergency (-30) amputation; the limb is lost whatever the result. */
+export async function amputateCharacterLimb(
+  characterId: string,
+  dto: AmputateLimbDto,
+  auth: AuthContextProps
+): Promise<AmputationResult<Character>> {
+  return await callApi(auth, `${characterUrl(characterId)}/amputations`, jsonPost(dto));
+}
+
+/** Workspace spec 079, C2: a strenuous activity failed on a treated injury (an absolute failure doubles its penalty). */
+export async function failCharacterInjuryStrenuous(
+  characterId: string,
+  injuryId: string,
+  dto: StrenuousFailureDto,
+  auth: AuthContextProps
+): Promise<Character> {
+  return await callApi(auth, `${characterUrl(characterId)}/injuries/${injuryId}/strenuous-failure`, jsonPost(dto));
 }
 
 export async function resolveCharacterCondition(
