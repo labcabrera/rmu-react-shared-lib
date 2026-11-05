@@ -1,3 +1,4 @@
+import type { LightType } from './combat-talents.dto';
 import { CharacterCondition, CharacterFate, HpBySource, HpLogEntry, Injury } from './health.dto';
 import { StrategicItemModifier } from './item-modifier.dto';
 import type { ItemConsumed, TemporaryModifier } from './temporary-modifier.dto';
@@ -83,6 +84,11 @@ export type CreateEnvironmentFactionDto = {
 export type TacticalGameEnvironment = {
   temperatureFatigueModifier: number;
   altitudeFatigueModifier: number;
+  /**
+   * Ambient light (workspace spec 076): the default light of maneuvers and movements, and the light Light Sensitivity
+   * reads in combat. Null: none. In a PATCH, left out keeps it and null clears it.
+   */
+  light?: LightType | null;
 };
 
 export type CreateTacticalGameDto = Omit<

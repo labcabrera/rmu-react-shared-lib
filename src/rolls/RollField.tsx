@@ -13,8 +13,8 @@ import {
   useTheme,
 } from '@mui/material';
 import RollPad from './RollPad';
-import { formatRoll, fromNumber, randomDie, rollDice } from './roll-logic';
-import { RollSpec, RollValue } from './roll.types';
+import { DEFAULT_OPEN_ENDED, formatRoll, fromNumber, randomDie, rollDice } from './roll-logic';
+import { OpenEndedThresholds, RollSpec, RollValue } from './roll.types';
 
 /**
  * Standard width of a roll field (spec 051), whatever its container: room for `142 (97+45)` and the dice button.
@@ -49,6 +49,11 @@ export interface RollFieldProps {
   presentation?: RollPresentation;
   /** Die used by the dice buttons, for tests. */
   random?: (sides: number) => number;
+  /**
+   * Thresholds of an open-ended roll (workspace spec 076): the actor's `rollProfile` of the tactical API, as luck
+   * talents move them. 96 and 5 by default.
+   */
+  openEnded?: OpenEndedThresholds;
 }
 
 /**
@@ -71,7 +76,9 @@ const RollField: FC<RollFieldProps> = ({
   fullWidth = false,
   presentation = 'auto',
   random = randomDie,
+  openEnded,
 }) => {
+  const thresholds: OpenEndedThresholds = openEnded ?? DEFAULT_OPEN_ENDED;
   const { t } = useTranslation();
   const theme = useTheme();
   const large = useMediaQuery(theme.breakpoints.up('md'));
@@ -88,8 +95,9 @@ const RollField: FC<RollFieldProps> = ({
           ? last
           : undefined
         : value;
-  const text = value === null || value === undefined ? '' : known ? formatRoll(known, spec) : String(value as number);
-  const initial = known ?? (typeof value === 'number' ? fromNumber(spec, value) : undefined);
+  const text =
+    value === null || value === undefined ? '' : known ? formatRoll(known, spec, thresholds) : String(value as number);
+  const initial = known ?? (typeof value === 'number' ? fromNumber(spec, value, thresholds) : undefined);
   const editable = !disabled && !readOnly;
   const fieldLabel = label ?? t('roll');
 
@@ -111,7 +119,14 @@ const RollField: FC<RollFieldProps> = ({
   };
 
   const pad = (
-    <RollPad spec={spec} initial={initial} onConfirm={commit} onCancel={() => setOpen(false)} random={random} />
+    <RollPad
+      spec={spec}
+      initial={initial}
+      onConfirm={commit}
+      onCancel={() => setOpen(false)}
+      random={random}
+      openEnded={thresholds}
+    />
   );
   const asPopover = presentation === 'popover' || (presentation === 'auto' && large);
 
@@ -157,7 +172,7 @@ const RollField: FC<RollFieldProps> = ({
                     size={compact ? 'small' : 'medium'}
                     onClick={(event) => {
                       event.stopPropagation();
-                      commit(rollDice(spec, random));
+                      commit(rollDice(spec, random, thresholds));
                     }}
                   >
                     <CasinoIcon fontSize={compact ? 'small' : 'medium'} />

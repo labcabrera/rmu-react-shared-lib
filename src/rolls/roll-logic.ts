@@ -1,7 +1,7 @@
-import { RollChain, RollSpec, RollValue } from './roll.types';
+import { OpenEndedThresholds, RollChain, RollSpec, RollValue } from './roll.types';
 
-const HIGH_FROM = 96;
-const LOW_TO = 5;
+/** The usual open-ended thresholds: 96-100 opens high and 01-05 opens low. */
+export const DEFAULT_OPEN_ENDED: OpenEndedThresholds = { highFrom: 96, lowTo: 5 };
 /** Guard against a broken random source in an open-ended chain. */
 const MAX_DICE = 50;
 
@@ -9,30 +9,38 @@ const MAX_DICE = 50;
 export const randomDie = (sides: number): number => Math.floor(Math.random() * sides) + 1;
 
 const isOpen = (spec: RollSpec) => spec.openEnded !== 'none' && spec.dice === 1 && spec.sides === 100;
-const opensHigh = (spec: RollSpec, first: number) =>
-  isOpen(spec) && first >= HIGH_FROM && (spec.openEnded === 'high' || spec.openEnded === 'both');
-const opensLow = (spec: RollSpec, first: number) =>
-  isOpen(spec) && first <= LOW_TO && (spec.openEnded === 'low' || spec.openEnded === 'both');
+const opensHigh = (spec: RollSpec, first: number, thresholds: OpenEndedThresholds) =>
+  isOpen(spec) && first >= thresholds.highFrom && (spec.openEnded === 'high' || spec.openEnded === 'both');
+const opensLow = (spec: RollSpec, first: number, thresholds: OpenEndedThresholds) =>
+  isOpen(spec) && first <= thresholds.lowTo && (spec.openEnded === 'low' || spec.openEnded === 'both');
 
 /**
  * Where the dice of a roll stand. A closed roll is complete with `dice` dice. An open-ended one opens with a first die
- * of 96-100 (adds) or 01-05 (subtracts), and each extra die of 96-100 asks for another one, which keeps adding or
- * subtracting.
+ * from `highFrom` (adds) or up to `lowTo` (subtracts), 96-100 and 01-05 by default, and each extra die from `highFrom`
+ * asks for another one, which keeps adding or subtracting (workspace spec 076: luck talents move the thresholds).
  */
-export function resolveChain(spec: RollSpec, rolls: number[]): RollChain {
+export function resolveChain(
+  spec: RollSpec,
+  rolls: number[],
+  thresholds: OpenEndedThresholds = DEFAULT_OPEN_ENDED
+): RollChain {
   const modifier = spec.modifier ?? 0;
   const first = rolls[0];
   if (first === undefined) return { complete: false, nextSign: 1 };
-  if (!opensHigh(spec, first) && !opensLow(spec, first)) {
+  if (!opensHigh(spec, first, thresholds) && !opensLow(spec, first, thresholds)) {
     if (rolls.length < spec.dice) return { complete: false, nextSign: 1 };
     const sum = rolls.slice(0, spec.dice).reduce((total, die) => total + die, 0);
     return { complete: true, total: sum + modifier, nextSign: 1 };
   }
-  const sign = opensHigh(spec, first) ? 1 : -1;
+  const sign = opensHigh(spec, first, thresholds) ? 1 : -1;
   const rest = rolls.slice(1);
   const last = rest[rest.length - 1];
-  if (last === undefined || last >= HIGH_FROM) return { complete: false, nextSign: sign };
-  return { complete: true, total: first + sign * rest.reduce((total, die) => total + die, 0) + modifier, nextSign: sign };
+  if (last === undefined || last >= thresholds.highFrom) return { complete: false, nextSign: sign };
+  return {
+    complete: true,
+    total: first + sign * rest.reduce((total, die) => total + die, 0) + modifier,
+    nextSign: sign,
+  };
 }
 
 /** The unmodified roll: the first die, or the sum of the dice of a roll of several dice. */
@@ -40,19 +48,27 @@ const unmodifiedOf = (spec: RollSpec, rolls: number[]) =>
   spec.dice > 1 ? rolls.slice(0, spec.dice).reduce((total, die) => total + die, 0) : rolls[0];
 
 /** The value of a complete chain of dice, or undefined while a die is missing. */
-export function toRollValue(spec: RollSpec, rolls: number[]): RollValue | undefined {
-  const chain = resolveChain(spec, rolls);
+export function toRollValue(
+  spec: RollSpec,
+  rolls: number[],
+  thresholds: OpenEndedThresholds = DEFAULT_OPEN_ENDED
+): RollValue | undefined {
+  const chain = resolveChain(spec, rolls, thresholds);
   if (!chain.complete || chain.total === undefined) return undefined;
   return { total: chain.total, rolls: [...rolls], unmodified: unmodifiedOf(spec, rolls) };
 }
 
 /** Rolls every die the roll needs. `random` is the die, for tests. */
-export function rollDice(spec: RollSpec, random: (sides: number) => number = randomDie): RollValue {
+export function rollDice(
+  spec: RollSpec,
+  random: (sides: number) => number = randomDie,
+  thresholds: OpenEndedThresholds = DEFAULT_OPEN_ENDED
+): RollValue {
   const rolls: number[] = [];
-  let value = toRollValue(spec, rolls);
+  let value = toRollValue(spec, rolls, thresholds);
   while (!value && rolls.length < MAX_DICE) {
     rolls.push(random(spec.sides));
-    value = toRollValue(spec, rolls);
+    value = toRollValue(spec, rolls, thresholds);
   }
   if (!value) throw new Error(`The roll did not end after ${MAX_DICE} dice`);
   return value;
@@ -78,9 +94,13 @@ const pad = (die: number, sides: number) => (sides === 100 && die < 10 ? `0${die
 /**
  * A roll as it is shown: the total, and its dice when there are several: `142 (97+45)`, `-87 (03−90)`, `13 (6+7)`.
  */
-export function formatRoll(value: RollValue, spec: RollSpec): string {
+export function formatRoll(
+  value: RollValue,
+  spec: RollSpec,
+  thresholds: OpenEndedThresholds = DEFAULT_OPEN_ENDED
+): string {
   if (value.rolls.length <= 1) return String(value.total);
-  const subtracts = isOpen(spec) && opensLow(spec, value.rolls[0]);
+  const subtracts = isOpen(spec) && opensLow(spec, value.rolls[0], thresholds);
   const dice = value.rolls.map((die) => pad(die, spec.sides)).join(subtracts ? '−' : '+');
   return `${value.total} (${dice})`;
 }
@@ -89,8 +109,12 @@ export function formatRoll(value: RollValue, spec: RollSpec): string {
  * A total stored without its dice as a roll of one die, when it is a complete roll of one die of the spec; undefined
  * otherwise (an open-ended total over 100, a 2d10 total...).
  */
-export function fromNumber(spec: RollSpec, total: number): RollValue | undefined {
+export function fromNumber(
+  spec: RollSpec,
+  total: number,
+  thresholds: OpenEndedThresholds = DEFAULT_OPEN_ENDED
+): RollValue | undefined {
   const die = total - (spec.modifier ?? 0);
   if (!Number.isInteger(die) || die < 1 || die > spec.sides) return undefined;
-  return toRollValue(spec, [die]);
+  return toRollValue(spec, [die], thresholds);
 }

@@ -138,10 +138,38 @@ export interface CharacterDefenseShield {
   blockCount: number;
 }
 
+/**
+ * Pool that pays development points (workspace spec 076, A3): `auto` normal points first and then bonus points,
+ * `bonus` bonus points first (up to the per level limit) and then normal points, `normal` only normal points.
+ */
+export const DEV_POINTS_POOLS = ['auto', 'normal', 'bonus'] as const;
+export type DevPointsPool = (typeof DEV_POINTS_POOLS)[number];
+
+/** Skills a Multilingual talent can grant ranks in (workspace spec 076, A7). */
+export const MULTILINGUAL_SKILL_IDS = ['language-spoken', 'language-written'] as const;
+export type MultilingualSkillId = (typeof MULTILINGUAL_SKILL_IDS)[number];
+
+/** Trait id of the Multilingual talent, which needs `languageRanks` (workspace spec 076). */
+export const MULTILINGUAL_TRAIT_ID = 'multilingual';
+
+/** Total ranks a Multilingual talent grants: 10 in one language or 5 + 5 in two (workspace spec 076). */
+export const MULTILINGUAL_RANKS = 10;
+
+/** Ranks of a language granted by Multilingual; `specialization` is a key of the `language` enumeration. */
+export interface LanguageRanks {
+  skillId: MultilingualSkillId;
+  specialization: string;
+  ranks: number;
+}
+
 export interface AddTraitDto {
   traitId: string;
   tier: number | undefined;
   specialization: string | undefined;
+  /** Pool that pays the trait (default `auto`); the game's talent policy at creation goes first (spec 076). */
+  pool?: DevPointsPool;
+  /** Multilingual only: how its 10 ranks are split, at most two languages (spec 076). */
+  languageRanks?: LanguageRanks[];
 }
 
 export interface UpdateCharacterDto {
@@ -229,6 +257,17 @@ export interface CharacterTrait {
   paidWith?: TraitPayment;
   /** The trait does not exist in this installation (an imported character, spec 024): it has no effect. */
   missingReference?: boolean;
+  /** Skill ranks granted by the talent, removed with it (workspace spec 076: Multilingual). */
+  grantedRanks?: TraitGrantedRanks[];
+}
+
+/** Ranks a talent granted in a skill (workspace spec 076). */
+export interface TraitGrantedRanks {
+  skillId: string;
+  specialization: string | null;
+  ranks: number;
+  /** The skill was created for the talent: it is removed with the talent when it keeps no ranks of its own. */
+  created: boolean;
 }
 
 export interface TraitPayment {
@@ -259,6 +298,10 @@ export interface CharacterSkill {
   ranksDeveloped: number;
   /** Ranks granted by the culture at creation: the skill cannot be leveled down below them. */
   cultureRanks?: number;
+  /** Culture entries (indexes) the culture ranks come from: two entries may grant the same language (spec 076). */
+  cultureSources?: number[];
+  /** Ranks granted by a talent such as Multilingual (spec 076): they cost no points and are included in `ranks`. */
+  talentRanks?: number;
   /** Development points spent on the skill in the current level, by pool. */
   devPointsSpent?: SkillDevPointsSpent;
   statBonus: number;
@@ -369,7 +412,38 @@ export interface CharacterExperience {
   availableStatLevelUp: number;
   developedStatLevelUp: number;
   weaponDevelopment: string[];
+  /** The skill trained intensely this level, the only one with more than two ranks (workspace spec 076, A1). */
+  intenseTrainingSkill?: IntenseTrainingSkill | null;
+  /** Normal points saved at the last level up, already included in `availableDevPoints` (spec 076, A5). */
+  savedDevPoints?: number;
+  /** Extra stat gain rolls paid with development points in the last two levels, by pool (spec 076, A4). */
+  statGainPayments?: StatGainPayment[];
 }
+
+/** Skill marked by intense training in the current level (workspace spec 076). */
+export interface IntenseTrainingSkill {
+  skillId: string;
+  specialization: string | null;
+}
+
+/** Development points paid for an extra stat gain roll (workspace spec 076). */
+export interface StatGainPayment {
+  stat: StatKey;
+  normal: number;
+  bonus: number;
+  level: number;
+}
+
+/** The skill is the one trained intensely in the current level (workspace spec 076). */
+export const isIntenseTrainingSkill = (
+  experience: Pick<CharacterExperience, 'intenseTrainingSkill'> | undefined,
+  skill: Pick<CharacterSkill, 'skillId' | 'specialization'>
+): boolean => {
+  const marked = experience?.intenseTrainingSkill;
+  return (
+    !!marked && marked.skillId === skill.skillId && (marked.specialization ?? null) === (skill.specialization ?? null)
+  );
+};
 
 export interface AddItemDto {
   name: string;
@@ -404,7 +478,7 @@ export interface CharacterAttack {
   /** The attack uses a two-handed weapon mode (one size bigger, §10). */
   twoHanded?: boolean;
   /** Weapon category used by the multiple attack rules. */
-  weaponCategory?: 'dagger' | 'light' | 'natural' | 'standard';
+  weaponCategory?: 'dagger' | 'light' | 'natural' | 'standard' | 'unarmed';
   /** The weapon is made for another size than the wielder: it attacks with its own size and -20 (workspace spec 075). */
   wrongSize?: boolean;
   /** Strategic item of the attack (spec 019). */
@@ -425,6 +499,8 @@ export interface DeleteTraitDto {
 export interface UpdateTemporaryStatDto {
   stat: StatKey;
   roll: number;
+  /** Pool that pays an extra stat gain roll (default `auto`, spec 076). */
+  pool?: DevPointsPool;
 }
 
 export interface StatCreationDto {

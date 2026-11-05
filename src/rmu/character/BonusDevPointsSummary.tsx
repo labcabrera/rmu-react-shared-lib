@@ -8,8 +8,9 @@ import { StrategicGame } from '../../api/strategic-game.dto';
 export const DEFAULT_RACE_DEV_POINTS_PER_LEVEL = 25;
 
 /**
- * Bonus development points (race and game master) with the spent / limit of the level, and the flaw points.
- * Renders nothing when the character has none of them.
+ * Bonus development points (race and game master) with the spent / limit of the level, the flaw points and the normal
+ * points saved at the last level up (workspace spec 076, already included in the available points). Renders nothing
+ * when the character has none of them.
  */
 const BonusDevPointsSummary: FC<{
   character: Character;
@@ -18,9 +19,15 @@ const BonusDevPointsSummary: FC<{
   limit?: number;
 }> = ({ character, strategicGame, limit }) => {
   const { t } = useTranslation();
-  const { availableBonusDevPoints = 0, bonusDevPointsSpentThisLevel = 0, flawDevPoints = 0 } = character.experience;
+  const {
+    availableBonusDevPoints = 0,
+    bonusDevPointsSpentThisLevel = 0,
+    flawDevPoints = 0,
+    savedDevPoints = 0,
+  } = character.experience;
   const levelLimit = limit ?? strategicGame?.powerLevel?.raceDevPointsPerLevel ?? DEFAULT_RACE_DEV_POINTS_PER_LEVEL;
-  if (availableBonusDevPoints <= 0 && bonusDevPointsSpentThisLevel <= 0 && flawDevPoints <= 0) return null;
+  if (availableBonusDevPoints <= 0 && bonusDevPointsSpentThisLevel <= 0 && flawDevPoints <= 0 && savedDevPoints <= 0)
+    return null;
   return (
     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ alignItems: { xs: 'stretch', sm: 'center' } }}>
       <Typography variant="body2" color="text.secondary">
@@ -32,6 +39,11 @@ const BonusDevPointsSummary: FC<{
       {flawDevPoints > 0 && (
         <Typography variant="body2" color="text.secondary">
           {t('flaw-dev-points')}: <b>{flawDevPoints}</b>
+        </Typography>
+      )}
+      {savedDevPoints > 0 && (
+        <Typography variant="body2" color="text.secondary" title={t('saved-dev-points-hint')}>
+          {t('saved-dev-points')}: <b>{savedDevPoints}</b>
         </Typography>
       )}
     </Stack>
