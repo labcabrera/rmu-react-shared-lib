@@ -5,7 +5,7 @@ import { Box, Chip, Stack, Typography } from '@mui/material';
 import { InjuryPoison, PoisonSeverity, PoisonStage, ROUNDS_PER_HOUR } from '../../api/poison.dto';
 import { bonusColor } from '../character/StatPill';
 
-const ROUNDS_PER_MINUTE = 6;
+const ROUNDS_PER_MINUTE = ROUNDS_PER_HOUR / 60;
 const ROUNDS_PER_DAY = 24 * ROUNDS_PER_HOUR;
 
 const SEVERITY_COLORS: Record<PoisonSeverity, 'default' | 'warning' | 'error'> = {
