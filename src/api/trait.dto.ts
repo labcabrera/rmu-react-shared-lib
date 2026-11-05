@@ -20,9 +20,15 @@ export type TraitPrerequisiteType = 'natural' | 'training' | 'milestone' | 'prof
 
 export type TraitPrerequisite = {
   type: TraitPrerequisiteType;
-  /** Profession, skill or race ids. */
-  value?: string[] | null;
+  /** Profession, skill or race ids: the API sends them comma separated; read them with `traitPrerequisiteValues`. */
+  value?: string | string[] | null;
   description?: string | null;
+};
+
+/** The ids a prerequisite names, whether the value comes comma separated (as the API sends it) or as a list. */
+export const traitPrerequisiteValues = (value: TraitPrerequisite['value']): string[] => {
+  const raw = Array.isArray(value) ? value.map(String) : typeof value === 'string' ? value.split(',') : [];
+  return raw.map((entry) => entry.trim()).filter(Boolean);
 };
 
 export type Trait = {
