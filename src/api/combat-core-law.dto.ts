@@ -189,7 +189,7 @@ export type GrappleFeat = (typeof GRAPPLE_FEATS)[number];
 
 /** What changed the BMR of a movement (`ActionMovementResult.bmrMultipliers[]`). */
 export interface BmrMultiplier {
-  key: 'half-movement' | 'concentration';
+  key: 'half-movement' | 'concentration' | 'backwards' | 'prone';
   value: number;
 }
 
