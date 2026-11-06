@@ -130,7 +130,7 @@ export const SITUATIONAL_TRAIT_BONUSES: SituationalTraitBonus[] = [
   { traitId: 'empathy', skills: ['social-awareness'], valuePerTier: 50, fixed: true, condition: 'read-emotions', mode: 'ticked' },
   {
     traitId: 'animal-empathy',
-    skills: ['animal-handling', 'animal-training', 'riding'],
+    skills: ['animal-handling', 'riding'],
     valuePerTier: 25,
     fixed: true,
     condition: 'animal-of-its-type',
