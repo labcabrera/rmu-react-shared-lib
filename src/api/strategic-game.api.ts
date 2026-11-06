@@ -6,6 +6,8 @@ import {
   GameMemberRole,
   GameMembers,
   GameTimeLogEntry,
+  GroupXpRequest,
+  GroupXpResult,
   PassTimeRequest,
   PassTimeResult,
   StrategicGame,
@@ -55,6 +57,16 @@ export async function updateStrategicGame(
 export async function deleteStrategicGame(gameId: string, auth: AuthContextProps): Promise<void> {
   const url = `${apiStrategicGameUrl}/strategic-games/${gameId}`;
   return await callApi(auth, url, { method: 'DELETE' });
+}
+
+/** Experience for the group (workspace spec 079): the masters give the whole amount to each chosen character. */
+export async function awardGroupXp(gameId: string, body: GroupXpRequest, auth: AuthContextProps): Promise<GroupXpResult> {
+  const url = `${apiStrategicGameUrl}/strategic-games/${gameId}/xp`;
+  return await callApi(auth, url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
 }
 
 /** Time passes in the campaign (spec 065): the calendar and the rest of its characters, or a preview with `dryRun`. */

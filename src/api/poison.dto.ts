@@ -34,8 +34,8 @@ export const COATING_FORMS: PoisonForm[] = ['liquid', 'paste'];
 /** An antidote of any category. */
 export const ANY_POISON = 'any';
 
-/** Rounds of 10 seconds in an hour. */
-export const ROUNDS_PER_HOUR = 360;
+/** Rounds of 5 seconds (Core Law §8.1) in an hour. */
+export const ROUNDS_PER_HOUR = 720;
 
 export type PoisonRange = { min: number; max: number };
 

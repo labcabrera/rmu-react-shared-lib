@@ -143,12 +143,15 @@ describe('PoisonStageTimeline', () => {
   const t = (key: string, options?: Record<string, unknown>) => `${key}:${options?.count}`;
 
   it('gives a time in its largest unit, rounded', () => {
+    // 5-second rounds (Core Law §8.1): 12 a minute, 720 an hour.
     expect(poisonTimeLabel(4, t)).toBe('poison-time-rounds:4');
-    expect(poisonTimeLabel(12, t)).toBe('poison-time-minutes:2');
-    expect(poisonTimeLabel(720, t)).toBe('poison-time-hours:2');
-    expect(poisonTimeLabel(8640, t)).toBe('poison-time-days:1');
-    expect(poisonTimeLabel(2917, t)).toBe('poison-time-hours:8');
-    expect(poisonTimeLabel(37, t)).toBe('poison-time-minutes:6');
+    expect(poisonTimeLabel(11, t)).toBe('poison-time-rounds:11');
+    expect(poisonTimeLabel(12, t)).toBe('poison-time-minutes:1');
+    expect(poisonTimeLabel(24, t)).toBe('poison-time-minutes:2');
+    expect(poisonTimeLabel(1440, t)).toBe('poison-time-hours:2');
+    expect(poisonTimeLabel(17280, t)).toBe('poison-time-days:1');
+    expect(poisonTimeLabel(5834, t)).toBe('poison-time-hours:8');
+    expect(poisonTimeLabel(74, t)).toBe('poison-time-minutes:6');
   });
 
   it('shows the poison, each stage with its state and the antidotes', () => {

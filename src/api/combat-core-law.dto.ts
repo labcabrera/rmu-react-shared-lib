@@ -68,6 +68,8 @@ export const CONCENTRATION_KINDS = [
   'spell-preparation',
   'hold-position',
   'manual',
+  // Workspace spec 079, B3: a full dodge granted by Adrenal Defense, kept as concentration.
+  'full-dodge',
 ] as const;
 export type ConcentrationKind = (typeof CONCENTRATION_KINDS)[number];
 
@@ -117,9 +119,14 @@ export type MentalFocusOutcome = (typeof MENTAL_FOCUS_OUTCOMES)[number];
 export const CONCENTRATION_ALERT_TYPES = ['mental-focus'] as const;
 export type ConcentrationAlertType = (typeof CONCENTRATION_ALERT_TYPES)[number];
 
-/** Body of `POST /actor-rounds/:id/alerts/:alertId/resolve`: the outcome of a Mental Focus maneuver. */
+/**
+ * Body of `POST /actor-rounds/:id/alerts/:alertId/resolve`: the outcome of a Mental Focus maneuver, or `confirmed` for a
+ * `death-threshold` alert (spec 079).
+ */
 export interface ResolveAlertDto {
-  outcome?: MentalFocusOutcome;
+  outcome?: MentalFocusOutcome | 'confirmed';
+  /** Workspace spec 079, C1: the side of a confirmed limb-loss alert whose injury has none. */
+  side?: 'left' | 'right';
 }
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -263,8 +270,8 @@ export const IRON_WILL_RR_KEY = 'iron-will';
 // Hazards: falls and falling objects (D1, D2)
 // ---------------------------------------------------------------------------------------------------------------
 
-/** What hits the actor: it falls, or something falls on it. */
-export const HAZARD_KINDS = ['fall', 'falling-object'] as const;
+/** What hits the actor: it falls, something falls on it, or an extreme temperature (spec 079, C3; no attack roll). */
+export const HAZARD_KINDS = ['fall', 'falling-object', 'extreme-temperature'] as const;
 export type HazardKind = (typeof HAZARD_KINDS)[number];
 
 /** Attack table of a hazard: Crush, or Rock for an object smaller than the actor. */
@@ -333,7 +340,8 @@ export interface ActorRoundHazard {
   objectSize: string | null;
   weightLbs: number | null;
   shield: boolean;
-  attackTable: HazardAttackTable;
+  /** Null for an extreme temperature (spec 079). */
+  attackTable: HazardAttackTable | null;
   /** Steps from medium of the attack size. */
   attackSize: number;
   ob: number;

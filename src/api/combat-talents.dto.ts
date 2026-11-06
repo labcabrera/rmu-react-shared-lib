@@ -64,9 +64,12 @@ export interface ReactionAlertData {
   phase: string;
 }
 
-/** Why an action is resolved out of its turn; `reaction` is new in spec 076 (0 AP, no AP penalty). */
-export type ForceReason = 'withdrawal' | 'pass-through' | 'effect' | 'gm' | 'reaction';
-export const FORCE_REASONS: ForceReason[] = ['withdrawal', 'pass-through', 'effect', 'gm', 'reaction'];
+/**
+ * Why an action is resolved out of its turn; `reaction` is new in spec 076 and `stray-shot` in spec 079 (both 0 AP, no AP
+ * penalty, only declared as a new attack from their alert).
+ */
+export type ForceReason = 'withdrawal' | 'pass-through' | 'effect' | 'gm' | 'reaction' | 'stray-shot';
+export const FORCE_REASONS: ForceReason[] = ['withdrawal', 'pass-through', 'effect', 'gm', 'reaction', 'stray-shot'];
 
 /** `forced` of a new attack declared as a reaction: always from its `reaction-available` alert. */
 export interface ReactionForcedRequest {
@@ -205,7 +208,14 @@ export const SENSE_USAGES = ['required', 'helpful'] as const;
 export type SenseUsage = (typeof SENSE_USAGES)[number];
 
 /** Situations the game master marks for the sense talents. */
-export const SENSE_SELECTIONS = ['locate-sound', 'warm-target', 'hidden-target', 'within-darkvision'] as const;
+/** `beyond-visual-range`: a sound beyond the visual range in fog (spec 079, C5). */
+export const SENSE_SELECTIONS = [
+  'locate-sound',
+  'warm-target',
+  'hidden-target',
+  'within-darkvision',
+  'beyond-visual-range',
+] as const;
 export type SenseSelection = (typeof SENSE_SELECTIONS)[number];
 
 /** Skills a sense can be chosen for (`err-maneuver-sense-not-allowed` for the others). */

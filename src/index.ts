@@ -157,6 +157,11 @@ export * from './api/tactical-game.api';
 export * from './api/tactical-game.dto';
 export * from './api/combat-talents.dto';
 export * from './api/combat-core-law.dto';
+export * from './api/combat-block-a-079.dto';
+export * from './api/combat-block-b-079.dto';
+export * from './api/health-079.dto';
+export * from './api/environment-079.dto';
+export * from './api/talents-079.dto';
 export * from './api/trait.api';
 export * from './api/trait.dto';
 
@@ -307,6 +312,7 @@ export { default as StatPill, bonusColor, formatBonus } from './rmu/character/St
 export { default as StatBonusGrid } from './rmu/character/StatBonusGrid';
 export { default as BonusDevPointsSummary } from './rmu/character/BonusDevPointsSummary';
 export { default as SituationalSenseTraits, senseTraitsOf } from './rmu/character/SituationalSenseTraits';
+export { default as SituationalTalentBonuses } from './rmu/character/SituationalTalentBonuses';
 export { default as TraitTypeChip } from './rmu/trait/TraitTypeChip';
 export { default as ManeuverProfilePanel } from './rmu/maneuver/ManeuverProfilePanel';
 export { default as ManeuverModifierList } from './rmu/maneuver/ManeuverModifierList';

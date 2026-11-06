@@ -1,8 +1,10 @@
+
 // Health model shared by the strategic and the tactical modules (spec 013 §1): injuries with a stable UUID and
 // their origin, treatments, recovery, conditions and the healing log of a character.
 import type { RollModifier } from '../rmu/RollBreakdown';
 import type { RuleParams } from '../rmu/RuleHint';
 import type { Pace } from './character.dto';
+import type { InjuryStrenuousFailure } from './health-079.dto';
 import { InjuryPoison } from './poison.dto';
 import type { TreatmentHerb } from './treasure-goods.dto';
 
@@ -219,6 +221,8 @@ export interface Injury {
   tourniquet?: InjuryTourniquet | null;
   /** Workspace spec 068, tactical only: the treatment of a `medical` action in progress. */
   treatmentInProgress?: TreatmentInProgress | null;
+  /** Workspace spec 079, C2: a failed strenuous activity reopened it; the next recovery roll needs a new treatment. */
+  strenuousFailure?: InjuryStrenuousFailure | null;
 }
 
 export type CharacterConditionStatus = 'unconscious' | 'permanent-unconscious' | 'dead';
@@ -230,6 +234,8 @@ export interface CharacterCondition {
   description?: string;
   createdAt: string;
   resolvedAt?: string;
+  /** Workspace spec 079, C6: day of the campaign of a death. */
+  gameDay?: number;
 }
 
 export type HealingLogKind =
@@ -240,7 +246,10 @@ export type HealingLogKind =
   | 'rest'
   | 'manual'
   /** Spec 062: a dose of a healing herb. */
-  | 'herb';
+  | 'herb'
+  /** Workspace spec 079, C1 and C2. */
+  | 'amputation'
+  | 'strenuous-failure';
 
 export interface HealingLogEntry {
   id: string;
@@ -373,6 +382,11 @@ export interface RestDto {
   hours?: number;
   days?: number;
   fullRest?: boolean;
+  /**
+   * Workspace spec 079, C2: the character keeps active (travels, works). Hits only recover in 8 sleep hours of each
+   * whole day, untreated injuries do not improve and `fullRest` is ignored.
+   */
+  active?: boolean;
 }
 
 /** Where a change of hits of a tactical game comes from (spec 013, §1.1). */
