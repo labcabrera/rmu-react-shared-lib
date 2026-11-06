@@ -32,10 +32,10 @@ export type RollModifierGroup =
 export type RollModifier = {
   key: string;
   value: number;
-  group?: RollModifierGroup;
-  source?: string;
-  rule?: string;
-  params?: RuleParams;
+  group?: RollModifierGroup | null;
+  source?: string | null;
+  rule?: string | null;
+  params?: RuleParams | null;
 };
 
 /** A rule that did not apply to the roll, and why (spec 051). */
@@ -43,8 +43,8 @@ export type SkippedRule = {
   source: string;
   group?: RollModifierGroup;
   reason: string;
-  rule?: string;
-  params?: RuleParams;
+  rule?: string | null;
+  params?: RuleParams | null;
 };
 
 const GROUP_ORDER: (RollModifierGroup | 'other')[] = [
@@ -97,9 +97,9 @@ export const useModifierLabel = () => {
 /** Translated values of the text params of an explanation (`flank` → its label), numbers as they are. */
 const useExplanationValues = () => {
   const { t } = useTranslation();
-  return (params: RuleParams = {}) =>
+  return (params?: RuleParams | null) =>
     Object.fromEntries(
-      Object.entries(params).map(([name, value]) => [
+      Object.entries(params ?? {}).map(([name, value]) => [
         name,
         typeof value === 'string' ? t(value, { defaultValue: value }) : value,
       ])
@@ -148,8 +148,8 @@ const ModifierRow: FC<{ modifier: RollModifier; context: RollContext }> = ({ mod
     <RuleHint
       title={`${label(modifier.key)} ${signed(modifier.value)}`}
       description={description}
-      params={modifier.params}
-      reference={modifier.rule}
+      params={modifier.params ?? undefined}
+      reference={modifier.rule ?? undefined}
     >
       {row}
     </RuleHint>

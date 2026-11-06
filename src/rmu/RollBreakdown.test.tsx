@@ -1,5 +1,7 @@
 import React from 'react';
+import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { screen } from '@testing-library/react';
+import i18next from 'i18next';
 import { describe, expect, it } from 'vitest';
 import { renderWithProviders } from '../test/render';
 import RollBreakdown from './RollBreakdown';
@@ -64,5 +66,25 @@ describe('RollBreakdown', () => {
 
     expect(screen.getByText('modifier-group-other')).toBeInTheDocument();
     expect(screen.getAllByText('+60')).toHaveLength(1);
+  });
+
+  it('explains a modifier whose params are null, as the API sends them', async () => {
+    const i18n = i18next.createInstance();
+    await i18n.use(initReactI18next).init({
+      lng: 'en',
+      resources: { en: { translation: { 'medical-rule-healer-penalty': 'The injuries of the healer' } } },
+    });
+
+    renderWithProviders(
+      <I18nextProvider i18n={i18n}>
+        <RollBreakdown
+          context="medical"
+          modifiers={[{ key: 'healer-penalty', value: -30, group: 'penalty', rule: null, params: null }]}
+        />
+      </I18nextProvider>
+    );
+
+    // Its row and the subtotal of its group.
+    expect(screen.getAllByText('-30')).toHaveLength(2);
   });
 });
