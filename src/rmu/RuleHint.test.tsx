@@ -6,7 +6,7 @@ import i18next from 'i18next';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '../test/render';
 import RollBreakdown from './RollBreakdown';
-import RuleHint, { FieldHint } from './RuleHint';
+import RuleHint, { FieldHint, RuleParamList } from './RuleHint';
 
 const hint = () =>
   renderWithProviders(
@@ -105,6 +105,15 @@ describe('RollBreakdown explanations (spec 051)', () => {
     await userEvent.click(toggle);
     expect(screen.getByText('shield-not-front')).toBeInTheDocument();
     expect(screen.getByText('§9.6')).toBeInTheDocument();
+  });
+});
+
+describe('RuleParamList (spec 080)', () => {
+  it('leaves out the ids of the params', () => {
+    renderWithProviders(<RuleParamList params={{ pace: 'walk', movementId: 'b7a7ca1b-0000' }} />);
+    expect(screen.getByText('walk')).toBeTruthy();
+    expect(screen.queryByText('b7a7ca1b-0000')).toBeNull();
+    expect(screen.queryByText('movementId')).toBeNull();
   });
 });
 

@@ -13,11 +13,12 @@ const signedParam = (value: number) => (value > 0 ? `+${value}` : `${value}`);
 
 /**
  * The inputs of a rule as `label: value` lines: `rule-param-<name>` labels, translated text values and signed
- * numbers for penalties (negative ones). A boolean shows as yes or no.
+ * numbers for penalties (negative ones). A boolean shows as yes or no. Ids (`movementId`…) are for the clients and are
+ * left out (workspace spec 080).
  */
 export const RuleParamList: FC<{ params: RuleParams }> = ({ params }) => {
   const { t } = useTranslation();
-  const entries = Object.entries(params);
+  const entries = Object.entries(params).filter(([name]) => !/Id$/.test(name));
   if (entries.length === 0) return null;
   const format = (value: number | string | boolean) =>
     typeof value === 'boolean'
