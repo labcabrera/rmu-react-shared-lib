@@ -286,6 +286,8 @@ export type { ApLedgerItem, ApPip, ApPipState } from './rmu/combat/ApPips';
 export { combatActionInfo, combatColors, factionColor } from './rmu/combat/actionTypes';
 export type { CombatActionCategory, CombatActionState, CombatActionType } from './rmu/combat/actionTypes';
 export { default as AttackCard } from './rmu/character/AttackCard';
+export { obMargin } from './rmu/combat/ob-margin';
+export type { ObAttack } from './rmu/combat/ob-margin';
 export { default as AttackSizeChip } from './rmu/combat/AttackSizeChip';
 export {
   ATTACK_SIZE_SCALE,
