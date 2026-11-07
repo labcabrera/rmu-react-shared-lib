@@ -1,4 +1,5 @@
 import React, { FC, ReactElement, ReactNode } from 'react';
+import CancelIcon from '@mui/icons-material/Cancel';
 import { alpha, Chip, SxProps, Theme, Tooltip } from '@mui/material';
 
 /**
@@ -20,6 +21,10 @@ export interface RmuChipProps {
   hint?: ReactNode;
   size?: 'small' | 'medium';
   sx?: SxProps<Theme>;
+  /** Shows a delete icon on the chip (an effect removed by hand). */
+  onDelete?: () => void;
+  /** Accessible name of the delete icon. */
+  deleteLabel?: string;
 }
 
 const softSx = (tone: RmuChipTone) => (theme: Theme) => {
@@ -40,6 +45,7 @@ const softSx = (tone: RmuChipTone) => (theme: Theme) => {
     bgcolor: alpha(palette.main, theme.palette.mode === 'dark' ? 0.18 : 0.12),
     color,
     '& .MuiChip-icon': { color },
+    '& .MuiChip-deleteIcon': { color: alpha(color, 0.7), '&:hover': { color } },
     ...avatar(palette.main),
   };
 };
@@ -47,9 +53,21 @@ const softSx = (tone: RmuChipTone) => (theme: Theme) => {
 /**
  * The chips of the app in three looks, so that a rule, a result and an effect never read alike: a `rule` is outlined
  * and neutral (it explains, it does not act); an `outcome` and an `effect` have a soft fill in the color of their
- * severity, the effect with its icon. None of them is clickable; a hint shows as a tooltip.
+ * severity, the effect with its icon. None of them is clickable, but an effect may have a delete icon (`onDelete`); a
+ * hint shows as a tooltip.
  */
-const RmuChip: FC<RmuChipProps> = ({ variant, label, tone = 'default', avatar, icon, hint, size = 'small', sx }) => {
+const RmuChip: FC<RmuChipProps> = ({
+  variant,
+  label,
+  tone = 'default',
+  avatar,
+  icon,
+  hint,
+  size = 'small',
+  sx,
+  onDelete,
+  deleteLabel,
+}) => {
   const chip = (
     <Chip
       size={size}
@@ -59,6 +77,8 @@ const RmuChip: FC<RmuChipProps> = ({ variant, label, tone = 'default', avatar, i
       variant={variant === 'rule' ? 'outlined' : 'filled'}
       data-variant={variant}
       data-tone={variant === 'rule' ? undefined : tone}
+      onDelete={onDelete}
+      deleteIcon={onDelete ? <CancelIcon aria-label={deleteLabel} titleAccess={deleteLabel} /> : undefined}
       sx={[
         variant === 'rule'
           ? (theme: Theme) => ({ color: theme.palette.text.secondary, borderColor: theme.palette.divider })
