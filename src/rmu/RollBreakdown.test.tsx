@@ -88,3 +88,18 @@ describe('RollBreakdown', () => {
     expect(screen.getAllByText('-30')).toHaveLength(2);
   });
 });
+
+describe('RollBreakdown collapsible (spec 085)', () => {
+  it('folds the modifiers under the total until it is opened', async () => {
+    const { default: RB } = await import('./RollBreakdown');
+    const { renderWithProviders } = await import('../test/render');
+    const { fireEvent, screen: s } = await import('@testing-library/react');
+    renderWithProviders(
+      <RB modifiers={[{ key: 'ob', value: 60 }]} total={60} totalLabel="Expected total" collapsible />
+    );
+    expect(s.getByText('Expected total')).toBeInTheDocument();
+    expect(s.queryByText('+60')).toBeNull();
+    fireEvent.click(s.getByRole('button', { expanded: false }));
+    expect(s.getAllByText('+60').length).toBeGreaterThan(0);
+  });
+});

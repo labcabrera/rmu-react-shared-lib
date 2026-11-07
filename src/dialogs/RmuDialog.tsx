@@ -1,9 +1,12 @@
 import React, { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   alpha,
+  Box,
   Button,
   DialogActions,
+  IconButton,
   Slide,
   Stack,
   SxProps,
@@ -29,7 +32,8 @@ const Transition = React.forwardRef(function Transition(
 
 const RmuDialog: FC<{
   title: string;
-  subtitle?: string | undefined;
+  /** A text, or a node (for example the type of an action next to a status badge). */
+  subtitle?: ReactNode;
   children?: ReactNode;
   maxWidth?: DialogProps['maxWidth'];
   fullScreen?: boolean;
@@ -45,6 +49,12 @@ const RmuDialog: FC<{
   onDismiss?: () => void;
   onResolve?: () => void;
   onConfirm?: () => void;
+  /** A close button (✕) in the title, which calls `onClose` or `onDismiss`. */
+  closeIcon?: boolean;
+  /** No action bar at the bottom: for a dialog whose content has its own footer. */
+  hideActions?: boolean;
+  /** No padding around the content: for a content that lays out its own edges (a flow with a sticky step bar). */
+  disableContentPadding?: boolean;
 }> = ({
   title,
   subtitle,
@@ -62,6 +72,9 @@ const RmuDialog: FC<{
   onDismiss,
   onResolve,
   onConfirm,
+  closeIcon = false,
+  hideActions = false,
+  disableContentPadding = false,
 }) => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -106,24 +119,31 @@ const RmuDialog: FC<{
       >
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
           {avatarImg && <EntityImage image={avatarImg} size="sm" />}
-          <Stack direction="column">
+          <Stack direction="column" sx={{ minWidth: 0, flex: 1 }}>
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
               {title}
             </Typography>
             {subtitle && (
-              <Typography variant="subtitle1" color="secondary" sx={{ fontWeight: 600 }}>
+              <Typography variant="subtitle1" color="secondary" component="div" sx={{ fontWeight: 600 }}>
                 {subtitle}
               </Typography>
             )}
           </Stack>
+          {closeIcon && (onClose ?? onDismiss) && (
+            <Box sx={{ alignSelf: 'flex-start' }}>
+              <IconButton aria-label={t('close')} onClick={() => (onClose ?? onDismiss)?.()} edge="end">
+                <CloseIcon />
+              </IconButton>
+            </Box>
+          )}
         </Stack>
       </DialogTitle>
       <DialogContent
         sx={{
-          px: 3,
-          py: 2.5,
+          px: disableContentPadding ? 0 : 3,
+          py: disableContentPadding ? 0 : 2.5,
           // MUI drops the top padding of a content that follows a title, with a more specific rule than sx.
-          [`.${dialogTitleClasses.root} + &`]: { pt: 2.5 },
+          [`.${dialogTitleClasses.root} + &`]: { pt: disableContentPadding ? 0 : 2.5 },
           backgroundColor: 'background.paper',
           backgroundImage: (theme) =>
             theme.palette.mode === 'dark'
@@ -134,30 +154,32 @@ const RmuDialog: FC<{
       >
         {children}
       </DialogContent>
-      <DialogActions
-        sx={{
-          px: 3,
-          py: 1.5,
-          backgroundColor: 'background.paper',
-          borderTop: (theme) =>
-            `1px solid ${theme.palette.mode === 'dark' ? alpha(theme.palette.primary.light, 0.16) : theme.palette.divider}`,
-        }}
-      >
-        {buttons}
-        {onDelete && (
-          <Button onClick={() => onDelete()} color="error">
-            {t('delete')}
-          </Button>
-        )}
-        {onClose && <Button onClick={() => onClose()}>{t('close')}</Button>}
-        {onCancel && <Button onClick={() => onCancel()}>{t('cancel')}</Button>}
-        {onResolve && <Button onClick={() => onResolve()}>{t('resolve')}</Button>}
-        {onConfirm && (
-          <Button disabled={onConfirmDisabled} onClick={() => onConfirm()}>
-            {t('confirm')}
-          </Button>
-        )}
-      </DialogActions>
+      {!hideActions && (
+        <DialogActions
+          sx={{
+            px: 3,
+            py: 1.5,
+            backgroundColor: 'background.paper',
+            borderTop: (theme) =>
+              `1px solid ${theme.palette.mode === 'dark' ? alpha(theme.palette.primary.light, 0.16) : theme.palette.divider}`,
+          }}
+        >
+          {buttons}
+          {onDelete && (
+            <Button onClick={() => onDelete()} color="error">
+              {t('delete')}
+            </Button>
+          )}
+          {onClose && <Button onClick={() => onClose()}>{t('close')}</Button>}
+          {onCancel && <Button onClick={() => onCancel()}>{t('cancel')}</Button>}
+          {onResolve && <Button onClick={() => onResolve()}>{t('resolve')}</Button>}
+          {onConfirm && (
+            <Button disabled={onConfirmDisabled} onClick={() => onConfirm()}>
+              {t('confirm')}
+            </Button>
+          )}
+        </DialogActions>
+      )}
     </Dialog>
   );
 };

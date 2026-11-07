@@ -179,11 +179,30 @@ export const CharacterCard: FC<{
   onClick?: () => void;
   renderDetails?: (option: CharacterOption) => ReactNode;
 }> = ({ option, role, selected = false, pending = false, disabled = false, onClick, renderDetails }) => {
-  const mark = role === 'checkbox' && !option.disabledReason && <SelectionMark selected={selected} pending={pending} />;
+  // Spec 085, 2.1: a single choice shows its mark too, so that a card reads as something to pick
+  const mark = !!role && !option.disabledReason && <SelectionMark selected={selected} pending={pending} />;
   if (!onClick) {
+    // A chosen option shown alone (the collapsed single picker) keeps the look of a selected card.
     return (
-      <Box sx={{ px: 1.25, py: 1 }}>
-        <CardContent option={option} renderDetails={renderDetails} />
+      <Box
+        sx={(theme) =>
+          selected
+            ? {
+                px: 1.25,
+                py: 1,
+                borderRadius: `${theme.radius.sm}px`,
+                border: 1,
+                borderColor: 'primary.main',
+                bgcolor: alpha(theme.palette.primary.main, 0.12),
+              }
+            : { px: 1.25, py: 1 }
+        }
+      >
+        <CardContent
+          option={option}
+          renderDetails={renderDetails}
+          mark={selected ? <SelectionMark selected pending={false} /> : undefined}
+        />
       </Box>
     );
   }
@@ -395,7 +414,7 @@ const CharacterPicker: FC<CharacterPickerProps> = (props) => {
         )}
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
           <Box sx={{ flex: 1, minWidth: 0 }}>
-            <CharacterCard option={selectedOption} renderDetails={renderDetails} />
+            <CharacterCard option={selectedOption} renderDetails={renderDetails} selected />
           </Box>
           <Button size="small" disabled={disabled} onClick={() => setChanging(true)}>
             {t('change')}
