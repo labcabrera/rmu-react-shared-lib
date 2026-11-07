@@ -42,7 +42,7 @@ describe('RollField', () => {
     const pad = await openPad();
     await press(pad, '9', '7');
     expect(within(pad).getByText('roll-pad-next-die-adds')).toBeInTheDocument();
-    await press(pad, '4', '5', 'confirm');
+    await press(pad, '4', '5', 'accept');
     expect(onChange).toHaveBeenCalledWith({ total: 142, rolls: [97, 45], unmodified: 97 });
 
     // The caller keeps only the total: the field still shows the dice of its last roll.
@@ -55,7 +55,7 @@ describe('RollField', () => {
     const pad = await openPad();
     await press(pad, '0', '3');
     expect(within(pad).getByText('roll-pad-next-die-subtracts')).toBeInTheDocument();
-    await press(pad, '9', '8', '2', '0', 'confirm');
+    await press(pad, '9', '8', '2', '0', 'accept');
     expect(onChange).toHaveBeenCalledWith({ total: -115, rolls: [3, 98, 20], unmodified: 3 });
   });
 
@@ -64,21 +64,21 @@ describe('RollField', () => {
     const pad = await openPad();
     await press(pad, '0', '0');
     expect(onChange).not.toHaveBeenCalled();
-    await press(pad, 'confirm');
+    await press(pad, 'accept');
     expect(onChange).toHaveBeenCalledWith({ total: 100, rolls: [100], unmodified: 100 });
   });
 
   it('confirms a short die with the confirm key', async () => {
     const { onChange } = setup(D100);
     const pad = await openPad();
-    await press(pad, '5', 'confirm');
+    await press(pad, '5', 'accept');
     expect(onChange).toHaveBeenCalledWith({ total: 5, rolls: [5], unmodified: 5 });
   });
 
   it('sums the two dice of 2d10, with 0 as 10', async () => {
     const { onChange } = setup(TWO_D10);
     const pad = await openPad();
-    await press(pad, '0', '3', 'confirm');
+    await press(pad, '0', '3', 'accept');
     expect(onChange).toHaveBeenCalledWith({ total: 13, rolls: [10, 3], unmodified: 13 });
   });
 
@@ -99,7 +99,7 @@ describe('RollField', () => {
     const pad = await openPad();
     await press(pad, 'roll-pad-random');
     expect(within(pad).getByText('roll-pad-total')).toBeInTheDocument();
-    await press(pad, 'confirm');
+    await press(pad, 'accept');
     expect(onChange).toHaveBeenLastCalledWith({ total: 50, rolls: [50], unmodified: 50 });
   });
 
@@ -124,7 +124,7 @@ describe('RollField', () => {
       <RollField spec={D100} value={null} onChange={onChange} label="attack-roll" presentation="sheet" />
     );
     const pad = await openPad();
-    await press(pad, '4', '5', 'confirm');
+    await press(pad, '4', '5', 'accept');
     expect(onChange).toHaveBeenCalledWith({ total: 45, rolls: [45], unmodified: 45 });
   });
 
@@ -173,7 +173,7 @@ describe('RollField', () => {
     const pad = await openPad();
     await press(pad, '9', '4');
     expect(within(pad).getByText('roll-pad-next-die-adds')).toBeInTheDocument();
-    await press(pad, '3', '0', 'confirm');
+    await press(pad, '3', '0', 'accept');
     expect(onChange).toHaveBeenCalledWith({ total: 124, rolls: [94, 30], unmodified: 94 });
   });
 

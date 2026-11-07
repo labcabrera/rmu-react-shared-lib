@@ -55,6 +55,8 @@ export type { SectionDef } from './layouts/SectionNav';
 
 export { default as ClearableTextField } from './inputs/ClearableTextField';
 export { default as NumericInput } from './inputs/NumericInput';
+export { default as OptionGroup } from './inputs/OptionGroup';
+export type { OptionGroupOption, OptionGroupProps } from './inputs/OptionGroup';
 export * from './rolls';
 
 export { default as DifficultyPicker } from './selectors/DifficultyPicker';
@@ -412,6 +414,8 @@ export type { HealerCandidate, HealerMode, HealerSelection } from './rmu/health/
 
 // Spec 066: shared pieces for a consistent UI
 export { default as SectionLabel } from './layouts/SectionLabel';
+export { default as RmuChip } from './ui/RmuChip';
+export type { RmuChipProps, RmuChipTone, RmuChipVariant } from './ui/RmuChip';
 export { Bento, span } from './layouts/Bento';
 export type { PanelVariant } from './layouts/Panel';
 export { KeyValueLine, keyValueColor } from './display/KeyValuePanel';

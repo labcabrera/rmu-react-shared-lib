@@ -134,7 +134,15 @@ export default function SidePanelLayout({
         onClose={onClose}
         slotProps={{
           paper: {
-            sx: { width: mode === 'drawer' ? width : '100%', display: 'flex', flexDirection: 'column' },
+            // Spec 085 (X7): below the app bar of the shell, which stays above the drawers, so that the header with
+            // the actor and the action shows.
+            sx: {
+              width: mode === 'drawer' ? width : '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              top: 'var(--rmu-app-bar-height, 0px)',
+              height: 'calc(100% - var(--rmu-app-bar-height, 0px))',
+            },
           },
         }}
       >

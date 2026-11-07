@@ -1,10 +1,10 @@
 import React, { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import BackspaceIcon from '@mui/icons-material/Backspace';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
+import PadLayout, { PAD_KEY_SX } from './PadLayout';
 
 const DIGITS = ['7', '8', '9', '4', '5', '6', '1', '2', '3'];
-const KEY_SX = { minHeight: 56, minWidth: 0, fontSize: '1.35rem', fontWeight: 600 } as const;
 
 export type NumberPadProps = {
   /** The value to start from. */
@@ -126,47 +126,49 @@ const NumberPad: FC<NumberPadProps> = ({
           ? t('number-pad-max', { max })
           : undefined;
 
-  return (
-    <Box
-      ref={ref}
-      tabIndex={-1}
-      onKeyDown={onKeyDown}
-      sx={{ p: 2, width: { xs: '100%', sm: 320 }, maxWidth: '100%', outline: 'none' }}
-      role="group"
-      aria-label={label ?? t('number-pad')}
+  const key = (
+    content: React.ReactNode,
+    onClick: () => void,
+    extra: { ariaLabel?: string; disabled?: boolean } = {}
+  ) => (
+    <Button
+      variant="outlined"
+      color="inherit"
+      sx={PAD_KEY_SX}
+      onClick={onClick}
+      aria-label={extra.ariaLabel}
+      disabled={extra.disabled}
     >
-      <Stack spacing={1.5}>
-        <Box
+      {content}
+    </Button>
+  );
+
+  return (
+    <PadLayout
+      padRef={ref}
+      onKeyDown={onKeyDown}
+      ariaLabel={label ?? t('number-pad')}
+      label={label}
+      invalid={invalid}
+      display={
+        <Typography
+          variant="h4"
+          component="output"
+          data-testid="number-pad-display"
           sx={{
-            px: 2,
-            py: 1,
-            border: 1,
-            borderColor: invalid ? 'error.main' : 'divider',
-            borderRadius: (theme) => `${theme.radius.sm}px`,
+            fontWeight: 600,
+            minHeight: '1.25em',
+            fontVariantNumeric: 'tabular-nums',
+            display: 'block',
             textAlign: 'right',
           }}
         >
-          {label && (
-            <Typography variant="caption" color="text.secondary" component="div" sx={{ textAlign: 'left' }}>
-              {label}
-            </Typography>
-          )}
-          <Typography
-            variant="h4"
-            component="output"
-            aria-live="polite"
-            data-testid="number-pad-display"
-            sx={{ fontWeight: 600, minHeight: '1.25em', fontVariantNumeric: 'tabular-nums', display: 'block' }}
-          >
-            {text || ' '}
-          </Typography>
-          {range && (
-            <Typography variant="caption" color={invalid ? 'error' : 'text.secondary'} component="div">
-              {range}
-            </Typography>
-          )}
-        </Box>
-        {steps.length > 0 && (
+          {text || ' '}
+        </Typography>
+      }
+      displayNote={range}
+      extras={
+        steps.length > 0 && (
           <Box sx={{ display: 'grid', gridTemplateColumns: `repeat(${steps.length}, 1fr)`, gap: 1 }}>
             {steps.map((step) => (
               <Button key={step} variant="outlined" onClick={() => adjust(step)} sx={{ minHeight: 44, minWidth: 0 }}>
@@ -174,66 +176,32 @@ const NumberPad: FC<NumberPadProps> = ({
               </Button>
             ))}
           </Box>
-        )}
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1 }}>
+        )
+      }
+      keys={
+        <>
           {DIGITS.map((digit) => (
-            <Button key={digit} variant="outlined" color="inherit" sx={KEY_SX} onClick={() => type(digit)}>
-              {digit}
-            </Button>
+            <React.Fragment key={digit}>{key(digit, () => type(digit))}</React.Fragment>
           ))}
-          <Button
-            variant="outlined"
-            color="inherit"
-            sx={KEY_SX}
-            disabled={!negatives}
-            onClick={toggleSign}
-            aria-label={t('number-pad-sign')}
-          >
-            ±
+          {key('±', toggleSign, { ariaLabel: t('number-pad-sign'), disabled: !negatives })}
+          {key('0', () => type('0'))}
+          {integer
+            ? key(<BackspaceIcon />, backspace, { ariaLabel: t('number-pad-backspace') })
+            : key('.', () => type('.'), { ariaLabel: t('number-pad-decimal') })}
+        </>
+      }
+      actionsStart={
+        !integer && (
+          <Button variant="outlined" color="inherit" onClick={backspace} aria-label={t('number-pad-backspace')}>
+            <BackspaceIcon fontSize="small" />
           </Button>
-          <Button variant="outlined" color="inherit" sx={KEY_SX} onClick={() => type('0')}>
-            0
-          </Button>
-          {integer ? (
-            <Button
-              variant="outlined"
-              color="inherit"
-              sx={KEY_SX}
-              onClick={backspace}
-              aria-label={t('number-pad-backspace')}
-            >
-              <BackspaceIcon />
-            </Button>
-          ) : (
-            <Button
-              variant="outlined"
-              color="inherit"
-              sx={KEY_SX}
-              onClick={() => type('.')}
-              aria-label={t('number-pad-decimal')}
-            >
-              .
-            </Button>
-          )}
-        </Box>
-        <Box sx={{ display: 'grid', gridTemplateColumns: integer ? '1fr 1fr 2fr' : '1fr 1fr 1fr 2fr', gap: 1 }}>
-          {!integer && (
-            <Button variant="outlined" color="inherit" onClick={backspace} aria-label={t('number-pad-backspace')}>
-              <BackspaceIcon fontSize="small" />
-            </Button>
-          )}
-          <Button variant="text" color="inherit" onClick={clear}>
-            {t('clear')}
-          </Button>
-          <Button variant="text" onClick={onCancel}>
-            {t('cancel')}
-          </Button>
-          <Button variant="contained" onClick={confirm} disabled={invalid} sx={{ minHeight: 44 }}>
-            {t('accept')}
-          </Button>
-        </Box>
-      </Stack>
-    </Box>
+        )
+      }
+      onClear={clear}
+      onCancel={onCancel}
+      onAccept={confirm}
+      acceptDisabled={invalid}
+    />
   );
 };
 

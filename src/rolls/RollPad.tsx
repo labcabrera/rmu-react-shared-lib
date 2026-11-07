@@ -1,11 +1,9 @@
 import React, { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import BackspaceIcon from '@mui/icons-material/Backspace';
 import CasinoIcon from '@mui/icons-material/Casino';
-import CheckIcon from '@mui/icons-material/Check';
-import { alpha, Box, Button, Chip, Stack, Typography } from '@mui/material';
-import { OpenEndedThresholds, RollSpec, RollValue } from './roll.types';
+import { Box, Button, Chip, Stack } from '@mui/material';
+import PadLayout, { PAD_KEY_SX } from '../inputs/PadLayout';
 import {
   DEFAULT_OPEN_ENDED,
   dieDigits,
@@ -16,11 +14,10 @@ import {
   rollDice,
   toRollValue,
 } from './roll-logic';
+import { OpenEndedThresholds, RollSpec, RollValue } from './roll.types';
 
 const DIGITS = ['7', '8', '9', '4', '5', '6', '1', '2', '3'];
 const ZERO = '0';
-
-const KEY_SX = { minHeight: 56, minWidth: 56, fontSize: '1.4rem', fontWeight: 600 } as const;
 
 /** The die being typed added to the chain, when it is a valid die. */
 const withTyped = (spec: RollSpec, rolls: number[], text: string): number[] | undefined => {
@@ -44,7 +41,9 @@ const RollPad: FC<{
   random?: (sides: number) => number;
   /** Thresholds of an open-ended roll (spec 076); 96 and 5 by default. */
   openEnded?: OpenEndedThresholds;
-}> = ({ spec, initial, onConfirm, onCancel, random = randomDie, openEnded = DEFAULT_OPEN_ENDED }) => {
+  /** What is rolled, above the dice (the field label). */
+  label?: string;
+}> = ({ spec, initial, onConfirm, onCancel, random = randomDie, openEnded = DEFAULT_OPEN_ENDED, label }) => {
   const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
   const [rolls, setRolls] = useState<number[]>(initial?.rolls ?? []);
@@ -117,68 +116,58 @@ const RollPad: FC<{
     : needsMore
       ? t(chain.nextSign > 0 ? 'roll-pad-next-die-adds' : 'roll-pad-next-die-subtracts')
       : t('roll-pad-enter-die');
-  const okLabel = candidate && !candidateValue && text ? t('roll-pad-next-die') : t('confirm');
+  // Spec 085, 3.3: Accept as in NumberPad; it says "Next die" when the typed die only adds to an open-ended chain.
+  const acceptLabel = candidate && !candidateValue && text ? t('roll-pad-next-die') : undefined;
 
   return (
-    <Box
-      ref={ref}
-      tabIndex={-1}
+    <PadLayout
+      padRef={ref}
       onKeyDown={onKeyDown}
-      data-testid="roll-pad"
-      sx={{ p: 2, width: { xs: '100%', md: 280 }, maxWidth: 360, mx: 'auto', outline: 'none' }}
-    >
-      <Stack spacing={1.5}>
-        <Box
-          sx={{
-            p: 1,
-            minHeight: 72,
-            borderRadius: 1,
-            backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.08),
-          }}
-        >
-          <Stack direction="row" spacing={0.5} useFlexGap sx={{ flexWrap: 'wrap', minHeight: 32 }}>
-            {rolls.map((die, index) => (
-              <Chip key={index} label={die} size="small" color={index === 0 ? 'primary' : 'default'} />
-            ))}
-            {(text || !chain.complete) && (
-              <Chip label={text || '_'} size="small" variant="outlined" data-testid="roll-pad-typed" />
-            )}
-          </Stack>
-          <Typography variant="body2" color="text.secondary" aria-live="polite" sx={{ mt: 0.5 }}>
-            {status}
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1 }}>
+      testId="roll-pad"
+      ariaLabel={label ?? t('roll-pad')}
+      label={label}
+      display={
+        <Stack direction="row" spacing={0.5} useFlexGap sx={{ flexWrap: 'wrap', minHeight: 40, alignItems: 'center' }}>
+          {rolls.map((die, index) => (
+            <Chip key={index} label={die} color={index === 0 ? 'primary' : 'default'} sx={{ fontWeight: 600 }} />
+          ))}
+          {(text || !chain.complete) && <Chip label={text || '_'} variant="outlined" data-testid="roll-pad-typed" />}
+        </Stack>
+      }
+      displayNote={status}
+      extras={
+        <Button variant="outlined" startIcon={<CasinoIcon />} onClick={randomize} sx={{ minHeight: 44 }}>
+          {t('roll-pad-random')}
+        </Button>
+      }
+      keys={
+        <>
           {DIGITS.map((digit) => (
-            <Button key={digit} variant="outlined" sx={KEY_SX} onClick={() => typeDigit(digit)}>
+            <Button key={digit} variant="outlined" color="inherit" sx={PAD_KEY_SX} onClick={() => typeDigit(digit)}>
               {digit}
             </Button>
           ))}
-          <Button variant="outlined" sx={KEY_SX} aria-label={t('roll-pad-delete-die')} onClick={deleteDie}>
-            <BackspaceIcon />
-          </Button>
-          <Button variant="outlined" sx={KEY_SX} onClick={() => typeDigit(ZERO)}>
+          <Box />
+          <Button variant="outlined" color="inherit" sx={PAD_KEY_SX} onClick={() => typeDigit(ZERO)}>
             {ZERO}
           </Button>
           <Button
-            variant="contained"
-            sx={KEY_SX}
-            aria-label={okLabel}
-            disabled={!candidate || (!text && !chain.complete)}
-            onClick={confirm}
+            variant="outlined"
+            color="inherit"
+            sx={PAD_KEY_SX}
+            aria-label={t('roll-pad-delete-die')}
+            onClick={deleteDie}
           >
-            {candidateValue || !text ? <CheckIcon /> : <ArrowForwardIcon />}
+            <BackspaceIcon />
           </Button>
-        </Box>
-        <Stack direction="row" spacing={1} sx={{ justifyContent: 'space-between' }}>
-          <Button startIcon={<CasinoIcon />} onClick={randomize}>
-            {t('roll-pad-random')}
-          </Button>
-          <Button onClick={clear}>{t('roll-pad-clear')}</Button>
-          <Button onClick={onCancel}>{t('cancel')}</Button>
-        </Stack>
-      </Stack>
-    </Box>
+        </>
+      }
+      onClear={clear}
+      onCancel={onCancel}
+      onAccept={confirm}
+      acceptDisabled={!candidate || (!text && !chain.complete)}
+      acceptLabel={acceptLabel}
+    />
   );
 };
 

@@ -126,6 +126,7 @@ const RollField: FC<RollFieldProps> = ({
       onCancel={() => setOpen(false)}
       random={random}
       openEnded={thresholds}
+      label={label}
     />
   );
   const asPopover = presentation === 'popover' || (presentation === 'auto' && large);
@@ -184,6 +185,8 @@ const RollField: FC<RollFieldProps> = ({
           htmlInput: {
             inputMode: 'none',
             'aria-haspopup': 'dialog',
+            // FlowSteps focuses the first empty roll of the step it moves to (spec 085).
+            'data-roll-input': '',
             style: { cursor: editable ? 'pointer' : undefined, textAlign: 'right' },
           },
         }}

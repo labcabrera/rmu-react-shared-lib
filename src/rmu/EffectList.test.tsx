@@ -41,8 +41,8 @@ describe('EffectList', () => {
 
     const bleeding = screen.getByText('bleeding 3').closest('.MuiChip-root')!;
     const fatigue = screen.getByText('fatigue').closest('.MuiChip-root')!;
-    expect(bleeding).toHaveClass('MuiChip-colorError', 'MuiChip-filled');
-    expect(fatigue).toHaveClass('MuiChip-colorWarning', 'MuiChip-filled');
+    expect(bleeding).toHaveAttribute('data-tone', 'error');
+    expect(fatigue).toHaveAttribute('data-tone', 'warning');
   });
 
   it('shows compact badges with the full text for screen readers', () => {
@@ -71,7 +71,7 @@ describe('EffectList legacy status', () => {
 
     const chips = screen.getAllByText('unconscious');
     expect(chips).toHaveLength(2);
-    chips.forEach((chip) => expect(chip.closest('.MuiChip-root')).toHaveClass('MuiChip-colorError'));
+    chips.forEach((chip) => expect(chip.closest('.MuiChip-root')).toHaveAttribute('data-tone', 'error'));
   });
 });
 
@@ -137,7 +137,7 @@ describe('EffectList grapple and concentration (spec 077)', () => {
     );
 
     const chip = screen.getByText('Concentrating').closest('.MuiChip-root')!;
-    expect(chip).toHaveClass('MuiChip-colorWarning');
+    expect(chip).toHaveAttribute('data-tone', 'warning');
     expect(chip).toHaveAttribute('aria-label', 'Preparing a spell · Fire Bolt');
     expect(chip.querySelector('svg')).not.toBeNull();
   });

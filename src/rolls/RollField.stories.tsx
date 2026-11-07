@@ -3,8 +3,8 @@ import { Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } f
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 import RmuDialog from '../dialogs/RmuDialog';
-import { D10, D100, HIGH_OPEN_D100, LOW_OPEN_D100, OPEN_D100, TWO_D10 } from './presets';
 import RollField, { RollFieldProps } from './RollField';
+import { D10, D100, HIGH_OPEN_D100, LOW_OPEN_D100, OPEN_D100, TWO_D10 } from './presets';
 import { RollValue } from './roll.types';
 
 /** Keeps the value like a screen does, so the field shows what was confirmed. */

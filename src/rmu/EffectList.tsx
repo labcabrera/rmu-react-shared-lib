@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import PsychologyIcon from '@mui/icons-material/Psychology';
-import { Avatar, Chip, Stack, Tooltip } from '@mui/material';
+import { Avatar, Stack } from '@mui/material';
 import { resolveAssetUrl } from '../config/asset-url';
+import RmuChip from '../ui/RmuChip';
 import StatusBadge from './StatusBadge';
 
 /**
@@ -208,21 +209,27 @@ const EffectList: FC<{
     <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 0.75 }}>
       {ordered.map((effect, index) => {
         const help = detailOf(effect);
-        const chip = (
-          <Chip size={size} avatar={icon(effect.status)} label={label(effect)} color={effectColor(effect.status)} />
-        );
-        return help ? (
-          <Tooltip key={`${effect.status}-${index}`} title={help}>
-            {chip}
-          </Tooltip>
-        ) : (
-          <React.Fragment key={`${effect.status}-${index}`}>{chip}</React.Fragment>
+        // Spec 085, 3.4: effects as the effect chips, soft fill in their color with their icon
+        return (
+          <RmuChip
+            key={`${effect.status}-${index}`}
+            variant="effect"
+            size={size}
+            avatar={icon(effect.status)}
+            label={label(effect)}
+            tone={effectColor(effect.status)}
+            hint={help || undefined}
+          />
         );
       })}
       {penaltyTotal !== 0 && (
-        <Tooltip title={penaltySources}>
-          <Chip size={size} avatar={icon('penalty')} label={`${t('penalty')} ${penaltyTotal}`} />
-        </Tooltip>
+        <RmuChip
+          variant="effect"
+          size={size}
+          avatar={icon('penalty')}
+          label={`${t('penalty')} ${penaltyTotal}`}
+          hint={penaltySources || undefined}
+        />
       )}
     </Stack>
   );

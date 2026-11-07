@@ -216,8 +216,25 @@ const RollBreakdown: FC<{
   skipped?: SkippedRule[];
   /** Which roll it is, for the texts of its explanations (spec 052). */
   context?: RollContext;
-}> = ({ modifiers, roll, total, totalLabel, skipped, context = 'combat' }) => {
+  /**
+   * Folded to one line with the total and a "show breakdown" toggle (spec 085, 2.5): for the steps after the one where
+   * the modifiers are chosen.
+   */
+  collapsible?: boolean;
+  /** Whether a collapsible breakdown starts open. */
+  defaultOpen?: boolean;
+}> = ({
+  modifiers,
+  roll,
+  total,
+  totalLabel,
+  skipped,
+  context = 'combat',
+  collapsible = false,
+  defaultOpen = false,
+}) => {
   const { t } = useTranslation();
+  const [open, setOpen] = useState(defaultOpen);
   const sum = modifiers.reduce((acc, modifier) => acc + modifier.value, 0);
   const computedTotal = total ?? sum + (roll ?? 0);
   // A group this version does not know yet is shown with the other entries, never left out of the list.
@@ -228,8 +245,8 @@ const RollBreakdown: FC<{
     items: modifiers.filter((modifier) => groupOf(modifier) === group),
   })).filter(({ items }) => items.length > 0);
 
-  return (
-    <Stack spacing={1} aria-label={t('roll-breakdown')}>
+  const detail = (
+    <>
       {groups.map(({ group, items }) => (
         <Box key={group}>
           <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'baseline' }}>
@@ -249,6 +266,44 @@ const RollBreakdown: FC<{
       ))}
       <Divider />
       {roll !== undefined && roll !== null && <Row label={t('roll')} value={roll} />}
+    </>
+  );
+
+  if (collapsible) {
+    return (
+      <Stack spacing={1} aria-label={t('roll-breakdown')}>
+        <ButtonBase
+          onClick={() => setOpen((value) => !value)}
+          aria-expanded={open}
+          sx={{ justifyContent: 'space-between', borderRadius: 1, px: 0.5, py: 0.25, mx: -0.5 }}
+        >
+          <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
+            <ExpandMoreIcon
+              fontSize="small"
+              sx={{ transform: open ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 150ms' }}
+            />
+            <Typography variant="body2" sx={{ fontWeight: 700 }}>
+              {totalLabel ?? t('total')}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {t(open ? 'hide-breakdown' : 'show-breakdown')}
+            </Typography>
+          </Stack>
+          <Typography variant="body2" sx={{ fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>
+            {computedTotal}
+          </Typography>
+        </ButtonBase>
+        <Collapse in={open} unmountOnExit>
+          <Stack spacing={1}>{detail}</Stack>
+        </Collapse>
+        {skipped && skipped.length > 0 && <SkippedRules rules={skipped} context={context} />}
+      </Stack>
+    );
+  }
+
+  return (
+    <Stack spacing={1} aria-label={t('roll-breakdown')}>
+      {detail}
       <Row label={totalLabel ?? t('total')} value={computedTotal} strong />
       {skipped && skipped.length > 0 && <SkippedRules rules={skipped} context={context} />}
     </Stack>
