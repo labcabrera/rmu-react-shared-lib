@@ -185,6 +185,7 @@ export type { Notify } from './app/NotificationProvider';
 // Data
 export { ApiError, isApiError } from './data/api-error';
 export { downloadBlob } from './utils/download';
+export { TABLES_NAMESPACE, useTableText } from './i18n/table-text';
 export { formatCampaignDate, formatElapsedTime } from './utils/campaign-date';
 export { usePagedQuery } from './data/usePagedQuery';
 export type { PagedFetcher, PagedQuery, PagedQueryOptions } from './data/usePagedQuery';
