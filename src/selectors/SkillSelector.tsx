@@ -12,6 +12,7 @@ import { fetchSkills } from '../api/skill.api';
 import { Skill } from '../api/skill.dto';
 import { fetchSpellLists, SPELL_LIST_CATALOG_MAX } from '../api/spell-list.api';
 import CategorySeparator from '../display/CategorySeparator';
+import { useSpellName } from '../i18n/spell-text';
 
 /** Specialization of the skills whose value is a spell list of rmu-api-spells (spec 029): the list code. */
 export const SPELL_LIST_SPECIALIZATION = 'spell-list';
@@ -55,6 +56,7 @@ const SkillSelector: FC<{
 }> = ({ realmId, realms, owned = [], onSkillChange, onSpecializationChange, onError }) => {
   const auth = useAuth();
   const { t } = useTranslation();
+  const spellName = useSpellName();
   const [availableCategories, setAvailableCategories] = useState<SkillCategory[]>();
   const [allSkills, setAllSkills] = useState<Skill[]>([]);
   const [availableSpecializations, setAvailableSpecializations] = useState<string[]>();
@@ -113,10 +115,12 @@ const SkillSelector: FC<{
   const specializations = useMemo(() => {
     const text = normalize(specializationQuery);
     const label = (value: string) =>
-      spellListNames[value] ?? t(value, { defaultValue: enumerationNames[value] ?? value });
+      spellListNames[value]
+        ? spellName(spellListNames[value])
+        : t(value, { defaultValue: enumerationNames[value] ?? value });
     const list = (availableSpecializations ?? []).filter((value) => !text || normalize(label(value)).includes(text));
     return list.sort((a, b) => label(a).localeCompare(label(b)));
-  }, [availableSpecializations, specializationQuery, spellListNames, enumerationNames, t]);
+  }, [availableSpecializations, specializationQuery, spellListNames, enumerationNames, t, spellName]);
 
   useEffect(() => {
     fetchSkillCategories('', 0, 100, auth)
@@ -276,7 +280,9 @@ const SkillSelector: FC<{
               }
               getKey={(value) => value}
               formatter={(value) =>
-                spellListNames[value] ?? t(value, { defaultValue: enumerationNames[value] ?? value })
+                spellListNames[value]
+                  ? spellName(spellListNames[value])
+                  : t(value, { defaultValue: enumerationNames[value] ?? value })
               }
               isDisabled={(value) => isOwned(selectedSkill.id, value)}
               endAdornment={(value) => ownedAdornment(ownedRanks(selectedSkill.id, value))}

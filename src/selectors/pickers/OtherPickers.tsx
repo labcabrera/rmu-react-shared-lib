@@ -7,6 +7,7 @@ import { ITEM_CATEGORIES } from '../../api/item.dto';
 import { SpellList } from '../../api/spell-list.dto';
 import { StrategicGame } from '../../api/strategic-game.dto';
 import { EntityKind, itemCategoryImage } from '../../config/default-images';
+import { useSpellName } from '../../i18n/spell-text';
 import { EntityOption } from '../EntityPicker';
 import { PickerProps, PresetPicker, useFetched } from './preset';
 
@@ -94,6 +95,7 @@ export const SpellListPicker: FC<PickerProps<SpellList> & { spellLists: SpellLis
   ...props
 }) => {
   const { t } = useTranslation();
+  const spellName = useSpellName();
   return (
     <PresetPicker
       props={props}
@@ -101,7 +103,7 @@ export const SpellListPicker: FC<PickerProps<SpellList> & { spellLists: SpellLis
       label={t('spell-list')}
       options={spellLists?.map((list) => ({
         id: list.id,
-        label: t(list.name, { defaultValue: list.name }),
+        label: spellName(list.name),
         secondary: list.realms?.map((realm) => t(realm)).join(' / '),
         group: t(list.type),
         imageUrl: list.imageUrl,
