@@ -9,6 +9,11 @@ import { renderWithProviders } from '../../test/render';
 // Without an i18n instance, t() returns the key (or the defaultValue).
 
 describe('picker presets', () => {
+  it('orders the professions by their label', () => {
+    renderWithProviders(<ProfessionPicker professions={['thief', 'fighter', 'bard']} value={null} onChange={vi.fn()} />);
+    expect(screen.getAllByRole('radio').map((radio) => radio.textContent)).toEqual(['bard', 'fighter', 'thief']);
+  });
+
   it('shows the four rarities as tiles with "all"', async () => {
     const onChange = vi.fn();
     renderWithProviders(<RarityPicker value={null} allowAll onChange={onChange} />);

@@ -11,6 +11,10 @@ import { Skill } from '../../api/skill.dto';
 import { EntityOption } from '../EntityPicker';
 import { PickerProps, PresetPicker, useFetched } from './preset';
 
+/** Options by their translated label, in the language of the user: the API only knows the English names. */
+const byLabel = <T,>(options: EntityOption<T>[] | undefined, language: string | undefined) =>
+  options && [...options].sort((a, b) => a.label.localeCompare(b.label, language));
+
 /** Realm (world) of the catalog. */
 export const RealmPicker: FC<PickerProps<Realm> & { realms: Realm[] | undefined }> = ({ realms, ...props }) => {
   const { t } = useTranslation();
@@ -47,18 +51,21 @@ export const CulturePicker: FC<PickerProps<Culture> & { cultures: Culture[] | un
   cultures,
   ...props
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   return (
     <PresetPicker
       props={props}
       kind="culture"
       label={t('culture')}
-      options={cultures?.map((culture) => ({
-        id: culture.id,
-        label: t(culture.name),
-        imageUrl: culture.imageUrl,
-        entity: culture,
-      }))}
+      options={byLabel(
+        cultures?.map((culture) => ({
+          id: culture.id,
+          label: t(culture.name),
+          imageUrl: culture.imageUrl,
+          entity: culture,
+        })),
+        i18n.language
+      )}
     />
   );
 };
@@ -79,13 +86,16 @@ type ProfessionPickerProps = PickerProps<Profession> & {
 };
 
 const ProfessionPickerOf: FC<ProfessionPickerProps> = ({ professions, ...props }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   return (
     <PresetPicker
       props={props}
       kind="profession"
       label={t('profession')}
-      options={professions?.map((profession) => professionOption(profession, t))}
+      options={byLabel(
+        professions?.map((profession) => professionOption(profession, t)),
+        i18n.language
+      )}
     />
   );
 };
