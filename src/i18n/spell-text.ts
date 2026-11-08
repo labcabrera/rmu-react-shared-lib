@@ -19,6 +19,7 @@ const spellKey = (level: number) => `level-${level}`;
  * Workspace spec 088: the English name of a spell or spell list is its own key. Returns a function that gives its
  * translation in the current language, or the name itself when there is none (English, a user's own spell, or not
  * loaded yet). Reads the namespace directly, so that a name never matches a key of the other namespaces.
+ * Without an i18next instance (a component rendered alone) `i18n` is empty and the name shows as it is.
  */
 export const useSpellName = (): ((name: string | null | undefined) => string) => {
   const { t, i18n } = useTranslation(SPELL_NAMES_NAMESPACE, { useSuspense: false });
@@ -26,7 +27,7 @@ export const useSpellName = (): ((name: string | null | undefined) => string) =>
     (name) => {
       if (!name) return '';
       // The names may carry '.', which i18next would read as a key separator.
-      const translated = i18n.getResource(i18n.language, SPELL_NAMES_NAMESPACE, name, { keySeparator: false });
+      const translated = i18n.getResource?.(i18n.language, SPELL_NAMES_NAMESPACE, name, { keySeparator: false });
       return typeof translated === 'string' && translated ? translated : name;
     },
     // `t` changes when the namespace finishes loading
@@ -51,7 +52,7 @@ export const useSpellText = (listCode: string | null | undefined): SpellText => 
   const { t, i18n } = useTranslation(namespace, { useSuspense: false });
   return useMemo(() => {
     const lookup = (key: string, original: string | null | undefined) => {
-      const translated = listCode ? i18n.getResource(i18n.language, namespace, key) : undefined;
+      const translated = listCode ? i18n.getResource?.(i18n.language, namespace, key) : undefined;
       return typeof translated === 'string' && translated ? translated : (original ?? '');
     };
     return {
@@ -71,7 +72,8 @@ export const useSpellNameMatches = (): ((text: string) => string[]) => {
   const { t, i18n } = useTranslation(SPELL_NAMES_NAMESPACE, { useSuspense: false });
   return useCallback(
     (text) => {
-      const names = i18n.getResourceBundle(i18n.language, SPELL_NAMES_NAMESPACE) as Record<string, string> | undefined;
+      const names = i18n.getResourceBundle?.(i18n.language, SPELL_NAMES_NAMESPACE) as
+        Record<string, string> | undefined;
       const query = normalizeText(text.trim());
       if (!names || !query) return [];
       return Object.keys(names).filter((name) => normalizeText(names[name]).includes(query));
