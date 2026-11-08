@@ -186,6 +186,17 @@ export type { Notify } from './app/NotificationProvider';
 export { ApiError, isApiError } from './data/api-error';
 export { downloadBlob } from './utils/download';
 export { TABLES_NAMESPACE, useTableText } from './i18n/table-text';
+export {
+  SPELL_NAME_MATCHES_MAX,
+  SPELL_NAMES_NAMESPACE,
+  spellNameRsql,
+  spellTextNamespace,
+  translateSpellName,
+  useSpellName,
+  useSpellNameMatches,
+  useSpellText,
+} from './i18n/spell-text';
+export type { SpellText } from './i18n/spell-text';
 export { formatCampaignDate, formatElapsedTime } from './utils/campaign-date';
 export { usePagedQuery } from './data/usePagedQuery';
 export type { PagedFetcher, PagedQuery, PagedQueryOptions } from './data/usePagedQuery';
@@ -202,6 +213,7 @@ export type {
   FilterValues,
   ListFilters,
 } from './data/useListFilters';
+export { useCatalogByLabel } from './data/useCatalogByLabel';
 export { useLocalPagedQuery } from './data/useLocalPagedQuery';
 export type { LocalPagedQueryOptions } from './data/useLocalPagedQuery';
 

@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSpellName } from '../../i18n/spell-text';
 import { Stack, Typography } from '@mui/material';
 import type { StrategicItem } from '../../api/strategic-item.dto';
 import KeyValuePanel from '../../display/KeyValuePanel';
@@ -26,6 +27,7 @@ const ItemEnchantmentInfo: FC<{ item: Pick<StrategicItem, 'enchantment' | 'charg
   bare = false,
 }) => {
   const { t } = useTranslation();
+  const spellName = useSpellName();
   const enchantment = item.enchantment;
   if (!enchantment) return null;
   if (enchantment.source && enchantment.source !== 'alchemy')
@@ -49,8 +51,8 @@ const ItemEnchantmentInfo: FC<{ item: Pick<StrategicItem, 'enchantment' | 'charg
                   sx={{ fontWeight: 'inherit' }}
                 >
                   {spell.listCode
-                    ? t('enchantment-spell-line', { name: spell.name, level: spell.level, list: spell.listCode })
-                    : t('magic-spell-line', { name: spell.name, level: spell.level })}
+                    ? t('enchantment-spell-line', { name: spellName(spell.name), level: spell.level, list: spell.listCode })
+                    : t('magic-spell-line', { name: spellName(spell.name), level: spell.level })}
                 </Typography>
               ))}
             </Stack>
