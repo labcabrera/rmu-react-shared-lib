@@ -12,6 +12,8 @@ import StatusBadge from './StatusBadge';
  * `concentrating`.
  */
 export type ActorEffect = {
+  /** Stored effects have one; the ones derived on the fly (bleeding from the injuries) do not, and cannot be deleted. */
+  id?: string | null;
   status: string;
   value?: number | null;
   rounds?: number | null;
@@ -120,7 +122,8 @@ const dataText = (effect: ActorEffect, key: string): string | undefined => {
  * Effects of an actor as solid chips, most severe first: incapacitating (red), ongoing (amber, bleeding red), the
  * rest, and one chip with the total penalty (its sources in the tooltip). Penalties of 0 are not shown.
  * `variant="compact"` shows them as `StatusBadge`s (icon, abbreviation and value; full text on hover or tap) for
- * dense places. `actorName` names the grappler of a `grappled` effect in its tooltip (spec 077).
+ * dense places. `actorName` names the grappler of a `grappled` effect in its tooltip (spec 077). `onDelete` puts a
+ * delete icon on the full chips of the effects with an id (the compact badges are too small to tap it safely).
  */
 const EffectList: FC<{
   effects: ActorEffect[];
@@ -128,10 +131,11 @@ const EffectList: FC<{
   size?: 'small' | 'medium';
   variant?: 'full' | 'compact';
   actorName?: ActorNameResolver;
-}> = ({ effects, penalties = [], size = 'small', variant = 'full', actorName }) => {
+  onDelete?: (effect: ActorEffect) => void;
+}> = ({ effects, penalties = [], size = 'small', variant = 'full', actorName, onDelete }) => {
   const { t } = useTranslation();
   const ordered = effects
-    .map((effect) => ({ ...effect, status: normalizeEffectStatus(effect.status) }))
+    .map((effect) => ({ ...effect, original: effect, status: normalizeEffectStatus(effect.status) }))
     .filter((effect) => effect.status !== 'penalty' || effect.value)
     .sort((a, b) => rank(a.status) - rank(b.status));
   const penaltyTotal = penalties.reduce((sum, penalty) => sum + penalty.value, 0);
@@ -219,6 +223,8 @@ const EffectList: FC<{
             label={label(effect)}
             tone={effectColor(effect.status)}
             hint={help || undefined}
+            onDelete={onDelete && effect.id ? () => onDelete(effect.original) : undefined}
+            deleteLabel={t('delete-effect', { name: t(effect.status) })}
           />
         );
       })}

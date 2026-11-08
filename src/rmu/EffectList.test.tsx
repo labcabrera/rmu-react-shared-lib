@@ -1,8 +1,8 @@
 import React from 'react';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import i18next from 'i18next';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '../test/render';
 import EffectList from './EffectList';
 
@@ -151,5 +151,23 @@ describe('EffectList grapple and concentration (spec 077)', () => {
     );
 
     expect(screen.getByRole('button', { name: /^Grappled 30 %/ })).toBeInTheDocument();
+  });
+
+  it('deletes the stored effects by hand, not the derived ones nor in the compact badges', () => {
+    const onDelete = vi.fn();
+    const effects = [
+      { id: 'e-1', status: 'stunned', value: -25 },
+      { status: 'bleeding', value: 4 },
+    ];
+    const { unmount } = renderWithProviders(<EffectList effects={effects} onDelete={onDelete} />);
+
+    const buttons = screen.getAllByLabelText(/^delete-effect/);
+    expect(buttons).toHaveLength(1);
+    fireEvent.click(buttons[0]);
+    expect(onDelete).toHaveBeenCalledWith(effects[0]);
+    unmount();
+
+    renderWithProviders(<EffectList effects={effects} onDelete={onDelete} variant="compact" />);
+    expect(screen.queryAllByLabelText(/^delete-effect/)).toHaveLength(0);
   });
 });
