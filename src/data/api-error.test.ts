@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ApiError, isApiError } from './api-error';
+import { ApiError, apiErrorCode, apiErrorDetails, isApiError } from './api-error';
 
 describe('ApiError', () => {
   it('keeps the historical message format', () => {
@@ -53,5 +53,33 @@ describe('ApiError', () => {
       'error-global-entity-admin-only'
     );
     expect(new ApiError(409, '', '{"code":"member-limit"}', '/x').messageKey).toBe('error-member-limit');
+  });
+});
+
+describe('apiErrorCode', () => {
+  const error = (body: string) => new ApiError(400, '', body, '/x');
+
+  it('reads an err- code, also from the deprecated errorCode', () => {
+    expect(apiErrorCode(error('{"code":"err-x"}'))).toBe('err-x');
+    expect(apiErrorCode(error('{"errorCode":"err-y"}'))).toBe('err-y');
+  });
+
+  it('prefixes the herb codes sent without it', () => {
+    expect(apiErrorCode(error('{"code":"herb-not-applicable"}'))).toBe('err-herb-not-applicable');
+  });
+
+  it('ignores other codes, invalid bodies and other errors', () => {
+    expect(apiErrorCode(error('{"code":"not-found"}'))).toBeUndefined();
+    expect(apiErrorCode(error('not json'))).toBeUndefined();
+    expect(apiErrorCode(new Error('x'))).toBeUndefined();
+  });
+});
+
+describe('apiErrorDetails', () => {
+  it('reads an object, and nothing else', () => {
+    expect(apiErrorDetails(new ApiError(400, '', '{"details":{"limit":3}}', '/x'))).toEqual({ limit: 3 });
+    expect(apiErrorDetails(new ApiError(400, '', '{"details":"text"}', '/x'))).toBeUndefined();
+    expect(apiErrorDetails(new ApiError(400, '', 'not json', '/x'))).toBeUndefined();
+    expect(apiErrorDetails(new Error('x'))).toBeUndefined();
   });
 });

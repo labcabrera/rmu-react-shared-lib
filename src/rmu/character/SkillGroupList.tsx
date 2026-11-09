@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -26,7 +27,7 @@ const OTHER_CATEGORY = 'other';
 type Group = { category: string; skills: CharacterSkill[]; best: number };
 
 // The specialization is a catalog key (spec 050): its translation or the name of the catalog
-const skillLabel = (skill: CharacterSkill, t: (key: string, options?: Record<string, unknown>) => string) =>
+const skillLabel = (skill: CharacterSkill, t: TFunction) =>
   skill.specialization ? `${t(skill.skillId)} (${specializationLabel(t, skill.specialization)})` : t(skill.skillId);
 
 /** Category of a skill: `categoryId` from strategic, `category` from older payloads. */
@@ -39,7 +40,7 @@ export const skillCategoryOf = (skill: Pick<CharacterSkill, 'categoryId' | 'cate
  */
 export const sortSkillsByName = <S extends Pick<CharacterSkill, 'skillId' | 'specialization'>>(
   skills: S[],
-  t: (key: string, options?: Record<string, unknown>) => string,
+  t: TFunction,
   language?: string
 ): S[] => {
   const collator = new Intl.Collator(language, { sensitivity: 'base', numeric: true });

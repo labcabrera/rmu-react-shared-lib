@@ -1,7 +1,8 @@
+import type { TFunction } from 'i18next';
 import { SpellArea, SpellDuration, SpellRange } from '../../api/spell.dto';
 
 /** The `t` of react-i18next, reduced to what the formatters use. */
-export type SpellTranslate = (key: string, options?: Record<string, unknown>) => string;
+export type SpellTranslate = TFunction;
 
 const amount = (value: number | null, scale: string | null, t: SpellTranslate): string | null => {
   if (value === null || value === undefined) return null;

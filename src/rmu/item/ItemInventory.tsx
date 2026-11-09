@@ -29,6 +29,7 @@ import MoneyDisplay from './MoneyDisplay';
 import { normalizeText } from './item-catalog';
 import { strategicItemUnitValue } from './item-value';
 import { roundGold } from './money';
+import { activationProps } from '../../ui/activation-props';
 
 /** An action of the menu of an item: equip, sell, give, repair... */
 export type ItemAction = {
@@ -100,6 +101,8 @@ const ItemRow: FC<{
         '&:hover': { bgcolor: highlighted ? 'action.selected' : 'action.hover' },
       }}
       onClick={() => onSelect?.(item)}
+      role={onSelect ? 'button' : undefined}
+      {...(onSelect ? activationProps(() => onSelect(item)) : {})}
       onMouseEnter={onHover ? () => onHover(item.id) : undefined}
       onMouseLeave={onHover ? () => onHover(undefined) : undefined}
       data-highlighted={highlighted || undefined}

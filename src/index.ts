@@ -94,6 +94,7 @@ export * from './api/character.dto';
 export * from './api/character-export.api';
 export * from './api/character-export.dto';
 export * from './api/character-health.api';
+export * from './api/healing-tables';
 export * from './api/health.dto';
 export * from './api/temporary-modifier.dto';
 export * from './api/poison.dto';
@@ -177,13 +178,13 @@ export { enterSx, hoverLiftSx, useViewTransitionNavigate, viewTransitionName } f
 
 // App
 export { default as MfeRoot } from './app/MfeRoot';
-export { bootstrapMfe } from './app/bootstrapMfe';
 export { ErrorBoundary } from './app/ErrorBoundary';
-export { NotificationProvider, useNotify } from './app/NotificationProvider';
+export { NotificationProvider, useApiNotify, useNotify } from './app/NotificationProvider';
 export type { Notify } from './app/NotificationProvider';
 
 // Data
-export { ApiError, isApiError } from './data/api-error';
+export { ApiError, apiErrorCode, apiErrorDetails, ConfirmCancelledError, isApiError } from './data/api-error';
+export { signed } from './utils/signed';
 export { downloadBlob } from './utils/download';
 export { TABLES_NAMESPACE, useTableText } from './i18n/table-text';
 export {
@@ -202,6 +203,9 @@ export type { SkillText } from './i18n/skill-text';
 export { formatCampaignDate, formatElapsedTime } from './utils/campaign-date';
 export { usePagedQuery } from './data/usePagedQuery';
 export type { PagedFetcher, PagedQuery, PagedQueryOptions } from './data/usePagedQuery';
+export { API_PAGE_SIZE, fetchAllPages, fetchFullPage } from './data/fetch-all-pages';
+export type { PageFetcher } from './data/fetch-all-pages';
+export { createRmuQueryClient } from './data/query-client';
 export { useEntity } from './data/useEntity';
 export type { EntityOptions, EntityState } from './data/useEntity';
 export { useDebounce } from './data/useDebounce';
@@ -423,6 +427,9 @@ export type { PoisonStageState } from './rmu/health/PoisonStageTimeline';
 export { default as PoisonDataFields, isPoisonDataValid } from './rmu/health/PoisonDataFields';
 export type { PoisonCatalogItem } from './rmu/health/PoisonDataFields';
 export { default as InjuryList } from './rmu/health/InjuryList';
+export { default as AntidoteFields, antidoteDto, EMPTY_ANTIDOTE_FIELDS } from './rmu/health/AntidoteFields';
+export type { AntidoteFieldsValue } from './rmu/health/AntidoteFields';
+export { default as HerbUseFields } from './rmu/health/HerbUseFields';
 export { default as HealerPicker, resolveHealer } from './rmu/health/HealerPicker';
 export { default as HpBreakdown, formatHpAmount, hpAmountColor } from './rmu/health/HpBreakdown';
 export type { HealerCandidate, HealerMode, HealerSelection } from './rmu/health/HealerPicker';

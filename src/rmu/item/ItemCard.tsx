@@ -6,6 +6,7 @@ import EntityCard, { EntityMetric } from '../../cards/EntityCard';
 import { resolveAssetUrl } from '../../config/asset-url';
 import { defaultImages, itemCategoryImage } from '../../config/default-images';
 import { DataTableColumn } from '../../ui/DataTable';
+import { signed } from '../../utils/signed';
 import EntitySourceChip from '../entity-source/EntitySourceChip';
 import ItemFeatureChips, { ItemFeatureTranslate } from './ItemFeatureChips';
 import ItemThumb, { itemImageUrl } from './ItemThumb';
@@ -28,8 +29,6 @@ export const itemCategoryLabel = (category: string, t: ItemFeatureTranslate): st
   t(`item-category-${category}`, { defaultValue: t(category) });
 
 const handsOf = (item: Item): string[] => [...new Set(item.weapon?.modes.map((mode) => mode.type) ?? [])];
-
-const signed = (value: number) => (value > 0 ? `+${value}` : `${value}`);
 
 /** Game data of an item for its card (decision 13): armor AT/MP/ENC, shield DB/blocks, weapon skill/fumble/hands. */
 export const itemMetrics = (item: Item, t: ItemFeatureTranslate): EntityMetric[] => {

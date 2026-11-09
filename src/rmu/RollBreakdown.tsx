@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box, ButtonBase, Collapse, Divider, Stack, Typography } from '@mui/material';
+import { signed } from '../utils/signed';
 import RuleHint, { RuleParams } from './RuleHint';
 
 /**
@@ -79,8 +80,6 @@ export type RollContext =
   | 'physical-rr'
   | 'endurance'
   | 'breakage';
-
-const signed = (value: number) => (value > 0 ? `+${value}` : `${value}`);
 
 /**
  * Translated label of a modifier key; unknown keys are shown readable ("restricted-quarters" → "Restricted quarters").

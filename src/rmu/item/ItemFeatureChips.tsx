@@ -1,8 +1,10 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Chip, Stack, Typography } from '@mui/material';
+import type { TFunction } from 'i18next';
 import { ItemArmor, ItemFeatures, WeaponMode } from '../../api/item.dto';
 import { difficultyCodeKey } from '../../api/treasure-goods.dto';
+import { signed } from '../../utils/signed';
 import { formatMoney } from './money';
 
 /** What ItemFeatureChips reads: a catalog item or the catalog copy of a strategic item. */
@@ -20,9 +22,7 @@ export type ItemFeatureLine = { key: string; label: string };
  * match the one of the lib.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ItemFeatureTranslate = (key: string, options?: any) => string;
-
-const signed = (value: number): string => (value > 0 ? `+${value}` : `${value}`);
+export type ItemFeatureTranslate = TFunction;
 
 /** Gold as coins with the translated abbreviations. */
 export const moneyText = (gold: number, t: ItemFeatureTranslate): string =>

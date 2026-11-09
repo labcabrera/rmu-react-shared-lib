@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import ScienceIcon from '@mui/icons-material/Science';
@@ -21,7 +22,7 @@ const SEVERITY_COLORS: Record<PoisonSeverity, 'default' | 'warning' | 'error'> =
  */
 export const poisonTimeLabel = (
   rounds: number,
-  t: (key: string, options?: Record<string, unknown>) => string
+  t: TFunction
 ): string => {
   if (rounds >= ROUNDS_PER_DAY) return t('poison-time-days', { count: Math.round(rounds / ROUNDS_PER_DAY) });
   if (rounds >= ROUNDS_PER_HOUR) return t('poison-time-hours', { count: Math.round(rounds / ROUNDS_PER_HOUR) });

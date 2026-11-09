@@ -2,9 +2,8 @@ import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stack, Typography } from '@mui/material';
 import { StrategicItemModifier } from '../../api/item-modifier.dto';
+import { signed } from '../../utils/signed';
 import StatusBadge, { StatusBadgeColor } from '../StatusBadge';
-
-const signed = (value: number): string => (value > 0 ? `+${value}` : `${value}`);
 
 const modifierColor = (modifier: StrategicItemModifier): StatusBadgeColor => {
   if (modifier.type === 'breakage') return modifier.broken ? 'error' : 'warning';

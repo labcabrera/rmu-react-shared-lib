@@ -1,23 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Page } from '../api/api';
+import { fetchAllPages, PageFetcher } from './fetch-all-pages';
 import { useLocalPagedQuery } from './useLocalPagedQuery';
 import { PagedQuery } from './usePagedQuery';
 
-/** The page size limit of the API. */
-const API_PAGE_SIZE = 100;
-
-type CatalogFetcher<T> = (rsql: string, page: number, size: number) => Promise<Page<T>>;
-
-const fetchAll = async <T>(fetcher: CatalogFetcher<T>, rsql: string): Promise<T[]> => {
-  const first = await fetcher(rsql, 0, API_PAGE_SIZE);
-  const others = await Promise.all(
-    Array.from({ length: Math.max(0, first.pagination.totalPages - 1) }, (_, index) =>
-      fetcher(rsql, index + 1, API_PAGE_SIZE)
-    )
-  );
-  return [first, ...others].flatMap((page) => page.content);
-};
+type CatalogFetcher<T> = PageFetcher<T>;
 
 /**
  * The list of a small catalog ordered by its translated name, which the API does not know: the RSQL filters go to the
@@ -50,7 +37,7 @@ export function useCatalogByLabel<T>({
   useEffect(() => {
     let cancelled = false;
     setItems(undefined);
-    fetchAll(fetcher, rsql)
+    fetchAllPages(fetcher, rsql)
       .then((all) => {
         if (cancelled) return;
         setItems(all);

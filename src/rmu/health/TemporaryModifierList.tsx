@@ -69,7 +69,7 @@ const TemporaryModifierList: FC<{
                 {t(`temporary-${modifier.source}`)}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                {t(expiry.key, expiry.params)}
+                {t(expiry.key, expiry.params ?? {})}
               </Typography>
             </Stack>
             {onRemove && (

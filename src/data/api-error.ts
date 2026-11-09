@@ -87,3 +87,43 @@ export class ApiError extends Error {
 }
 
 export const isApiError = (error: unknown): error is ApiError => error instanceof ApiError;
+
+/** Domain codes sent without the `err-` prefix; their i18n key is `err-<code>`. */
+const UNPREFIXED_CODES = ['herb-without-effect', 'herb-not-applicable'];
+
+/**
+ * Domain error code of an API error body (`{ code, message }`), when it is a translatable one. Falls back to the
+ * deprecated `errorCode` alias that images released before workspace spec 021 still send.
+ */
+export const apiErrorCode = (error: unknown): string | undefined => {
+  if (!isApiError(error)) return undefined;
+  try {
+    const body = JSON.parse(error.body);
+    const code = body?.code ?? body?.errorCode;
+    if (typeof code !== 'string') return undefined;
+    if (code.startsWith('err-')) return code;
+    // Herb rules of workspace spec 062 send their codes without the prefix
+    return UNPREFIXED_CODES.includes(code) ? `err-${code}` : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+/** `details` of an API error body (`{ code, message, details }`), when it is an object. */
+export const apiErrorDetails = (error: unknown): Record<string, unknown> | undefined => {
+  if (!isApiError(error)) return undefined;
+  try {
+    const details = JSON.parse(error.body)?.details;
+    return details && typeof details === 'object' ? (details as Record<string, unknown>) : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+/** Rejection of a request whose confirmation the user declined (workspace spec 068): nothing to report. */
+export class ConfirmCancelledError extends Error {
+  constructor() {
+    super('confirm-cancelled');
+    this.name = 'ConfirmCancelledError';
+  }
+}

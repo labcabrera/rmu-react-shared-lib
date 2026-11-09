@@ -23,18 +23,23 @@ async function send(url: string, init: RequestInit, token: string): Promise<Resp
   }
 }
 
+/** The renewal in progress: several requests answered 401 at once share it (spec 091, A9). */
+let renewal: Promise<string | undefined> | undefined;
+
 /**
  * Renews the session once with a silent sign-in (refresh token, or prompt=none against the
  * Keycloak session) and returns the new access token, or undefined when it cannot be renewed.
  */
-async function renewToken(auth: AuthContextProps): Promise<string | undefined> {
-  if (typeof auth.signinSilent !== 'function') return undefined;
-  try {
-    const user = await auth.signinSilent();
-    return user?.access_token || undefined;
-  } catch {
-    return undefined;
-  }
+function renewToken(auth: AuthContextProps): Promise<string | undefined> {
+  if (typeof auth.signinSilent !== 'function') return Promise.resolve(undefined);
+  renewal ??= auth
+    .signinSilent()
+    .then((user) => user?.access_token || undefined)
+    .catch(() => undefined)
+    .finally(() => {
+      renewal = undefined;
+    });
+  return renewal;
 }
 
 /**

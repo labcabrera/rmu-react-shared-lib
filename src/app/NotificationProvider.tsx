@@ -1,7 +1,7 @@
 import React, { createContext, FC, ReactNode, useCallback, useContext, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertColor, Snackbar, SnackbarOrigin } from '@mui/material';
-import { isApiError } from '../data/api-error';
+import { apiErrorCode, apiErrorDetails, ConfirmCancelledError, isApiError } from '../data/api-error';
 import { bottomOffset, usePhone } from '../templates/responsive';
 
 export interface Notify {
@@ -82,4 +82,26 @@ export const useNotify = (): Notify => {
   const ctx = useContext(NotificationContext);
   if (!ctx) throw new Error('useNotify must be used within a NotificationProvider (MfeRoot provides one)');
   return ctx;
+};
+
+/**
+ * The notifications for pages that call the game APIs: rule errors (`err-*` codes) show their translation, filled with
+ * the `details` of the error, instead of the generic "bad request" and the English detail. A confirmation the user
+ * declined is not reported. Other errors are shown as useNotify does.
+ */
+export const useApiNotify = (): Notify => {
+  const notify = useNotify();
+  const { t, i18n } = useTranslation();
+  return useMemo<Notify>(
+    () => ({
+      ...notify,
+      error: (error: unknown) => {
+        if (error instanceof ConfirmCancelledError) return;
+        const code = apiErrorCode(error);
+        if (code && i18n.exists(code)) notify.error(t(code, apiErrorDetails(error) ?? {}));
+        else notify.error(error);
+      },
+    }),
+    [notify, t, i18n]
+  );
 };

@@ -1,7 +1,8 @@
+import type { TFunction } from 'i18next';
 import type { Npc } from '../../api/npc.dto';
 import { DEFAULT_ENVIRONMENT_NAME } from '../../api/tactical-game.dto';
 
-type Translate = (key: string, options?: Record<string, unknown>) => string;
+type Translate = TFunction;
 
 /** Name of an NPC: the translated name of a book creature (`creature-<key>`), the stored name otherwise. */
 export const npcName = (npc: Pick<Npc, 'name' | 'source'>, t: Translate): string =>

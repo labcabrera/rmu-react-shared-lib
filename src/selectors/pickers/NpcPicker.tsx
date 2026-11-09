@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from 'react-oidc-context';
@@ -44,7 +45,7 @@ export const useCampaignNpcs = (realmId: string | null | undefined): Npc[] | und
 };
 
 /** Options of some NPCs: translated name, category and level, grouped by category and sorted by name. */
-export const npcOptions = (npcs: Npc[], t: (key: string) => string): EntityOption<Npc>[] =>
+export const npcOptions = (npcs: Npc[], t: TFunction): EntityOption<Npc>[] =>
   npcs
     .map((npc) => ({
       id: npc.id,

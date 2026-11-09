@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import { useEffect, useSyncExternalStore } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthContextProps, useAuth } from 'react-oidc-context';
@@ -63,7 +64,7 @@ export function resetEnumerationNames(): void {
 
 /** Label of a specialization key: its translation, else the name of the catalog, else the key itself. */
 export const specializationLabel = (
-  t: (key: string, options?: Record<string, unknown>) => string,
+  t: TFunction,
   key: string | null | undefined
 ) => (key ? t(key, { defaultValue: names.get(key) ?? key }) : '');
 
