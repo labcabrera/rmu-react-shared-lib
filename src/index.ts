@@ -197,6 +197,8 @@ export {
   useSpellText,
 } from './i18n/spell-text';
 export type { SpellText } from './i18n/spell-text';
+export { SKILL_TEXT_NAMESPACE, useSkillText } from './i18n/skill-text';
+export type { SkillText } from './i18n/skill-text';
 export { formatCampaignDate, formatElapsedTime } from './utils/campaign-date';
 export { usePagedQuery } from './data/usePagedQuery';
 export type { PagedFetcher, PagedQuery, PagedQueryOptions } from './data/usePagedQuery';
