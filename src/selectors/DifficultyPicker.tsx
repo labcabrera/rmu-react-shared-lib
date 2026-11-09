@@ -68,6 +68,7 @@ const DifficultyPicker: FC<{
           sx={{
             mt: 1,
             pl: 1.5,
+            pr: 1,
             py: 0.75,
             borderLeft: 3,
             borderColor: 'primary.main',
@@ -87,7 +88,7 @@ const DifficultyPicker: FC<{
             </Button>
           </Stack>
           {value && (
-            <Typography variant="body2" sx={{ pr: 1, color: text(value) ? 'text.primary' : 'text.secondary' }}>
+            <Typography variant="body2" sx={{ color: text(value) ? 'text.primary' : 'text.secondary' }}>
               {text(value) ? (
                 <>
                   <Box component="span" sx={{ fontWeight: 600 }}>{`${t(`difficulty-${value}`)}: `}</Box>
@@ -99,7 +100,7 @@ const DifficultyPicker: FC<{
             </Typography>
           )}
           <Collapse in={showAll} unmountOnExit>
-            <Stack spacing={0.5} sx={{ mt: 1, pr: 1, pb: 0.5 }}>
+            <Stack spacing={0.5} sx={{ mt: 1, pb: 0.5 }}>
               {guide.examples.map((each) => (
                 <Box
                   key={each.difficulty}
