@@ -365,6 +365,7 @@ export { default as TreasureDialog } from './rmu/treasure/TreasureDialog';
 export type { TreasureDialogProps } from './rmu/treasure/TreasureDialog';
 export { default as TreasureRollPanel } from './rmu/treasure/TreasureRollPanel';
 export type { TreasureRollPanelProps, TreasureTableFocus } from './rmu/treasure/TreasureRollPanel';
+export * from './rmu/treasure/treasure-table-model';
 export {
   creatureTypeLabel,
   magicBonusText,

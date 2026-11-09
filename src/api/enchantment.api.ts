@@ -1,5 +1,5 @@
 import { AuthContextProps } from 'react-oidc-context';
-import { apiCoreUrl, apiSpellsUrl, apiStrategicGameUrl } from '../config/config.service';
+import { apiSpellsUrl, apiStrategicGameUrl } from '../config/config.service';
 import callApi, { Page } from './api';
 import {
   AlchemyTables,
