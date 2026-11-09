@@ -52,8 +52,8 @@ describe('TreasureDialog (spec 067)', () => {
   it('rolls the codes and shows the lines, the warnings and the dice', async () => {
     renderWithProviders(<TreasureDialog open onClose={() => {}} codes="c, n, x" gameId="g1" />);
     expect(screen.getByRole('textbox', { name: 'treasure-codes' })).toHaveValue('c, n, x');
-    await userEvent.click(screen.getByRole('button', { name: 'roll' }));
-    expect(rollTreasure).toHaveBeenCalledWith({ codes: 'c, n, x', wealthModifier: 0, gameId: 'g1' }, auth);
+    await userEvent.click(screen.getByRole('button', { name: 'treasure-roll-all' }));
+    expect(rollTreasure).toHaveBeenCalledWith({ codes: 'c, n, x', wealthModifier: 0, gameId: 'g1', dice: [] }, auth);
     expect(await screen.findByText('A warning')).toBeInTheDocument();
     expect(screen.getByText('Gem A')).toBeInTheDocument();
     expect(screen.getByText('Lifestyle note')).toBeInTheDocument();
@@ -67,7 +67,7 @@ describe('TreasureDialog (spec 067)', () => {
 
   it('keeps Award disabled without a holder and says so', async () => {
     renderWithProviders(<TreasureDialog open onClose={() => {}} codes="c" gameId="g1" />);
-    await userEvent.click(screen.getByRole('button', { name: 'roll' }));
+    await userEvent.click(screen.getByRole('button', { name: 'treasure-roll-all' }));
     await screen.findByText('Gem A');
     expect(screen.getByRole('button', { name: 'treasure-award' })).toBeDisabled();
     expect(screen.getByText('treasure-holder-required')).toBeInTheDocument();
@@ -80,7 +80,7 @@ describe('TreasureDialog (spec 067)', () => {
     renderWithProviders(
       <TreasureDialog open onClose={onClose} codes="c" gameId="g1" holder={holder} onAwarded={onAwarded} />
     );
-    await userEvent.click(screen.getByRole('button', { name: 'roll' }));
+    await userEvent.click(screen.getByRole('button', { name: 'treasure-roll-all' }));
     await screen.findByText('Gem A');
     // Leave the gem out.
     await userEvent.click(screen.getAllByRole('checkbox')[1]);
@@ -95,17 +95,17 @@ describe('TreasureDialog (spec 067)', () => {
 
   it('sends explicit qualities and needs some input to roll', async () => {
     renderWithProviders(<TreasureDialog open onClose={() => {}} />);
-    expect(screen.getByRole('button', { name: 'roll' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'treasure-roll-all' })).toBeDisabled();
     await userEvent.click(screen.getByRole('combobox', { name: 'treasure-magic' }));
     await userEvent.click(within(await screen.findByRole('listbox')).getByText('treasure-quality-rich'));
-    await userEvent.click(screen.getByRole('button', { name: 'roll' }));
-    expect(rollTreasure).toHaveBeenCalledWith({ codes: null, magic: ['rich'], wealthModifier: 0, gameId: null }, auth);
+    await userEvent.click(screen.getByRole('button', { name: 'treasure-roll-all' }));
+    expect(rollTreasure).toHaveBeenCalledWith({ codes: null, magic: ['rich'], wealthModifier: 0, gameId: null, dice: [] }, auth);
   });
 
   it('shows the error of the roll', async () => {
     rollTreasure.mockRejectedValue(new Error('boom'));
     renderWithProviders(<TreasureDialog open onClose={() => {}} codes="c" />);
-    await userEvent.click(screen.getByRole('button', { name: 'roll' }));
+    await userEvent.click(screen.getByRole('button', { name: 'treasure-roll-all' }));
     expect(await screen.findByText('boom')).toBeInTheDocument();
   });
 });

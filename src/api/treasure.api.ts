@@ -23,11 +23,11 @@ const send = <T>(auth: AuthContextProps, path: string, method: string, body?: ob
 
 const itemPath = (itemId: string, path: string) => `/items/${encodeURIComponent(itemId)}${path}`;
 
-/** Random treasure, random gem and standard price tables (Core Law access); 404 until they are imported. */
+/** Random treasure, random gem and standard price tables (Treasure Law access); 404 until they are imported. */
 export const fetchTreasureTables = (auth: AuthContextProps): Promise<TreasureTablesDto> =>
   callApi(auth, `${apiCoreUrl}/treasure-tables`, { method: 'GET' });
 
-/** Rolls a treasure on the server and answers every line with its dice; nothing is stored. */
+/** Works out a treasure from the dice rolled in the client: its lines, or the next die in `pending`. Stores nothing. */
 export const rollTreasure = (dto: TreasureRollRequest, auth: AuthContextProps): Promise<TreasureRoll> =>
   send(auth, '/treasure/rolls', 'POST', dto);
 
