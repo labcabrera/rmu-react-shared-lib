@@ -4,14 +4,13 @@ import { Grid } from '@mui/material';
 import { ItemFeatures } from '../../api/item.dto';
 import { ALL_STUN_ROUNDS, difficultyCodeKey, NumberRange } from '../../api/treasure-goods.dto';
 import KeyValuePanel, { KeyValueRow } from '../../display/KeyValuePanel';
+import { signed } from '../../utils/signed';
 import { ItemFeatureTranslate, moneyText } from './ItemFeatureChips';
 
 export type ItemFeatureSection = { key: string; title: string; rows: KeyValueRow[] };
 
 const range = (value: NumberRange | null | undefined): string =>
   !value ? '-' : value.min === value.max ? `${value.min}` : `${value.min}-${value.max}`;
-
-const signed = (value: number): string => (value > 0 ? `+${value}` : `${value}`);
 
 const yesNo = (value: boolean, t: ItemFeatureTranslate) => t(value ? 'yes' : 'no');
 

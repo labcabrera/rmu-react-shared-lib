@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Box, Chip, Stack, Typography } from '@mui/material';
 import { RollModifier, PriceFactorSelection } from '../../api/item-operations.dto';
 import NumericInput from '../../inputs/NumericInput';
+import { signed } from '../../utils/signed';
 
 /** A modifier the user can choose: a maneuver modifier of core, or a market condition (spec 048). */
 export type SelectableModifier = {
@@ -48,8 +49,6 @@ export const selectedPriceFactors = (
     if (modifier.type === 'number') return [{ key: modifier.key, units: selection as number }];
     return [{ key: modifier.key }];
   });
-
-const signed = (value: number) => (value > 0 ? `+${value}` : `${value}`);
 
 /**
  * Chips to choose modifiers (spec 048): a flag is a chip that toggles, a choice a group of chips where choosing the

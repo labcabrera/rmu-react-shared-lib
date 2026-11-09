@@ -2,7 +2,7 @@ import React, { FC, MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useTheme, useMediaQuery, Tooltip } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
+import { IconButton } from '@mui/material';
 
 type Props = {
   onClick: (event: MouseEvent<HTMLButtonElement>) => void;

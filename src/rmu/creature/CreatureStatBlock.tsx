@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import React, { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, Chip, Stack, Tooltip, Typography } from '@mui/material';
@@ -16,7 +17,7 @@ import Panel from '../../layouts/Panel';
 import { fonts } from '../../theme/tokens';
 import { bonusColor, formatBonus } from '../character/StatPill';
 
-type Translate = (key: string, options?: Record<string, unknown>) => string;
+type Translate = TFunction;
 
 /** Label of a biome code: `npc-biome-F`, and `Fw` as the biome with water. */
 export const biomeLabel = (code: NpcBiome | string, t: Translate): string =>

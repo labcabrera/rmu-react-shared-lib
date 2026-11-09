@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import RmuPagination from '../display/RmuPagination';
 import EmptyState from './states/EmptyState';
+import { activationProps } from './activation-props';
 
 /** Server or local paging under the table (0-based page). */
 export interface DataTablePagination {
@@ -98,6 +99,8 @@ export default function DataTable<T>({
               key={getKey(row)}
               variant="outlined"
               onClick={onRowClick ? () => onRowClick(row) : undefined}
+              role={onRowClick ? 'button' : undefined}
+              {...(onRowClick ? activationProps(() => onRowClick(row)) : {})}
               sx={onRowClick ? { cursor: 'pointer' } : undefined}
             >
               <CardContent sx={{ py: 1, '&:last-child': { pb: 1 } }}>
@@ -146,6 +149,7 @@ export default function DataTable<T>({
                 key={getKey(row)}
                 hover={Boolean(onRowClick)}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
+                {...(onRowClick ? activationProps(() => onRowClick(row)) : {})}
                 sx={onRowClick ? { cursor: 'pointer' } : undefined}
               >
                 {columns.map((column) => (

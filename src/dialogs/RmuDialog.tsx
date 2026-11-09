@@ -15,9 +15,9 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import Dialog, { DialogProps } from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle, { dialogTitleClasses } from '@mui/material/DialogTitle';
+import { Dialog, DialogProps } from '@mui/material';
+import { DialogContent } from '@mui/material';
+import { DialogTitle, dialogTitleClasses } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
 import EntityImage from '../avatars/EntityImage';
 

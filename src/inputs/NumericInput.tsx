@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
-import TextField from '@mui/material/TextField';
+import { TextField } from '@mui/material';
 
 export type NumericInputProps = {
   value: number | null | undefined;

@@ -1,4 +1,4 @@
-import { getContrastRatio } from '@mui/material/styles';
+import { getContrastRatio } from '@mui/material';
 import { describe, expect, it } from 'vitest';
 import { createAppTheme, defaultThemeConfig, parseThemeConfig, ThemeMode } from './createAppTheme';
 import { themePresetNames } from './presets';

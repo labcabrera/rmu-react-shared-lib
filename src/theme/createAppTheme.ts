@@ -1,4 +1,4 @@
-import { alpha, createTheme, PaletteOptions, responsiveFontSizes, Shadows, Theme } from '@mui/material/styles';
+import { alpha, createTheme, PaletteOptions, responsiveFontSizes, Shadows, Theme } from '@mui/material';
 import { PresetPalette, ThemeMode, ThemePreset, themePresetNames, themePresets } from './presets';
 import { fonts, gameColors, motion, radius } from './tokens';
 
