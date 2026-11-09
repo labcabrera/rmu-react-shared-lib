@@ -6,7 +6,7 @@ export const MATERIAL_GROUPS: MaterialGroup[] = ['metal', 'wood', 'bow-wood', 's
 
 export type MaterialUse = 'weapon' | 'ammunition' | 'launcher' | 'armor' | 'shield';
 
-/** A superior material (GET /v1/materials of rmu-api-core). Costs in gold. */
+/** A superior material (GET /v1/materials of rmu-api-items). Costs in gold. */
 export type Material = {
   id: string;
   group: MaterialGroup;
