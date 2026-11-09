@@ -76,7 +76,7 @@ export type StandardPricing = {
   }[];
 };
 
-/** `GET v1/treasure-tables` of rmu-api-core (Treasure Law access). */
+/** `GET v1/treasure-tables` of rmu-api-items (Treasure Law access). */
 export type TreasureTablesDto = {
   id: 'treasure';
   /** 7-1a: a..e, l..p, u..z. */

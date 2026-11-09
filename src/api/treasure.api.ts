@@ -1,5 +1,5 @@
 import { AuthContextProps } from 'react-oidc-context';
-import { apiCoreUrl, apiStrategicGameUrl } from '../config/config.service';
+import { apiItemsUrl, apiStrategicGameUrl } from '../config/config.service';
 import callApi from './api';
 import {
   ChangeChargesDto,
@@ -12,7 +12,7 @@ import { StrategicItem } from './strategic-item.dto';
 import { TreasureTablesDto } from './treasure-tables.dto';
 import { TreasureAwardDto, TreasureAwardResult, TreasureRoll, TreasureRollRequest } from './treasure.dto';
 
-// Magic items, charges, gems and random treasure of rmu-api-strategic, and the treasure tables of rmu-api-core
+// Magic items, charges, gems and random treasure of rmu-api-strategic, and the treasure tables of rmu-api-items
 // (workspace spec 067).
 
 const send = <T>(auth: AuthContextProps, path: string, method: string, body?: object): Promise<T> =>
@@ -25,7 +25,7 @@ const itemPath = (itemId: string, path: string) => `/items/${encodeURIComponent(
 
 /** Random treasure, random gem and standard price tables (Treasure Law access); 404 until they are imported. */
 export const fetchTreasureTables = (auth: AuthContextProps): Promise<TreasureTablesDto> =>
-  callApi(auth, `${apiCoreUrl}/treasure-tables`, { method: 'GET' });
+  callApi(auth, `${apiItemsUrl}/treasure-tables`, { method: 'GET' });
 
 /** Works out a treasure from the dice rolled in the client: its lines, or the next die in `pending`. Stores nothing. */
 export const rollTreasure = (dto: TreasureRollRequest, auth: AuthContextProps): Promise<TreasureRoll> =>
