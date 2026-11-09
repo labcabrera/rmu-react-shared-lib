@@ -49,7 +49,7 @@ export type SpellAlchemy = {
 /** A row of an alchemy failure table; `max` null is open ("301+"). */
 export type AlchemyFailureRow = { min: number; max: number | null; text: string; serendipity?: 'minor' | 'major' };
 
-/** GET /v1/alchemy-tables of rmu-api-core. */
+/** GET /v1/alchemy-tables of rmu-api-spells. */
 export type AlchemyTables = {
   id: 'alchemy';
   failureTables: Record<AlchemyFailureTable, AlchemyFailureRow[]>;

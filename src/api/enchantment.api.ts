@@ -1,5 +1,5 @@
 import { AuthContextProps } from 'react-oidc-context';
-import { apiCoreUrl, apiStrategicGameUrl } from '../config/config.service';
+import { apiCoreUrl, apiSpellsUrl, apiStrategicGameUrl } from '../config/config.service';
 import callApi, { Page } from './api';
 import {
   AlchemyTables,
@@ -21,7 +21,7 @@ const send = <T>(auth: AuthContextProps, path: string, method: string, body?: ob
 
 /** Failure tables and power level multipliers. */
 export const fetchAlchemyTables = (auth: AuthContextProps): Promise<AlchemyTables> =>
-  callApi(auth, `${apiCoreUrl}/alchemy-tables`, { method: 'GET' });
+  callApi(auth, `${apiSpellsUrl}/alchemy-tables`, { method: 'GET' });
 
 /** Days, PP, costs and SCR modifiers of an enchantment, without rolling or paying. */
 export const quoteEnchantment = (dto: EnchantmentRequest, auth: AuthContextProps): Promise<EnchantmentPlan> =>
