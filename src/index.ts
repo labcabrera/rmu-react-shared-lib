@@ -363,6 +363,8 @@ export { default as MagicItemDialog, buildMagicItemRequest } from './rmu/magic/M
 export type { MagicItemDialogProps } from './rmu/magic/MagicItemDialog';
 export { default as TreasureDialog } from './rmu/treasure/TreasureDialog';
 export type { TreasureDialogProps } from './rmu/treasure/TreasureDialog';
+export { default as TreasureRollPanel } from './rmu/treasure/TreasureRollPanel';
+export type { TreasureRollPanelProps, TreasureTableFocus } from './rmu/treasure/TreasureRollPanel';
 export {
   creatureTypeLabel,
   magicBonusText,
