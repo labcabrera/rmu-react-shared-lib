@@ -19,15 +19,13 @@ Library of UI components based on React and MUI.
 Local build:
 
 ----
-npm run build
-
-npm link
+pnpm run build
 ----
 
-Install in another project:
+Install in another project of the workspace, in its `package.json`:
 
 ----
-npm link @labcabrera-rmu/rmu-react-shared-lib
+"@labcabrera-rmu/rmu-react-shared-lib": "link:../rmu-react-shared-lib"
 ----
 
 == Visual rules (spec 066)
