@@ -5,10 +5,21 @@
   "description": "RMU React Shared Library",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "markdown-editor": [
+        "./dist/markdown-editor/index.d.ts"
+      ]
+    }
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./markdown-editor": {
+      "types": "./dist/markdown-editor/index.d.ts",
+      "default": "./dist/markdown-editor/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -43,7 +54,10 @@
   },
   "homepage": "https://github.com/labcabrera/rmu-react-shared-lib#readme",
   "dependencies": {
-    "react-avatar-editor": "^15.1.0"
+    "@mdxeditor/editor": "4.3.4",
+    "react-avatar-editor": "^15.1.0",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1"
   },
   "peerDependencies": {
     "@emotion/react": "^11.14.0",

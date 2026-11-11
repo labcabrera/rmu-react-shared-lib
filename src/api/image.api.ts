@@ -18,12 +18,27 @@ export async function fetchImages(
   return callApi(auth, `${mediaApiBaseUrl}/images?${params.toString()}`, { method: 'GET' });
 }
 
+/** Scope of the images of the chronicle of a campaign (workspace spec 102, decision 4). */
+export const campaignImageScope = (gameId: string): string => `strategic-game:${gameId}`;
+
+/** The uploads of a scope, in the order media lists them (workspace spec 102). */
+export async function fetchImagesByScope(
+  scope: string,
+  page = 0,
+  size = 60,
+  auth: AuthContextProps
+): Promise<MediaImagePage> {
+  const params = new URLSearchParams({ q: `scope==${scope}`, page: String(page), size: String(size) });
+  return callApi(auth, `${mediaApiBaseUrl}/images?${params.toString()}`, { method: 'GET' });
+}
+
 export async function uploadImage(auth: AuthContextProps, input: UploadImageInput): Promise<MediaImage> {
   const formData = new FormData();
   formData.append('file', input.file, input.filename);
   formData.append('category', input.category);
   if (input.altText) formData.append('altText', input.altText);
   if (input.metadata) formData.append('metadata', JSON.stringify(input.metadata));
+  if (input.scope) formData.append('scope', input.scope);
   return callApi(auth, `${mediaApiBaseUrl}/images`, {
     method: 'POST',
     body: formData,
