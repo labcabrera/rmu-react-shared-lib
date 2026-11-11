@@ -19,13 +19,49 @@ Library of UI components based on React and MUI.
 Local build:
 
 ----
-npm run build
-
-npm link
+pnpm run build
 ----
 
-Install in another project:
+Install in another project of the workspace, in its `package.json`:
 
 ----
-npm link @labcabrera-rmu/rmu-react-shared-lib
+"@labcabrera-rmu/rmu-react-shared-lib": "link:../rmu-react-shared-lib"
 ----
+
+== Visual rules (spec 066)
+
+The MFEs build their pages only with the components of this library. Each visual role has one component:
+
+[cols="1,2"]
+|===
+| Role | Component
+
+| Page | `ListPage`, `DetailPage` (always with `hero`), `FormPage`; `LayoutBase` for tool pages
+| Block of a page | `Section`
+| Tile of a page grid | `Panel`
+| Sub-block inside a section, a dialog or a wizard step | `Panel variant="outlined"` (`dense` in dialogs)
+| Title of a sub-block | `SectionLabel` (overline, `text.secondary`); `CategorySeparator` separates groups of a list
+| Label / value rows | `KeyValueList` / `KeyValuePanel` (`tone: 'penalty'` for penalties), `StatRow` for a single row
+| Grid of a detail page | `Bento` + `span()`; `CardGrid` for lists of cards
+| Dialog | `RmuDialog`; `ConfirmDialog` for yes/no (`destructive` to delete)
+| Table | `DataTable` (`emptyTitle`, `pagination`); rule tables with merged cells may stay a MUI `Table`
+| Search box | `SearchField` (`FilterSearchField` for a `text` filter of `useListFilters`)
+| Paging | `RmuPagination` (`dense` under a table)
+| Wizard | `FlowSteps`
+| Nothing to show | `EmptyState` (`dense` inside panels, tables and dialogs); `Alert` only for rule or state warnings
+| Loading | `LoadingState` (`inline` for a spinner in a line)
+| Chosen tile | `SelectableCard`, or `selectableSx(selected)` on another element
+| Chips in a row | `ChipRow`
+| Roll result | `RollResultAlert` + `RollBreakdown`
+| Help of a block of options | `OptionsHelpButton` / `OptionsHelpDialog`
+| Number on a table or a tablet | `NumberPadField` (keypad in a dialog); `NumericInput` in desktop forms
+| Message instead of a page | `MessageScreen`
+|===
+
+Dialog widths (`maxWidth`): confirmation `xs`, short form `sm`, picker or list `md`, large table `lg`.
+
+Radius: `theme.radius.sm|md|lg|xl` and `theme.radius.pill` for pills and bars, never loose numbers or px.
+Font weight: 600 by default (titles, values), 700 only for big numbers. Colours always from the palette.
+
+The `eslint.config.mjs` shared by the MFEs warns when a MFE imports `Dialog`, `Stepper`, `Pagination` or
+`CircularProgress` from `@mui/material`.

@@ -1,8 +1,9 @@
 import React, { FC, ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import { Box, Breadcrumbs, Link, Stack, Typography } from '@mui/material';
+import { Box, Breadcrumbs, Link, Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
 
 type BreadcrumbItem = {
   name: string;
@@ -16,9 +17,14 @@ interface RmuBreadcrumbsProps {
 }
 
 const RmuBreadcrumbs: FC<RmuBreadcrumbsProps> = ({ items, children, showHome = true }) => {
+  const { t } = useTranslation();
   const firstItem = items[0];
   const firstItemIsHome = firstItem?.link === '/' || firstItem?.name?.toLowerCase() === 'home';
-  const breadcrumbItems = showHome && !firstItemIsHome ? [{ name: 'Home', link: '/' }, ...items] : items;
+  const theme = useTheme();
+  const isPhone = useMediaQuery(theme.breakpoints.down('sm'));
+  const allItems = showHome && !firstItemIsHome ? [{ name: t('home'), link: '/' }, ...items] : items;
+  // Phones only show the parent (as the way back) and the current page.
+  const breadcrumbItems = isPhone && allItems.length > 2 ? allItems.slice(-2) : allItems;
 
   return (
     <Stack
@@ -29,7 +35,7 @@ const RmuBreadcrumbs: FC<RmuBreadcrumbsProps> = ({ items, children, showHome = t
       <Box sx={{ width: '100%' }}>
         <Breadcrumbs
           separator={<ChevronRightIcon sx={{ fontSize: 20, color: 'text.disabled' }} />}
-          aria-label="breadcrumb"
+          aria-label={t('breadcrumb')}
           sx={{
             fontSize: { xs: '1rem', sm: '1.0625rem' },
             fontWeight: 600,
@@ -45,7 +51,7 @@ const RmuBreadcrumbs: FC<RmuBreadcrumbsProps> = ({ items, children, showHome = t
         >
           {breadcrumbItems.map((it, idx) => {
             const display = it.name;
-            const isHome = showHome && idx === 0 && (firstItemIsHome || it.link === '/');
+            const isHome = showHome && it.link === '/' && idx === 0;
             const isLast = idx === breadcrumbItems.length - 1;
             const content = (
               <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, lineHeight: 1 }}>
@@ -67,6 +73,9 @@ const RmuBreadcrumbs: FC<RmuBreadcrumbsProps> = ({ items, children, showHome = t
                 sx={{
                   display: 'inline-flex',
                   alignItems: 'center',
+                  // A comfortable touch target on phones, where the parent link is the way back.
+                  minHeight: { xs: 44, sm: 'auto' },
+                  minWidth: { xs: 44, sm: 'auto' },
                   fontSize: 'inherit',
                   fontWeight: 'inherit',
                   lineHeight: 1,

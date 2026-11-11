@@ -6,6 +6,8 @@ export type EffectPropertyRequirement = (typeof effectPropertyRequirements)[numb
 
 export interface EffectType {
   id: string;
+  /** Version of the stored entity; sent back in a PATCH, a concurrent change answers 409 (spec 018). */
+  version?: number;
   isPersistent: boolean;
   isStackable: boolean;
   value: EffectPropertyRequirement;
@@ -19,6 +21,6 @@ export interface EffectType {
   entitySource: EntityType;
 }
 
-export type CreateEffectTypeDto = Omit<EffectType, 'owner' | 'entitySource'>;
+export type CreateEffectTypeDto = Omit<EffectType, 'owner' | 'entitySource'> & { entitySource?: EntityType };
 
-export type UpdateEffectTypeDto = Partial<Omit<EffectType, 'id' | 'owner' | 'entitySource'>>;
+export type UpdateEffectTypeDto = Partial<Omit<EffectType, 'id' | 'owner'>>;

@@ -7,7 +7,7 @@ const LevelUpButton: FC<{
   color?: 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning' | 'default' | undefined;
 }> = ({ color = 'primary', onClick }) => {
   return (
-    <RmuIconButton onClick={onClick} ariaLabel="level-up" Icon={ArrowCircleUpIcon} color={color} tooltip="Level up" />
+    <RmuIconButton onClick={onClick} ariaLabel="level-up" Icon={ArrowCircleUpIcon} color={color} tooltip="level-up" />
   );
 };
 

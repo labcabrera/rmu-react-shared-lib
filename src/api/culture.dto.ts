@@ -1,20 +1,49 @@
-import { AccessType } from './common.dto';
+import { AccessType, EntityType } from './common.dto';
+
+export type CultureSkillRankType = 'skill' | 'skill-choice' | 'category-pool' | 'languages' | 'region';
+
+export type CultureRegion = 'own' | 'neighboring';
+
+/**
+ * One typed entry of a culture's skill ranks. Which optional fields apply depends on the type:
+ * - skill: skillId and optional specialization (fixed ranks).
+ * - skill-choice: skillIds (1+) and optional maxRanksPerSkill; the player picks the specialization.
+ * - category-pool: categoryIds (1+) and optional maxRanksPerSkill.
+ * - languages: only ranks, spread between spoken and written languages.
+ * - region: skillId and region.
+ */
+export type CultureSkillRank = {
+  type: CultureSkillRankType;
+  skillId?: string;
+  skillIds?: string[];
+  specialization?: string;
+  categoryIds?: string[];
+  ranks: number;
+  maxRanksPerSkill?: number;
+  region?: CultureRegion;
+};
 
 export type Culture = {
   id: string;
+  /** Version of the stored entity; sent back in a PATCH, a concurrent change answers 409 (spec 018). */
+  version?: number;
   name: string;
-  fixedSkillRanks: CultureSkillRank[];
+  skillRanks: CultureSkillRank[];
+  languages?: string[];
+  suggestedCrafts?: string;
+  suggestedVocations?: string;
+  /** Indicative development cost computed by the API (read-only). */
+  developmentCost?: number;
   description: string | undefined;
   imageUrl: string | undefined;
+  owner?: string;
   accessType: AccessType;
+  /** Rulebook (`system`, admin only) or user content (spec 063). */
+  entitySource: EntityType;
 };
 
-export type CultureSkillRank = {
-  skillId: string;
-  specialization: string | null;
-  ranks: number;
+export type CreateCultureDto = Omit<Culture, 'id' | 'developmentCost' | 'owner' | 'entitySource'> & {
+  entitySource?: EntityType;
 };
 
-export type CreateCultureDto = Omit<Culture, 'id'>;
-
-export type UpdateCultureDto = Partial<Omit<CreateCultureDto, 'id'>>;
+export type UpdateCultureDto = Partial<CreateCultureDto>;

@@ -29,4 +29,4 @@ export const MANEUVER_DIFFICULTIES: KeyValue[] = [
 
 export const ITEM_RARITIES: ItemRarity[] = ['common', 'uncommon', 'rare', 'very-rare'];
 
-export const SPELL_LIST_TYPES: ListType[] = ['open', 'closed', 'base'];
+export const SPELL_LIST_TYPES: ListType[] = ['open', 'closed', 'base', 'evil'];

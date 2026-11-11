@@ -1,7 +1,10 @@
 export const IMAGE_CATEGORIES = [
   'actions',
+  'armor',
   'avatars',
   'backgrounds',
+  'chronicle',
+  'cultures',
   'doc',
   'generic',
   'icons',
@@ -10,16 +13,34 @@ export const IMAGE_CATEGORIES = [
   'photos',
   'professions',
   'races',
+  'spells',
+  'weapons',
   'user-data',
 ] as const;
 
 export type ImageCategory = (typeof IMAGE_CATEGORIES)[number];
 
+/** i18n key of the name of an image category: `cultures` → `image-category-cultures`. */
+export const imageCategoryKey = (category: string): string => `image-category-${category}`;
+
+/** `base`: a file of rmu-mfe-assets, read only; `user`: an upload (workspace spec 057, decision 2). */
+export type ImageSource = 'base' | 'user';
+
+/** Every image is public for now; `friends` and `private` are reserved (spec 057, decision 8). */
+export type ImageVisibility = 'public' | 'friends' | 'private';
+
+/** Prefix of the id of a base image, derived from its path (`base:images/races/elf.png`). */
+export const BASE_IMAGE_ID_PREFIX = 'base:';
+
 export type MediaImage = {
+  /** `base:<path>` for a base image, a uuid for an upload. */
   id: string;
   category: ImageCategory;
+  /** Relative path to store: `images/…` for a base image, `uploads/…` for an upload (see config/asset-url.ts). */
   url: string;
   storageKey: string;
+  source: ImageSource;
+  visibility: ImageVisibility;
   contentType: string;
   sizeBytes: number;
   width?: number;
@@ -27,8 +48,19 @@ export type MediaImage = {
   originalFilename?: string;
   altText?: string;
   metadata?: Record<string, string>;
-  owner: string;
+  /** What the image belongs to (workspace spec 102), such as `strategic-game:<id>`. */
+  scope?: string;
+  /** The id of the user who uploaded it; empty or absent for a base image. */
+  owner?: string;
+  version?: number;
 };
+
+/** A base image: either `source` says so or, for an older API, the id does. */
+export const isBaseImage = (image: Pick<MediaImage, 'id' | 'source'>): boolean =>
+  image.source === 'base' || image.id.startsWith(BASE_IMAGE_ID_PREFIX);
+
+/** The path to store for an image: its relative `url` (the storage key only for older records without one). */
+export const imagePath = (image: Pick<MediaImage, 'url' | 'storageKey'>): string => image.url || image.storageKey;
 
 export type MediaImagePage = {
   content: MediaImage[];
@@ -40,10 +72,19 @@ export type MediaImagePage = {
   };
 };
 
+export type UpdateImageInput = {
+  altText?: string;
+  category?: ImageCategory;
+  /** The `version` read, so that a stale edit answers 409 `version-conflict`. */
+  version?: number;
+};
+
 export type UploadImageInput = {
   file: Blob;
   filename: string;
   category: ImageCategory;
   altText?: string;
   metadata?: Record<string, string>;
+  /** What the image belongs to (workspace spec 102): `strategic-game:<id>` for the chronicle of a campaign. */
+  scope?: string;
 };

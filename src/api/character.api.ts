@@ -1,7 +1,7 @@
 import { AuthContextProps } from 'react-oidc-context';
 import { apiStrategicGameUrl } from './../config/config.service';
 import callApi, { Page } from './api';
-import { AddTraitDto, Character, UpdateTemporaryStatDto } from './character.dto';
+import { AddTraitDto, Character, DevPointsPool, KnownSpellList, UpdateTemporaryStatDto } from './character.dto';
 import { AddSkill, DeleteTraitDto } from './character.dto';
 
 // error handling is done inside callApi
@@ -72,14 +72,24 @@ export async function deleteCharacterSkill(
   return await callApi(auth, url, { method: 'DELETE' });
 }
 
+/**
+ * Develops a rank of the skill. `pool` picks the points that pay it (spec 076, default `auto`): `normal` without
+ * enough normal points is a 400 `err-dev-points-insufficient`. A third rank needs the game's `intenseTraining`
+ * (`err-skill-max-ranks-per-level`), only one skill per level (`err-skill-intense-training-taken`) and, but for lores
+ * and languages, at most twice the level in ranks (`err-skill-intense-training-limit`).
+ */
 export async function levelUpSkill(
   characterId: string,
   skillId: string,
   specialization: string | undefined,
-  auth: AuthContextProps
+  auth: AuthContextProps,
+  pool?: DevPointsPool
 ): Promise<Character> {
-  const specializationQuery = specialization ? `?specialization=${specialization}` : '';
-  const url = `${apiStrategicGameUrl}/characters/${characterId}/skills/${skillId}/level-up${specializationQuery}`;
+  const params = new URLSearchParams();
+  if (specialization) params.set('specialization', specialization);
+  if (pool && pool !== 'auto') params.set('pool', pool);
+  const query = params.toString() ? `?${params.toString()}` : '';
+  const url = `${apiStrategicGameUrl}/characters/${characterId}/skills/${skillId}/level-up${query}`;
   return await callApi(auth, url, { method: 'PATCH' });
 }
 
@@ -153,13 +163,63 @@ export async function transferFactionGold(
   });
 }
 
+/**
+ * Levels the character up. Unspent development points are a 400 `err-level-up-unspent-dev-points` with
+ * `details.unspent`, unless `force` (they are lost) or `save` (spec 076: kept for the next level; needs the game's
+ * `allowSavingDevPoints`, otherwise `err-dev-points-saving-not-allowed`).
+ */
 export async function levelUpCharacter(
   characterId: string,
   force: boolean,
+  auth: AuthContextProps,
+  save = false
+): Promise<Character> {
+  const url = `${apiStrategicGameUrl}/characters/${characterId}/level-up?force=${force}${save ? '&save=true' : ''}`;
+  return await callApi(auth, url, { method: 'POST' });
+}
+
+/** Runs the character processor again and stores the sheet (admin only, spec 077). */
+export async function recalculateCharacter(characterId: string, auth: AuthContextProps): Promise<Character> {
+  const url = `${apiStrategicGameUrl}/characters/${characterId}/recalculate`;
+  return await callApi(auth, url, { method: 'POST' });
+}
+
+/** Spell lists of the character and the spells it knows up to its ranks (spec 029). */
+export async function fetchCharacterSpells(characterId: string, auth: AuthContextProps): Promise<KnownSpellList[]> {
+  const url = `${apiStrategicGameUrl}/characters/${characterId}/spells`;
+  return await callApi(auth, url, { method: 'GET' });
+}
+
+/** Spends power points: not enough points is a 400 err-insufficient-power. */
+export async function spendCharacterPower(
+  characterId: string,
+  amount: number,
   auth: AuthContextProps
 ): Promise<Character> {
-  const url = `${apiStrategicGameUrl}/characters/${characterId}/level-up?force=${force}`;
-  return await callApi(auth, url, { method: 'POST' });
+  return changeCharacterPower(characterId, 'spend', amount, auth);
+}
+
+/** Gives back power points, up to the maximum. */
+export async function restoreCharacterPower(
+  characterId: string,
+  amount: number,
+  auth: AuthContextProps
+): Promise<Character> {
+  return changeCharacterPower(characterId, 'restore', amount, auth);
+}
+
+async function changeCharacterPower(
+  characterId: string,
+  change: 'spend' | 'restore',
+  amount: number,
+  auth: AuthContextProps
+): Promise<Character> {
+  const url = `${apiStrategicGameUrl}/characters/${characterId}/power/${change}`;
+  return await callApi(auth, url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ amount }),
+  });
 }
 
 export async function addCharacterXP(characterId: string, xp: number, auth: AuthContextProps): Promise<Character> {

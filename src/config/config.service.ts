@@ -1,12 +1,18 @@
-export const assetsBaseUrl = process.env.RMU_MFE_ASSETS;
-export const apiCoreUrl = process.env.RMU_API_CORE_URL;
-export const apiStrategicGameUrl = process.env.RMU_API_STRATEGIC_URL;
-export const apiTacticalUrl = process.env.RMU_API_TACTICAL_URL;
-export const apiItemsUrl = process.env.RMU_API_ITEMS_URL;
-export const apiAttackTablesUrl = process.env.RMU_API_ATTACK_TABLES_URL;
-export const apiNpcUrl = process.env.RMU_API_NPCS_URL!;
-export const apiSpellsUrl = process.env.RMU_API_SPELLS_URL!;
-export const mediaApiBaseUrl = process.env.RMU_API_MEDIA_URL!;
+// Read through window.__RMU_CONFIG__ at runtime: each MFE's webpack DefinePlugin rewrites these
+// process.env references (see public/env-config.template.js in the MFE repos). Every key read here must
+// be listed in each MFE's template, or the bundle keeps a bare `process.env` reference.
+export const assetsBaseUrl: string = process.env.RMU_MFE_ASSETS_URI ?? '';
+export const apiCoreUrl: string = process.env.RMU_API_CORE_URI ?? '';
+export const apiStrategicGameUrl: string = process.env.RMU_API_STRATEGIC_URI ?? '';
+export const apiTacticalUrl: string = process.env.RMU_API_TACTICAL_URI ?? '';
+export const apiItemsUrl: string = process.env.RMU_API_ITEMS_URI ?? '';
+export const apiAttackTablesUrl: string = process.env.RMU_API_ATTACK_TABLES_URI ?? '';
+export const apiNpcUrl: string = process.env.RMU_API_NPCS_URI ?? '';
+export const apiNpcNamesUrl: string = process.env.RMU_API_NPC_NAMES_URI ?? '';
+export const apiSpellsUrl: string = process.env.RMU_API_SPELLS_URI ?? '';
+/** users: the friends of the signed-in user, to share entities with them (spec 069). */
+export const apiUsersUrl: string = process.env.RMU_API_USERS_URI ?? '';
+export const mediaApiBaseUrl: string = process.env.RMU_API_MEDIA_URI ?? '';
 
-//deprecated
-export const imageBaseUrl = process.env.RMU_MFE_ASSETS;
+/** @deprecated Use assetsBaseUrl, or resolveAssetUrl for stored image paths. */
+export const imageBaseUrl: string = process.env.RMU_MFE_ASSETS_URI ?? '';

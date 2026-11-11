@@ -45,12 +45,13 @@ export async function deleteCulture(cultureId: string, auth: AuthContextProps): 
   return await callApi(auth, url, { method: 'DELETE' });
 }
 
-export async function addCultureFixedSkillRank(
+/** Appends one typed entry to the culture's skill ranks. */
+export async function addCultureSkillRank(
   cultureId: string,
   data: CultureSkillRank,
   auth: AuthContextProps
 ): Promise<Culture> {
-  const url = `${apiCoreUrl}/cultures/${cultureId}/fixed-skills`;
+  const url = `${apiCoreUrl}/cultures/${cultureId}/skill-ranks`;
   return await callApi(auth, url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -58,17 +59,12 @@ export async function addCultureFixedSkillRank(
   });
 }
 
-export async function deleteCultureFixedSkillRank(
+/** Removes the skill rank entry at the given 0-based index. */
+export async function deleteCultureSkillRank(
   cultureId: string,
-  skillId: string,
-  specialization: string | null,
+  index: number,
   auth: AuthContextProps
 ): Promise<Culture> {
-  const dto = { skillId, specialization };
-  const url = `${apiCoreUrl}/cultures/${cultureId}/fixed-skills`;
-  return await callApi(auth, url, {
-    method: 'DELETE',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(dto),
-  });
+  const url = `${apiCoreUrl}/cultures/${cultureId}/skill-ranks/${index}`;
+  return await callApi(auth, url, { method: 'DELETE' });
 }

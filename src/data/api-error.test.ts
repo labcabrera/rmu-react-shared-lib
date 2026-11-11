@@ -1,0 +1,85 @@
+import { describe, expect, it } from 'vitest';
+import { ApiError, apiErrorCode, apiErrorDetails, isApiError } from './api-error';
+
+describe('ApiError', () => {
+  it('keeps the historical message format', () => {
+    const error = new ApiError(500, 'Internal Server Error', '{"statusCode":500}', '/api/items/v1/items');
+    expect(error.message).toBe(
+      'API request failed: 500 Internal Server Error {"statusCode":500}. Url: /api/items/v1/items'
+    );
+    expect(isApiError(error)).toBe(true);
+    expect(isApiError(new Error('x'))).toBe(false);
+  });
+
+  it.each([
+    [0, 'error-network'],
+    [400, 'error-bad-request'],
+    [401, 'error-unauthorized'],
+    [403, 'error-forbidden'],
+    [404, 'error-not-found'],
+    [409, 'error-conflict'],
+    [503, 'error-server'],
+    [418, 'unexpected-error'],
+  ])('maps status %i to %s', (status, key) => {
+    expect(new ApiError(status, '', '', '/x').messageKey).toBe(key);
+  });
+
+  it('reads the code of the body and explains a concurrent change', () => {
+    const stale = new ApiError(409, '', '{"statusCode":409,"code":"version-conflict","message":"x"}', '/x');
+    expect(stale.code).toBe('version-conflict');
+    expect(stale.messageKey).toBe('error-version-conflict');
+    const duplicated = new ApiError(409, '', '{"code":"duplicate-key"}', '/x');
+    expect(duplicated.messageKey).toBe('error-conflict');
+    expect(new ApiError(500, '', 'not json', '/x').code).toBeUndefined();
+  });
+
+  it('explains a rulebook entity changed by a non-admin', () => {
+    const body = '{"statusCode":403,"error":"Forbidden","code":"system-entity-admin-only","message":"x"}';
+    expect(new ApiError(403, '', body, '/x').messageKey).toBe('error-system-entity-admin-only');
+    expect(new ApiError(403, '', '{"code":"forbidden"}', '/x').messageKey).toBe('error-forbidden');
+  });
+
+  it('extracts the detail from NestJS and validation bodies', () => {
+    expect(new ApiError(404, '', '{"message":"Item not found"}', '/x').detail).toBe('Item not found');
+    expect(new ApiError(400, '', '{"message":["name is required","size must be positive"]}', '/x').detail).toBe(
+      'name is required, size must be positive'
+    );
+    expect(new ApiError(500, '', 'not json', '/x').detail).toBeUndefined();
+  });
+  it('names the errors of the members of a strategic game (spec 071)', () => {
+    expect(new ApiError(400, '', '{"code":"not-a-friend"}', '/x').messageKey).toBe('error-not-a-friend');
+    expect(new ApiError(403, '', '{"code":"not-a-player"}', '/x').messageKey).toBe('error-not-a-player');
+    expect(new ApiError(403, '', '{"code":"global-entity-admin-only"}', '/x').messageKey).toBe(
+      'error-global-entity-admin-only'
+    );
+    expect(new ApiError(409, '', '{"code":"member-limit"}', '/x').messageKey).toBe('error-member-limit');
+  });
+});
+
+describe('apiErrorCode', () => {
+  const error = (body: string) => new ApiError(400, '', body, '/x');
+
+  it('reads an err- code, also from the deprecated errorCode', () => {
+    expect(apiErrorCode(error('{"code":"err-x"}'))).toBe('err-x');
+    expect(apiErrorCode(error('{"errorCode":"err-y"}'))).toBe('err-y');
+  });
+
+  it('prefixes the herb codes sent without it', () => {
+    expect(apiErrorCode(error('{"code":"herb-not-applicable"}'))).toBe('err-herb-not-applicable');
+  });
+
+  it('ignores other codes, invalid bodies and other errors', () => {
+    expect(apiErrorCode(error('{"code":"not-found"}'))).toBeUndefined();
+    expect(apiErrorCode(error('not json'))).toBeUndefined();
+    expect(apiErrorCode(new Error('x'))).toBeUndefined();
+  });
+});
+
+describe('apiErrorDetails', () => {
+  it('reads an object, and nothing else', () => {
+    expect(apiErrorDetails(new ApiError(400, '', '{"details":{"limit":3}}', '/x'))).toEqual({ limit: 3 });
+    expect(apiErrorDetails(new ApiError(400, '', '{"details":"text"}', '/x'))).toBeUndefined();
+    expect(apiErrorDetails(new ApiError(400, '', 'not json', '/x'))).toBeUndefined();
+    expect(apiErrorDetails(new Error('x'))).toBeUndefined();
+  });
+});

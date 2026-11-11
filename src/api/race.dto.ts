@@ -1,10 +1,12 @@
 import { StatKey } from './character.dto';
-import { AccessType } from './common.dto';
+import { AccessType, EntityType, EntityAccess } from './common.dto';
 
 export const resistances = ['channeling', 'mentalism', 'essence', 'physical', 'poison', 'disease', 'fear'];
 
 export type Race = {
   id: string;
+  /** Version of the stored entity; sent back in a PATCH, a concurrent change answers 409 (spec 018). */
+  version?: number;
   name: string;
   archetype: string | undefined;
   realmId: string;
@@ -25,7 +27,12 @@ export type Race = {
   skillBonuses: RaceSkillBonus[];
   description: string | undefined;
   imageUrl: string | undefined;
+  owner?: string;
+  /** What the signed-in user can do with it: follows its realm (spec 069). */
+  access?: EntityAccess;
   accessType: AccessType;
+  /** Rulebook (`system`, admin only) or user content (spec 063). */
+  entitySource: EntityType;
 };
 
 export type RaceResistances = {
@@ -35,6 +42,7 @@ export type RaceResistances = {
   physical: number;
   poison: number;
   disease: number;
+  fear: number;
 };
 
 export type GenderBasedStat = {
@@ -54,6 +62,12 @@ export type RaceSkillBonus = {
   skillId: string;
   specialization: string | null;
   bonus: number;
+};
+
+/** Body of `POST /races/:id/copy` (spec 074): the new name and a realm the user can change. */
+export type CopyRaceDto = {
+  name: string;
+  realmId: string;
 };
 
 export type CreateRaceDto = {
@@ -76,10 +90,13 @@ export type CreateRaceDto = {
   defaultLanguage: string | undefined;
   description: string | undefined;
   imageUrl: string | undefined;
+  /** Only an admin may send `system` (spec 063). */
+  entitySource?: EntityType;
 };
 
 export type UpdateRaceDto = {
   id: string;
+  version?: number;
   name: string | undefined;
   archetype: string | undefined;
   sizeId: string | undefined;
@@ -98,6 +115,8 @@ export type UpdateRaceDto = {
   defaultLanguage: string | undefined;
   description: string | undefined;
   imageUrl: string | undefined;
+  /** Only an admin may send `system` (spec 063). */
+  entitySource?: EntityType;
 };
 
 export type AddRaceTraitDto = {

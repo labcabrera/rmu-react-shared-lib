@@ -1,9 +1,82 @@
+import { EntityAccess, EntityType } from './common.dto';
+import type { MagicItemFeature } from './magic-item.dto';
+import { ItemAntidote, ItemPoison } from './poison.dto';
+import type {
+  ItemAcid,
+  ItemAnimal,
+  ItemGem,
+  ItemHerb,
+  ItemIntoxicant,
+  ItemJewelry,
+  ItemProperty,
+} from './treasure-goods.dto';
+
 export type WeaponModeType = 'one-hand' | 'two-hands';
 export type WeaponAttackType = 'melee' | 'ranged' | 'thrown';
 export type ItemArmorSlot = 'head' | 'body' | 'arms' | 'legs';
 export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'very-rare';
 export type ItemModifierType = 'bonus' | 'item-damage' | 'skill-bonus' | 'material' | 'slayer';
 export type OptionType = 'required' | 'optional' | 'forbidden';
+export type ItemArmorClass = 'light' | 'medium' | 'heavy';
+
+/**
+ * Categories of the item catalog; spec 041 adds the general equipment ones (container to instrument), spec 062 the
+ * Treasure Law goods (acid to property), spec 067 the potions and the spell items (wands, rods, staves, rune paper…).
+ */
+export const ITEM_CATEGORIES = [
+  'weapon',
+  'armor',
+  'shield',
+  'clothes',
+  'coins',
+  'tools',
+  'food',
+  'ammunition',
+  'container',
+  'light',
+  'mount',
+  'vehicle',
+  'service',
+  'instrument',
+  'poison',
+  'herb',
+  'acid',
+  'intoxicant',
+  'gem',
+  'jewelry',
+  'animal',
+  'property',
+  'potion',
+  'spell-item',
+  'other',
+] as const;
+export type ItemCategory = (typeof ITEM_CATEGORIES)[number];
+
+/** Optional blocks of the general equipment (spec 041): information, no rule reads them yet. */
+export type ItemFeatures = {
+  /** Pounds, cubic feet, gallons or units it holds. */
+  container?: { weight: number | null; volume: number | null; liquid: number | null; units: number | null } | null;
+  /** Radius lit in feet and hours of each load. */
+  light?: { radius: number | null; durationHours: number | null } | null;
+  /** Pounds a mount or a vehicle carries and its feet per round. */
+  transport?: { capacity: number | null; speed: number | null } | null;
+  /** Item types that shoot it and its attack size adjustment. */
+  ammunition?: { launchers: string[]; sizeAdjustment: number } | null;
+  /** Spec 042. */
+  poison?: ItemPoison | null;
+  antidote?: ItemAntidote | null;
+  /** Spec 062: Treasure Law goods. An antidote herb has both `antidote` and `herb`. */
+  herb?: ItemHerb | null;
+  acid?: ItemAcid | null;
+  intoxicant?: ItemIntoxicant | null;
+  gem?: ItemGem | null;
+  jewelry?: ItemJewelry | null;
+  /** Animals and mounts. */
+  animal?: ItemAnimal | null;
+  property?: ItemProperty | null;
+  /** Spec 067: a magic item of Treasure Law chapter 6, in any category. */
+  magic?: MagicItemFeature | null;
+};
 
 export type Item = {
   id: string;
@@ -13,17 +86,28 @@ export type Item = {
   weapon: ItemWeapon | null;
   armor: ItemArmor | null;
   shield: ItemShield | null;
+  /** Spec 041. */
+  features?: ItemFeatures | null;
   modifiers: ItemModifier[] | null;
   info: ItemInfo;
   description: string | null;
   imageUrl: string;
   owner: string;
+  /** Rulebook (`system`, admin only) or user content (spec 063). */
+  entitySource: EntityType;
+  /**
+   * What the signed-in user can do (spec 073): an item of a realm follows the access to the realm; a global one its
+   * owner. Absent from APIs before spec 073.
+   */
+  access?: EntityAccess;
 };
 
 export type ItemWeapon = {
   skillId: string;
   fumble: number;
   modes: WeaponMode[];
+  /** What the type and the skill can't tell, for the fighting styles (spec 032): fencing, axe, whip... */
+  tags?: string[];
 };
 
 export type ItemArmor = {
@@ -34,6 +118,12 @@ export type ItemArmor = {
   rangedPenalty: number;
   perceptionPenalty: number;
   baseDifficulty: string;
+  /** Spec 041: the slots it covers, its slot among them (a full suit covers the four). */
+  coverage?: ItemArmorSlot[];
+  /** Spec 041: light, medium or heavy helmet, vambraces or greaves. */
+  class?: ItemArmorClass;
+  /** Spec 077 (strategic items): body weight (lb) it was made for; worn by another body it weighs weight × wearer / fittedWeight. */
+  fittedWeight?: number;
 };
 
 export type WeaponMode = {
@@ -43,6 +133,8 @@ export type WeaponMode = {
   fumbleTable: string;
   sizeAdjustment: number;
   ranges: WeaponRange[] | null;
+  /** Spec 041: OB modifier of the mode, such as the penalty of an improvised weapon. */
+  obModifier?: number;
 };
 
 export type WeaponRange = {
@@ -71,6 +163,8 @@ export type ItemInfo = {
   stackable: boolean;
   rarity: ItemRarity;
   unique: boolean;
+  /** Spec 041: units of the lot the book sells (cost and weight are per unit). */
+  lotSize?: number | null;
 };
 
 export interface ItemModifier {
@@ -88,9 +182,12 @@ export interface CreateItemDto {
   weapon: Partial<ItemWeapon> | undefined;
   armor: Partial<ItemArmor> | undefined;
   shield: Partial<ItemShield> | undefined;
+  features?: ItemFeatures | null;
   info: Partial<ItemInfo> | undefined;
   description: string | undefined;
   imageUrl?: string;
+  /** Only an admin may send `system` (spec 063). */
+  entitySource?: EntityType;
 }
 
 export interface UpdateItemDto {
@@ -98,10 +195,14 @@ export interface UpdateItemDto {
   weapon: Partial<ItemWeapon> | undefined;
   armor: Partial<ItemArmor> | undefined;
   shield: Partial<ItemShield> | undefined;
+  /** Spec 041: null removes the blocks. */
+  features?: ItemFeatures | null;
   info: Partial<ItemInfo> | undefined;
   stackable: boolean | undefined;
   description: string | undefined;
   imageUrl: string | undefined;
+  /** Only an admin may send `system` (spec 063). */
+  entitySource?: EntityType;
 }
 
 export interface ItemModifierOption {

@@ -1,4 +1,4 @@
-import { AccessType } from './common.dto';
+import { AccessType, EntityType } from './common.dto';
 
 export type RealmType = 'channeling' | 'essence' | 'mentalism';
 
@@ -6,19 +6,26 @@ export type ProfessionArchetype = 'non-spellcaster' | 'semi-spellcaster' | 'pure
 
 export interface Profession {
   id: string;
+  /** Version of the stored entity; sent back in a PATCH, a concurrent change answers 409 (spec 018). */
+  version?: number;
   archetype: ProfessionArchetype;
   availableRealmTypes: RealmType[];
   fixedRealmTypes: RealmType[];
   skillCosts: ProfessionSkillCosts;
-  professionalSkills: [];
+  professionalSkills: string[];
   description: string;
   imageUrl?: string;
+  owner?: string;
   accessType: AccessType;
+  /** Rulebook (`system`, admin only) or user content (spec 063). */
+  entitySource: EntityType;
+  /** Spec 064: most Base lists of the profession a character develops as base; the rest are closed. Null: no limit. */
+  baseListLimit?: number | null;
 }
 
-export type CreateProfessionDto = Profession;
+export type CreateProfessionDto = Omit<Profession, 'owner' | 'entitySource'> & { entitySource?: EntityType };
 
-export type UpdateProfessionDto = Partial<Omit<Profession, 'id'>>;
+export type UpdateProfessionDto = Partial<Omit<Profession, 'id' | 'owner'>>;
 
 export interface ProfessionSkillCosts {
   animal: number[];

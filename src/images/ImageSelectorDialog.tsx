@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import CloseIcon from '@mui/icons-material/Close';
 import ImageSearchIcon from '@mui/icons-material/ImageSearch';
 import UploadIcon from '@mui/icons-material/Upload';
@@ -14,7 +15,7 @@ import {
   Tab,
   Tabs,
 } from '@mui/material';
-import { MediaImage } from '../api/image.dto';
+import { ImageCategory, imagePath, MediaImage } from '../api/image.dto';
 import ImageCategorySelector from './ImageCategorySelector';
 import ImageUploadEditor from './ImageUploadEditor';
 
@@ -25,6 +26,8 @@ export type ImageDialogProps = {
   onClose: () => void;
   onSelect: (image: string) => void;
   onUpload?: (image: string) => void;
+  /** Category the gallery opens on, like `items` for an item (avatars by default). */
+  defaultCategory?: ImageCategory;
 };
 
 function TabPanel({ children, value, index }: { children: React.ReactNode; value: number; index: number }) {
@@ -41,17 +44,23 @@ export default function ImageSelectorDialog({
   maxWidth = 'xl',
   onClose,
   onSelect: onImageSelected,
+  onUpload: onImageUploaded,
+  defaultCategory,
 }: ImageDialogProps) {
+  const { t } = useTranslation();
   const [tab, setTab] = useState(0);
   const [selectedImage, setSelectedImage] = useState<MediaImage>();
 
+  // With onUpload, an uploaded image is applied right away; without it, it becomes the selection.
   const handleUploaded = (image: MediaImage) => {
     setSelectedImage(image);
+    onImageUploaded?.(imagePath(image));
   };
 
   const handleSelect = () => {
     if (!selectedImage) return;
-    onImageSelected(selectedImage.url);
+    // Store the relative path (`images/…` or `uploads/…`, see config/asset-url.ts), not the public URL.
+    onImageSelected(imagePath(selectedImage));
     onClose();
   };
 
@@ -63,9 +72,9 @@ export default function ImageSelectorDialog({
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth={maxWidth}>
       <DialogTitle>
-        Images
+        {t('images')}
         <IconButton
-          aria-label="close"
+          aria-label={t('close')}
           onClick={handleClose}
           sx={{ position: 'absolute', right: 8, top: 8 }}
           size="large"
@@ -75,23 +84,28 @@ export default function ImageSelectorDialog({
       </DialogTitle>
       <DialogContent dividers>
         <Tabs value={tab} onChange={(_, value) => setTab(value)} variant="scrollable" scrollButtons="auto">
-          <Tab icon={<UploadIcon />} iconPosition="start" label="Upload image" />
-          <Tab icon={<ImageSearchIcon />} iconPosition="start" label="Select image" />
+          <Tab icon={<UploadIcon />} iconPosition="start" label={t('upload-image')} />
+          <Tab icon={<ImageSearchIcon />} iconPosition="start" label={t('select-image')} />
         </Tabs>
         <Divider />
         <TabPanel value={tab} index={0}>
           <ImageUploadEditor value={value} onUploaded={handleUploaded} />
         </TabPanel>
         <TabPanel value={tab} index={1}>
-          <ImageCategorySelector selectedImageId={selectedImage?.id} onSelect={setSelectedImage} />
+          <ImageCategorySelector
+            defaultCategory={defaultCategory}
+            selectedImageId={selectedImage?.id}
+            onSelect={setSelectedImage}
+            onDeleted={(image) => setSelectedImage((current) => (current?.id === image.id ? undefined : current))}
+          />
         </TabPanel>
       </DialogContent>
       <DialogActions>
         <Button variant="contained" onClick={handleClose}>
-          Close
+          {t('close')}
         </Button>
         <Button variant="contained" color="success" onClick={handleSelect} disabled={!selectedImage}>
-          Select
+          {t('select')}
         </Button>
       </DialogActions>
     </Dialog>

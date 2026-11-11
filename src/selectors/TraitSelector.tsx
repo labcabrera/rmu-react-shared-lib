@@ -9,7 +9,7 @@ import { fetchTraits } from '../api/trait.api';
 import { Trait, traitCategories } from '../api/trait.dto';
 import CategorySeparator from '../display/CategorySeparator';
 
-const SkillSelector: FC<{
+const TraitSelector: FC<{
   realmId?: string;
   onTraitChange: (trait: Trait | null) => void;
   onTierChange: (tier: number | null) => void;
@@ -21,6 +21,8 @@ const SkillSelector: FC<{
   const availableCategories = traitCategories;
   const [availableTraits, setAvailableTraits] = useState<Trait[]>([]);
   const [availableSpecializations, setAvailableSpecializations] = useState<string[]>();
+  // Names of the enumerations by key, spec 050
+  const [enumerationNames, setEnumerationNames] = useState<Record<string, string>>({});
 
   const [selectedCategory, setSelectedCategory] = useState<string>();
   const [selectedTrait, setSelectedTrait] = useState<Trait>();
@@ -50,7 +52,10 @@ const SkillSelector: FC<{
       } else {
         const realmQuery = realmId ? `;(realmId==${realmId},realmId==null)` : ``;
         fetchEnumerations(`category==${selectedTrait.specialization}${realmQuery}`, 0, 100, auth)
-          .then((response) => setAvailableSpecializations(response.content.map((e) => e.key)))
+          .then((response) => {
+            setEnumerationNames(Object.fromEntries(response.content.map((e) => [e.key, e.name ?? e.key])));
+            setAvailableSpecializations(response.content.map((e) => e.key));
+          })
           .catch((err) => onError(err.message));
       }
     }
@@ -65,7 +70,7 @@ const SkillSelector: FC<{
     }
   }, [selectedCategory]);
 
-  if (!availableCategories) return <p>Loading...</p>;
+  if (!availableCategories) return <p>{t('loading')}</p>;
 
   return (
     <Grid container spacing={1} sx={{ mt: 1 }}>
@@ -110,7 +115,7 @@ const SkillSelector: FC<{
             value={selectedSpecialization}
             options={availableSpecializations}
             onChange={(value) => setSelectedSpecialization(value)}
-            formatter={(value: any) => t(value as string)}
+            formatter={(value: any) => t(value as string, { defaultValue: enumerationNames[value as string] ?? value })}
           />
         </Grid>
       )}
@@ -172,4 +177,4 @@ const SelectionList: FC<{
   );
 };
 
-export default SkillSelector;
+export default TraitSelector;

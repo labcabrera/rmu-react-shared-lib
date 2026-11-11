@@ -1,10 +1,25 @@
 import React, { FC, ReactNode } from 'react';
-import { alpha, Button, DialogActions, Slide, Stack, SxProps, Theme, Typography } from '@mui/material';
-import Dialog, { DialogProps } from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
+import { useTranslation } from 'react-i18next';
+import CloseIcon from '@mui/icons-material/Close';
+import {
+  alpha,
+  Box,
+  Button,
+  DialogActions,
+  IconButton,
+  Slide,
+  Stack,
+  SxProps,
+  Theme,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import { Dialog, DialogProps } from '@mui/material';
+import { DialogContent } from '@mui/material';
+import { DialogTitle, dialogTitleClasses } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
-import GenericAvatar from '../avatars/GenericAvatar';
+import EntityImage from '../avatars/EntityImage';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -17,7 +32,8 @@ const Transition = React.forwardRef(function Transition(
 
 const RmuDialog: FC<{
   title: string;
-  subtitle?: string | undefined;
+  /** A text, or a node (for example the type of an action next to a status badge). */
+  subtitle?: ReactNode;
   children?: ReactNode;
   maxWidth?: DialogProps['maxWidth'];
   fullScreen?: boolean;
@@ -29,13 +45,21 @@ const RmuDialog: FC<{
   onDelete?: () => void;
   onCancel?: () => void;
   onClose?: () => void;
+  /** Closes on Escape and on a click outside without adding a Close button (when `onClose` is not set). */
+  onDismiss?: () => void;
   onResolve?: () => void;
   onConfirm?: () => void;
+  /** A close button (✕) in the title, which calls `onClose` or `onDismiss`. */
+  closeIcon?: boolean;
+  /** No action bar at the bottom: for a dialog whose content has its own footer. */
+  hideActions?: boolean;
+  /** No padding around the content: for a content that lays out its own edges (a flow with a sticky step bar). */
+  disableContentPadding?: boolean;
 }> = ({
   title,
   subtitle,
   children,
-  fullScreen = false,
+  fullScreen,
   maxWidth = 'xl',
   avatarImg,
   paperSx,
@@ -45,17 +69,25 @@ const RmuDialog: FC<{
   onDelete,
   onCancel,
   onClose,
+  onDismiss,
   onResolve,
   onConfirm,
+  closeIcon = false,
+  hideActions = false,
+  disableContentPadding = false,
 }) => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  // Full screen on phones unless the caller decides.
+  const isPhone = useMediaQuery(theme.breakpoints.down('sm'));
   const paperBaseSx: SxProps<Theme> = {
-    backgroundColor: (theme) =>
-      theme.palette.mode === 'dark' ? '#171b1c' : theme.palette.background.paper,
+    backgroundColor: 'background.paper',
     backgroundImage: (theme) =>
       theme.palette.mode === 'dark'
-        ? `linear-gradient(135deg, #15191a 0%, #1f2526 52%, #171d1f 100%)`
+        ? `linear-gradient(135deg, ${theme.palette.background.paper} 0%, ${theme.palette.background.light} 52%, ${theme.palette.background.paper} 100%)`
         : undefined,
-    border: (theme) => (theme.palette.mode === 'dark' ? `1px solid ${alpha(theme.palette.primary.light, 0.18)}` : undefined),
+    border: (theme) =>
+      theme.palette.mode === 'dark' ? `1px solid ${alpha(theme.palette.primary.light, 0.18)}` : undefined,
     boxShadow: (theme) =>
       theme.palette.mode === 'dark' ? `0 24px 80px ${alpha(theme.palette.common.black, 0.62)}` : undefined,
   };
@@ -63,8 +95,8 @@ const RmuDialog: FC<{
   return (
     <Dialog
       open={open}
-      onClose={onClose}
-      fullScreen={fullScreen}
+      onClose={onClose ?? onDismiss}
+      fullScreen={fullScreen ?? isPhone}
       maxWidth={maxWidth}
       fullWidth
       slots={{ transition: Transition }}
@@ -74,11 +106,10 @@ const RmuDialog: FC<{
         sx={{
           px: 3,
           py: 2,
-          backgroundColor: (theme) =>
-            theme.palette.mode === 'dark' ? '#202728' : theme.palette.grey[100],
+          backgroundColor: 'background.light',
           backgroundImage: (theme) =>
             theme.palette.mode === 'dark'
-              ? `linear-gradient(90deg, #222b2c 0%, ${alpha(theme.palette.primary.dark, 0.34)} 52%, #161b1c 100%)`
+              ? `linear-gradient(90deg, ${theme.palette.background.light} 0%, ${alpha(theme.palette.primary.dark, 0.2)} 52%, ${theme.palette.background.paper} 100%)`
               : undefined,
           borderBottom: (theme) =>
             `1px solid ${theme.palette.mode === 'dark' ? alpha(theme.palette.primary.light, 0.22) : theme.palette.divider}`,
@@ -87,25 +118,33 @@ const RmuDialog: FC<{
         }}
       >
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-          {avatarImg && <GenericAvatar variant="square" imageUrl={avatarImg} />}
-          <Stack direction="column">
+          {avatarImg && <EntityImage image={avatarImg} size="sm" />}
+          <Stack direction="column" sx={{ minWidth: 0, flex: 1 }}>
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
               {title}
             </Typography>
             {subtitle && (
-              <Typography variant="subtitle1" color="secondary" sx={{ fontWeight: 600 }}>
+              <Typography variant="subtitle1" color="secondary" component="div" sx={{ fontWeight: 600 }}>
                 {subtitle}
               </Typography>
             )}
           </Stack>
+          {closeIcon && (onClose ?? onDismiss) && (
+            <Box sx={{ alignSelf: 'flex-start' }}>
+              <IconButton aria-label={t('close')} onClick={() => (onClose ?? onDismiss)?.()} edge="end">
+                <CloseIcon />
+              </IconButton>
+            </Box>
+          )}
         </Stack>
       </DialogTitle>
       <DialogContent
         sx={{
-          px: 3,
-          py: 2.5,
-          backgroundColor: (theme) =>
-            theme.palette.mode === 'dark' ? '#202526' : theme.palette.background.paper,
+          px: disableContentPadding ? 0 : 3,
+          py: disableContentPadding ? 0 : 2.5,
+          // MUI drops the top padding of a content that follows a title, with a more specific rule than sx.
+          [`.${dialogTitleClasses.root} + &`]: { pt: disableContentPadding ? 0 : 2.5 },
+          backgroundColor: 'background.paper',
           backgroundImage: (theme) =>
             theme.palette.mode === 'dark'
               ? `linear-gradient(180deg, ${alpha(theme.palette.common.white, 0.018)} 0%, transparent 36%)`
@@ -115,31 +154,32 @@ const RmuDialog: FC<{
       >
         {children}
       </DialogContent>
-      <DialogActions
-        sx={{
-          px: 3,
-          py: 1.5,
-          backgroundColor: (theme) =>
-            theme.palette.mode === 'dark' ? '#1a2021' : theme.palette.background.paper,
-          borderTop: (theme) =>
-            `1px solid ${theme.palette.mode === 'dark' ? alpha(theme.palette.primary.light, 0.16) : theme.palette.divider}`,
-        }}
-      >
-        {buttons}
-        {onDelete && (
-          <Button onClick={() => onDelete()} color="error">
-            Delete
-          </Button>
-        )}
-        {onClose && <Button onClick={() => onClose()}>Close</Button>}
-        {onCancel && <Button onClick={() => onCancel()}>Cancel</Button>}
-        {onResolve && <Button onClick={() => onResolve()}>Resolve</Button>}
-        {onConfirm && (
-          <Button disabled={onConfirmDisabled} onClick={() => onConfirm()}>
-            Confirm
-          </Button>
-        )}
-      </DialogActions>
+      {!hideActions && (
+        <DialogActions
+          sx={{
+            px: 3,
+            py: 1.5,
+            backgroundColor: 'background.paper',
+            borderTop: (theme) =>
+              `1px solid ${theme.palette.mode === 'dark' ? alpha(theme.palette.primary.light, 0.16) : theme.palette.divider}`,
+          }}
+        >
+          {buttons}
+          {onDelete && (
+            <Button onClick={() => onDelete()} color="error">
+              {t('delete')}
+            </Button>
+          )}
+          {onClose && <Button onClick={() => onClose()}>{t('close')}</Button>}
+          {onCancel && <Button onClick={() => onCancel()}>{t('cancel')}</Button>}
+          {onResolve && <Button onClick={() => onResolve()}>{t('resolve')}</Button>}
+          {onConfirm && (
+            <Button disabled={onConfirmDisabled} onClick={() => onConfirm()}>
+              {t('confirm')}
+            </Button>
+          )}
+        </DialogActions>
+      )}
     </Dialog>
   );
 };
