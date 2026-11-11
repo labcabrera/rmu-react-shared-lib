@@ -170,7 +170,8 @@ export const MarkdownEditor = forwardRef<MDXEditorMethods, MarkdownEditorProps>(
         <GlobalStyles
           styles={{
             // The editor and its popups (dialogs, menus) share the root class, so the colors reach the portals too.
-            [`.${ROOT_CLASS}`]: {
+            // The class twice: the stylesheet of MDXEditor loads later and sets the same variables on `.mdxeditor`.
+            [`.${ROOT_CLASS}.${ROOT_CLASS}`]: {
               '--basePageBg': palette.background.paper,
               '--baseBase': palette.background.default,
               '--baseBgSubtle': palette.action.hover,
@@ -194,6 +195,24 @@ export const MarkdownEditor = forwardRef<MDXEditorMethods, MarkdownEditorProps>(
               '--accentBgActive': palette.action.selected,
               fontFamily: theme.typography.fontFamily,
               color: palette.text.primary,
+            },
+            // The Markdown mode (CodeMirror) with the colors of the theme.
+            [`.${ROOT_CLASS} .cm-editor`]: {
+              backgroundColor: palette.background.paper,
+              color: palette.text.primary,
+              minHeight,
+            },
+            [`.${ROOT_CLASS} .cm-gutters`]: {
+              backgroundColor: palette.background.default,
+              color: palette.text.disabled,
+              borderRight: `1px solid ${palette.divider}`,
+            },
+            [`.${ROOT_CLASS} .cm-activeLine, .${ROOT_CLASS} .cm-activeLineGutter`]: {
+              backgroundColor: palette.action.hover,
+            },
+            [`.${ROOT_CLASS} .cm-cursor`]: { borderLeftColor: palette.text.primary },
+            [`.${ROOT_CLASS} .cm-selectionBackground, .${ROOT_CLASS} .cm-content ::selection`]: {
+              backgroundColor: `${palette.action.selected} !important`,
             },
             [`.${CONTENT_CLASS}`]: {
               minHeight,
