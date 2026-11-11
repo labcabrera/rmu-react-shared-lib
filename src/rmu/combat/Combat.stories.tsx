@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { Box, Button, Card, CardContent, Stack, Typography } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { D100, OPEN_D100 } from '../../rolls/presets';
-import RollField from '../../rolls/RollField';
 import SidePanelLayout from '../../layouts/SidePanelLayout';
+import RollField from '../../rolls/RollField';
+import { D100, OPEN_D100 } from '../../rolls/presets';
 import FlowSteps from '../../ui/FlowSteps';
 import ActionStateMarker from './ActionStateMarker';
 import ActionTypeChip from './ActionTypeChip';
 import ApPips from './ApPips';
 import AttackSizeChip from './AttackSizeChip';
-import { ATTACK_SIZE_SCALE } from './attack-size';
 import { CombatActionState, combatActionTypes, CombatActionType } from './actionTypes';
+import { ATTACK_SIZE_SCALE } from './attack-size';
 
 // Building blocks of the combat dashboard of spec 005: action type chips, state markers, the side panel
 // and the guided flow. Sample data only.
@@ -73,6 +73,7 @@ const actors = ['Aldric Vane', 'Orc warrior 1', 'Orc warrior 2', 'Orc archer'];
 const PanelDemo = () => {
   const [open, setOpen] = useState(true);
   const [step, setStep] = useState(1);
+  const [reviewing, setReviewing] = useState<string | null>(null);
   const steps = [
     {
       id: 'targets',
@@ -116,6 +117,15 @@ const PanelDemo = () => {
         <FlowSteps
           steps={steps}
           activeIndex={step}
+          reviewing={reviewing}
+          onReview={setReviewing}
+          reviewAction={(id) => ({
+            label: 'Edit from here',
+            onClick: () => {
+              setReviewing(null);
+              setStep(steps.findIndex((each) => each.id === id));
+            },
+          })}
           footer={
             <Stack direction="row" spacing={1} sx={{ justifyContent: 'flex-end' }}>
               <Button disabled={step === 0} onClick={() => setStep((s) => s - 1)}>

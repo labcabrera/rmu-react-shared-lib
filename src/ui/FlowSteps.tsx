@@ -1,7 +1,8 @@
 import React, { ReactNode, useEffect, useLayoutEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import CheckIcon from '@mui/icons-material/Check';
-import { Box, ButtonBase, Stack, Typography } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import { Box, Button, ButtonBase, Stack, Typography } from '@mui/material';
 import { enterSx } from '../motion/motion';
 
 export interface FlowStep {
@@ -19,6 +20,18 @@ export interface FlowStep {
 }
 
 type StepState = 'done' | 'current' | 'next';
+
+/** What can be done from a reviewed done step, for example going back to edit it (workspace spec 101). */
+export interface FlowReviewAction {
+  label: string;
+  onClick: () => void;
+}
+
+const ReviewActionButton = ({ action }: { action: FlowReviewAction }) => (
+  <Button size="small" startIcon={<EditIcon fontSize="small" />} onClick={action.onClick}>
+    {action.label}
+  </Button>
+);
 
 const stepState = (index: number, activeIndex: number): StepState => {
   if (index < activeIndex) return 'done';
@@ -68,7 +81,7 @@ const prefersReducedMotion = () =>
  * open, the next ones are greyed. Horizontal (spec 085, 3.6): the steps go in a bar that stays at the top, with the
  * summary of each done step under its name, and only the current step (or the one reviewed) is shown below it.
  * `footer` stays at the bottom of the scrolling panel (the step's main action). `reviewing` opens a done step
- * read-only, for example after clicking its summary.
+ * read-only, for example after clicking its summary, and `reviewAction` may add a button to it (go back and edit it).
  */
 export default function FlowSteps({
   steps,
@@ -76,6 +89,7 @@ export default function FlowSteps({
   footer,
   reviewing,
   onReview,
+  reviewAction,
   autoScroll = true,
   orientation = 'vertical',
 }: {
@@ -87,6 +101,8 @@ export default function FlowSteps({
   reviewing?: string | null;
   /** Called with a done step's id when its summary is clicked (or null to close it). */
   onReview?: (id: string | null) => void;
+  /** A button shown with a reviewed done step, by its id (workspace spec 101); none when it returns undefined. */
+  reviewAction?: (id: string) => FlowReviewAction | undefined;
   /**
    * Scrolls the current step into view when it changes (and when the flow opens on a later step), and focuses its
    * first empty roll once the flow has moved on.
@@ -241,12 +257,18 @@ export default function FlowSteps({
         </Box>
         <Box ref={contentRef} sx={{ flex: 1, px: { xs: 1.5, sm: 3 }, py: 2 }}>
           {isReview && onReview && (
-            <ButtonBase
-              onClick={() => onReview(null)}
-              sx={{ mb: 1.5, px: 1, py: 0.5, borderRadius: 1, color: 'primary.main', typography: 'body2' }}
-            >
-              {t('flow-back-to-step', { step: steps[activeIndex]?.label ?? '' })}
-            </ButtonBase>
+            <Stack direction="row" spacing={1} sx={{ mb: 1.5, alignItems: 'center', flexWrap: 'wrap' }}>
+              <ButtonBase
+                onClick={() => onReview(null)}
+                sx={{ px: 1, py: 0.5, borderRadius: 1, color: 'primary.main', typography: 'body2' }}
+              >
+                {t('flow-back-to-step', { step: steps[activeIndex]?.label ?? '' })}
+              </ButtonBase>
+              {(() => {
+                const action = reviewAction?.(shown.id);
+                return action ? <ReviewActionButton action={action} /> : null;
+              })()}
+            </Stack>
           )}
           {shown?.content && (
             <Box key={shown.id} sx={enterSx()}>
@@ -326,6 +348,15 @@ export default function FlowSteps({
               )}
               {open && step.content && (
                 <Box sx={[{ pl: 5, pt: 1, pb: 1 }, enterSx()]}>
+                  {state === 'done' &&
+                    (() => {
+                      const action = reviewAction?.(step.id);
+                      return action ? (
+                        <Box sx={{ mb: 1 }}>
+                          <ReviewActionButton action={action} />
+                        </Box>
+                      ) : null;
+                    })()}
                   {state === 'done' && !step.reviewInteractive ? (
                     <Box inert sx={{ opacity: 0.85 }}>
                       {step.content}
