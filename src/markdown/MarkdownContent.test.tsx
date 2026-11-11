@@ -36,6 +36,23 @@ describe('MarkdownContent (workspace spec 102)', () => {
     expect(screen.getByText('Fuera')).toBeTruthy();
   });
 
+  it('stretches the images to the text width only when asked', () => {
+    const md = '![Mapa](uploads/chronicle/a.webp)';
+    const natural = render(
+      <MemoryRouter>
+        <MarkdownContent markdown={md} />
+      </MemoryRouter>
+    );
+    expect(getComputedStyle(natural.container.querySelector('img')!).width).not.toBe('100%');
+    natural.unmount();
+    const full = render(
+      <MemoryRouter>
+        <MarkdownContent markdown={md} fullWidthImages />
+      </MemoryRouter>
+    );
+    expect(getComputedStyle(full.container.querySelector('img')!).width).toBe('100%');
+  });
+
   it('opens external links in a new tab and drops javascript: URLs', () => {
     show('[web](https://example.com) [mal](javascript:alert(1))');
     expect(screen.getByText('web').closest('a')?.getAttribute('target')).toBe('_blank');
