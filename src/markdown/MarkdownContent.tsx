@@ -25,6 +25,11 @@ export type MarkdownContentProps = {
   resolveLink?: (href: string) => MarkdownLink;
   /** URL to show an image, or undefined to leave it out (only its text is shown). By default, only app files. */
   resolveImage?: (src: string) => string | undefined;
+  /**
+   * Stretch every image to the width of the text, as the wiki does with its SVG figures (they have no size of their
+   * own). By default an image keeps its size and only shrinks to fit.
+   */
+  fullWidthImages?: boolean;
 };
 
 // Room for the shell's header when the browser scrolls to an anchor.
@@ -33,7 +38,8 @@ const anchorSx = { scrollMarginTop: 80 };
 // The ids of the headings come from remarkHeadingIds: `{#id}` or the slug of the text.
 const buildComponents = (
   resolveLink: (href: string) => MarkdownLink,
-  resolveImage: (src: string) => string | undefined
+  resolveImage: (src: string) => string | undefined,
+  fullWidthImages: boolean
 ): Components => ({
   h1: ({ id, children }) => (
     <Typography variant="h4" component="h1" id={id} sx={{ ...anchorSx, mt: 3, mb: 2 }}>
@@ -158,7 +164,13 @@ const buildComponents = (
           src={url}
           alt={alt ?? ''}
           loading="lazy"
-          sx={{ display: 'block', maxWidth: '100%', height: 'auto', borderRadius: 1 }}
+          sx={{
+            display: 'block',
+            maxWidth: '100%',
+            width: fullWidthImages ? '100%' : undefined,
+            height: 'auto',
+            borderRadius: 1,
+          }}
         />
         {alt && (
           <Typography component="figcaption" variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
@@ -178,10 +190,15 @@ export const MarkdownContent: FC<MarkdownContentProps> = ({
   markdown,
   resolveLink = defaultMarkdownLink,
   resolveImage = defaultMarkdownImage,
+  fullWidthImages = false,
 }) => {
-  const components = useMemo(() => buildComponents(resolveLink, resolveImage), [resolveLink, resolveImage]);
+  const components = useMemo(
+    () => buildComponents(resolveLink, resolveImage, fullWidthImages),
+    [resolveLink, resolveImage, fullWidthImages]
+  );
   return (
-    <Box sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>
+    // The first block (usually the title) starts at the top of the page, without its margin.
+    <Box sx={{ minWidth: 0, overflowWrap: 'anywhere', '& > :first-child': { mt: 0 } }}>
       <ReactMarkdown remarkPlugins={[remarkGfm, remarkHeadingIds]} components={components}>
         {markdown}
       </ReactMarkdown>
