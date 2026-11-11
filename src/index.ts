@@ -268,7 +268,7 @@ export { default as DataTable } from './ui/DataTable';
 export type { DataTableColumn, DataTablePagination } from './ui/DataTable';
 export { default as PreviewDrawer } from './ui/PreviewDrawer';
 export { default as FlowSteps } from './ui/FlowSteps';
-export type { FlowStep } from './ui/FlowSteps';
+export type { FlowReviewAction, FlowStep } from './ui/FlowSteps';
 export { rsqlAnd } from './data/rsql';
 
 // Rolemaster-specific selects shared by several MFEs

@@ -87,3 +87,39 @@ describe('FlowSteps horizontal (spec 085)', () => {
     expect(onReview).toHaveBeenLastCalledWith(null);
   });
 });
+
+describe('FlowSteps review action (workspace spec 101)', () => {
+  const steps = [
+    { id: 'modifiers', label: 'Modifiers', content: <span>modifiers content</span> },
+    { id: 'roll', label: 'Roll', content: <span>roll content</span> },
+  ];
+
+  it.each(['vertical', 'horizontal'] as const)('offers the action of a reviewed done step (%s)', (orientation) => {
+    const onClick = vi.fn();
+    renderWithProviders(
+      <FlowSteps
+        orientation={orientation}
+        steps={steps}
+        activeIndex={1}
+        reviewing="modifiers"
+        onReview={() => undefined}
+        reviewAction={(id) => (id === 'modifiers' ? { label: 'Edit from here', onClick } : undefined)}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Edit from here' }));
+    expect(onClick).toHaveBeenCalled();
+  });
+
+  it('shows no action when the step has none', () => {
+    renderWithProviders(
+      <FlowSteps
+        steps={steps}
+        activeIndex={1}
+        reviewing="modifiers"
+        onReview={() => undefined}
+        reviewAction={() => undefined}
+      />
+    );
+    expect(screen.queryByRole('button', { name: 'Edit from here' })).toBeNull();
+  });
+});
