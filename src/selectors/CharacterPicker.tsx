@@ -52,14 +52,25 @@ export const CHARACTER_PICKER_COMPACT_FROM = 12;
 /** More cards than this get a search field (spec 038, decision 3). */
 export const CHARACTER_PICKER_SEARCH_FROM = 8;
 
-/** Options related to `factionId` as asked: friends share it, enemies don't. Without a faction nothing is filtered. */
+/**
+ * Options related to the point of view as asked: friends are on its side, enemies are not. With `allyFactionIds`
+ * (the factions of its side, spec 100) friends are the options of any of those factions; otherwise they share
+ * `factionId`. Without either nothing is filtered.
+ */
 export const filterByRelation = (
   options: CharacterOption[],
   relation: CharacterRelation,
-  factionId?: string
+  factionId?: string,
+  allyFactionIds?: string[]
 ): CharacterOption[] => {
-  if (relation === 'all' || !factionId) return options;
-  return options.filter((option) => (option.factionId === factionId) === (relation === 'friends'));
+  if (relation === 'all') return options;
+  const isFriend = allyFactionIds
+    ? (option: CharacterOption) => !!option.factionId && allyFactionIds.includes(option.factionId)
+    : factionId
+      ? (option: CharacterOption) => option.factionId === factionId
+      : undefined;
+  if (!isFriend) return options;
+  return options.filter((option) => isFriend(option) === (relation === 'friends'));
 };
 
 /** Option of a character of the strategic API. */
@@ -87,6 +98,8 @@ type CommonProps = {
   relation?: CharacterRelation;
   /** Faction of the point of view: the acting actor's, or the character's. */
   factionId?: string;
+  /** Factions of the side of the point of view (spec 100): when given, they decide friends and enemies. */
+  allyFactionIds?: string[];
   /** Ids never offered: the acting actor, the target… */
   exclude?: string[];
   /** A "show all" switch that widens `friends` or `enemies` to everyone. */
@@ -269,6 +282,7 @@ const CharacterPicker: FC<CharacterPickerProps> = (props) => {
     options,
     relation = 'all',
     factionId,
+    allyFactionIds,
     exclude = [],
     allowShowAll = false,
     renderDetails,
@@ -286,7 +300,7 @@ const CharacterPicker: FC<CharacterPickerProps> = (props) => {
   const singleValue = props.mode === 'multiple' ? null : props.value;
   const [changing, setChanging] = useState(!singleValue);
 
-  const related = filterByRelation(options, showAll ? 'all' : relation, factionId);
+  const related = filterByRelation(options, showAll ? 'all' : relation, factionId, allyFactionIds);
   const visible = [...extraOptions, ...related].filter((option) => !exclude.includes(option.id));
   const compact = variant === 'compact' || (variant === 'auto' && visible.length > CHARACTER_PICKER_COMPACT_FROM);
   const all = [...extraOptions, ...options];

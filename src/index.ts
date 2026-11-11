@@ -1,4 +1,11 @@
-export { canEditEntity, canManageEntity, useCanEditEntity, useCanManageEntity, isAdmin, useIsAdmin } from './auth/roles';
+export {
+  canEditEntity,
+  canManageEntity,
+  useCanEditEntity,
+  useCanManageEntity,
+  isAdmin,
+  useIsAdmin,
+} from './auth/roles';
 export type { EditableEntity } from './auth/roles';
 export { default as EntityImage } from './avatars/EntityImage';
 export type { EntityImageProps, EntityImageSize } from './avatars/EntityImage';
@@ -320,6 +327,18 @@ export {
   signedSteps,
 } from './rmu/combat/attack-size';
 export type { AttackSizeEffect, AttackSizeStep } from './rmu/combat/attack-size';
+export { default as SideStrengthBar } from './rmu/combat/SideStrengthBar';
+export type { SideStrengthBarProps } from './rmu/combat/SideStrengthBar';
+export {
+  SIDE_STRENGTH_FLED,
+  SIDE_STRENGTH_INCAPACITATED,
+  SIDE_STRENGTH_THRESHOLDS,
+  sideStrength,
+  sideStrengthLevel,
+  sideStrengthState,
+  standingShare,
+} from './rmu/combat/side-strength';
+export type { SideStrength, SideStrengthActor, SideStrengthSide } from './rmu/combat/side-strength';
 export { default as ResistanceList } from './rmu/character/ResistanceList';
 export { default as ResourceBar } from './rmu/character/ResourceBar';
 export type { ResourceKind } from './rmu/character/ResourceBar';
