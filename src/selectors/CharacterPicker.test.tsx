@@ -22,6 +22,18 @@ describe('filterByRelation', () => {
     expect(filterByRelation(OPTIONS, 'all', 'f1')).toHaveLength(4);
     expect(filterByRelation(OPTIONS, 'enemies')).toHaveLength(4);
   });
+
+  it('takes the factions of the side as friends when allyFactionIds is given', () => {
+    const withAlly: CharacterOption[] = [
+      ...OPTIONS,
+      { id: 'r', name: 'Rohirrim', factionId: 'f3' },
+      { id: 'x', name: 'X' },
+    ];
+    expect(filterByRelation(withAlly, 'friends', 'f1', ['f1', 'f3']).map((o) => o.id)).toEqual(['a', 'b', 'r']);
+    expect(filterByRelation(withAlly, 'enemies', 'f1', ['f1', 'f3']).map((o) => o.id)).toEqual(['o', 'u', 'x']);
+    expect(filterByRelation(withAlly, 'enemies', undefined, ['f2']).map((o) => o.id)).toEqual(['a', 'b', 'r', 'x']);
+    expect(filterByRelation(withAlly, 'all', 'f1', ['f1'])).toHaveLength(6);
+  });
 });
 
 describe('CharacterPicker', () => {
@@ -72,6 +84,21 @@ describe('CharacterPicker', () => {
     expect(screen.queryByRole('radio', { name: 'Boromir' })).toBeNull();
     await userEvent.click(screen.getByLabelText('show-all-actors'));
     expect(screen.getByRole('radio', { name: 'Boromir' })).toBeInTheDocument();
+  });
+
+  it('leaves out the allies of another faction of the same side', () => {
+    renderWithProviders(
+      <CharacterPicker
+        options={[...OPTIONS, { id: 'r', name: 'Rohirrim', factionId: 'f3' }]}
+        relation="enemies"
+        factionId="f1"
+        allyFactionIds={['f1', 'f3']}
+        value={null}
+        onChange={vi.fn()}
+      />
+    );
+    expect(screen.queryByRole('radio', { name: 'Rohirrim' })).toBeNull();
+    expect(screen.getByRole('radio', { name: 'Orc' })).toBeInTheDocument();
   });
 
   it('toggles several characters and leaves out the excluded ones', async () => {
