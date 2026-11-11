@@ -3,6 +3,7 @@ export const IMAGE_CATEGORIES = [
   'armor',
   'avatars',
   'backgrounds',
+  'chronicle',
   'cultures',
   'doc',
   'generic',
@@ -47,6 +48,8 @@ export type MediaImage = {
   originalFilename?: string;
   altText?: string;
   metadata?: Record<string, string>;
+  /** What the image belongs to (workspace spec 102), such as `strategic-game:<id>`. */
+  scope?: string;
   /** The id of the user who uploaded it; empty or absent for a base image. */
   owner?: string;
   version?: number;
@@ -82,4 +85,6 @@ export type UploadImageInput = {
   category: ImageCategory;
   altText?: string;
   metadata?: Record<string, string>;
+  /** What the image belongs to (workspace spec 102): `strategic-game:<id>` for the chronicle of a campaign. */
+  scope?: string;
 };
